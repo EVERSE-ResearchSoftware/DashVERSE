@@ -75,3 +75,35 @@ Kustomize Version: v5.4.2
 ```shell
 minikube start --driver=docker
 ```
+
+## Step-2 Deploy a Superset instance
+
+* Add the Superset helm repository
+
+    ```shell
+    helm repo add superset https://apache.github.io/superset
+    ```
+
+* View charts in repo
+
+    ```shell
+    helm search repo superset
+    ```
+
+* Install and run
+
+    ```shell
+    helm upgrade --install --values dashverse-values.yaml superset superset/superset
+    ```
+
+* Verify the running pods
+
+    ```shell
+    kubectl get pods
+    ```
+
+* To directly tunnel one pod's port into your localhost run
+
+    ```shell
+    kubectl port-forward service/superset 8088:8088 --namespace default
+    ```
