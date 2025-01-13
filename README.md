@@ -107,3 +107,14 @@ minikube start --driver=docker
     ```shell
     kubectl port-forward service/superset 8088:8088 --namespace default
     ```
+
+## Testing
+
+### API endpoints
+
+Thedocumentation for the API is at <http://localhost:8088//swagger/v1>
+
+## Clean up
+
+minikube stop
+minikube delete --purge --all
