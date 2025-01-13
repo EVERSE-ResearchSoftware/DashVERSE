@@ -51,3 +51,27 @@ Poetry is used for dependency management of the Python packages.
 <https://helm.sh/docs/intro/install>
 
 </details>
+
+## Step-1 Setting up a Kubernetes Cluster
+
+This step will set up a Kubernetes cluster using minikube. The kubernetes cluster will be deployed using Docker driver. For the alternative drivers have a look at [this link](https://minikube.sigs.k8s.io/docs/drivers/).
+
+### Check versions
+
+```shell
+$ minikube version
+minikube version: v1.34.0
+commit: 210b148df93a80eb872ecbeb7e35281b3c582c61
+```
+
+```shell
+$ kubectl version --client
+Client Version: v1.31.1
+Kustomize Version: v5.4.2
+```
+
+### Start the cluster
+
+```shell
+minikube start --driver=docker
+```
