@@ -116,5 +116,8 @@ Thedocumentation for the API is at <http://localhost:8088//swagger/v1>
 
 ## Clean up
 
+The command below will remove the kubernetes cluster and purge all the data.
+```shell
 minikube stop
 minikube delete --purge --all
+```
