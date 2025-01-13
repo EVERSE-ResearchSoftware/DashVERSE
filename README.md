@@ -106,7 +106,7 @@ minikube start --driver=docker
 
 ### API endpoints
 
-Thedocumentation for the API is at <http://localhost:8088//swagger/v1>
+Thedocumentation for the API is at <http://localhost:8088/swagger/v1>
 
 ## Clean up
 
