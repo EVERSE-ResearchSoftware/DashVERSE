@@ -78,31 +78,25 @@ minikube start --driver=docker
 
 ## Step-2 Deploy a Superset instance
 
-* Add the Superset helm repository
+- Add the Superset helm repository
 
     ```shell
     helm repo add superset https://apache.github.io/superset
     ```
 
-* View charts in repo
+- View charts in repo
 
     ```shell
     helm search repo superset
     ```
 
-* Install and run
+- Install and run
 
     ```shell
     helm upgrade --install --values dashverse-values.yaml superset superset/superset
     ```
 
-* Verify the running pods
-
-    ```shell
-    kubectl get pods
-    ```
-
-* To directly tunnel one pod's port into your localhost run
+- Create a tunnel between the superset pod and your localhost
 
     ```shell
     kubectl port-forward service/superset 8088:8088 --namespace default
@@ -117,6 +111,7 @@ Thedocumentation for the API is at <http://localhost:8088//swagger/v1>
 ## Clean up
 
 The command below will remove the kubernetes cluster and purge all the data.
+
 ```shell
 minikube stop
 minikube delete --purge --all
