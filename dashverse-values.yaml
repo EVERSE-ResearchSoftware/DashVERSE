@@ -306,7 +306,7 @@ supersetNode:
     db_name: superset
   env: {}
   # -- If true, forces deployment to reload on each upgrade
-  forceReload: false
+  forceReload: true
   # -- Init containers
   # @default -- a container waiting for postgres
   initContainers:
