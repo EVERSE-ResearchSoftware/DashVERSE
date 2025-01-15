@@ -155,6 +155,17 @@ configOverrides:
             "EMBEDDED_SUPERSET": True,
             "DYNAMIC_PLUGINS": True
         }
+    enable_cors: |
+        ENABLE_CORS = True
+        # port 4200 for angular, port 3000 for react webapp
+        CORS_OPTIONS = {
+            "supports_credentials": True,
+            "allow_headers": "*",
+            "expose_headers": "*",
+            "resources": "*",
+            "origins": ["http://localhost:4200","http://localhost:3000"]
+        }
+
   # extend_timeout: |
   #    # Extend timeout to allow long running queries.
   #    SUPERSET_WEBSERVER_TIMEOUT = ...
