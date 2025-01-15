@@ -147,7 +147,7 @@ extraVolumeMounts: []
 # WARNING: the order is not guaranteed
 # Files can be passed as helm --set-file configOverrides.my-override=my-file.py
 configOverrides:
-    enable_embedded: |
+    enable_embeding: |
         # This will make sure the redirect_uri is properly computed, even with SSL offloading
         ENABLE_PROXY_FIX = True
 
@@ -156,7 +156,7 @@ configOverrides:
             "DYNAMIC_PLUGINS": True
         }
 
-        GUEST_ROLE_NAME = "Everse"
+        GUEST_ROLE_NAME = "EVERSE"
         GUEST_TOKEN_JWT_SECRET = "EVERSE_UPDATE_ME"
         GUEST_TOKEN_JWT_ALGO = "HS256"
         GUEST_TOKEN_HEADER_NAME = "X-GuestToken"
