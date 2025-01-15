@@ -150,11 +150,18 @@ configOverrides:
     enable_embedded: |
         # This will make sure the redirect_uri is properly computed, even with SSL offloading
         ENABLE_PROXY_FIX = True
-        #Feature Flag
+
         FEATURE_FLAGS = {
             "EMBEDDED_SUPERSET": True,
             "DYNAMIC_PLUGINS": True
         }
+
+        GUEST_ROLE_NAME = "Everse"
+        GUEST_TOKEN_JWT_SECRET = "EVERSE_UPDATE_ME"
+        GUEST_TOKEN_JWT_ALGO = "HS256"
+        GUEST_TOKEN_HEADER_NAME = "X-GuestToken"
+        GUEST_TOKEN_JWT_EXP_SECONDS = 300 # 5 minutes
+
     enable_cors: |
         ENABLE_CORS = True
         # port 4200 for angular, port 3000 for react webapp
