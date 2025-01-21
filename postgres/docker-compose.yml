@@ -19,3 +19,11 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: everse
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
