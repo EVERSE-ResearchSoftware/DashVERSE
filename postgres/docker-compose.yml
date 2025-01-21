@@ -16,9 +16,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: everse
+      POSTGRES_DB: postgres
 
   # adminer:
   #   image: adminer
