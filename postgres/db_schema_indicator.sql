@@ -6,9 +6,24 @@ CREATE TABLE IF NOT EXISTS indicators (
   identifier text NOT NULL UNIQUE,
   name text NOT NULL,
   description text NOT NULL,
-  keywords enum UNIQUE,
-  status enum,
-  "quality-dimension" enum,
+  keywords text UNIQUE CHECK
+        (
+            "keywords" IN(
+                'keyword-1',
+                'keyword-2',
+                'keyword-3'
+            )
+        ) NULL,
+  status text CHECK
+        ("status" IN('active', 'deprecated')) NOT NULL,
+  "quality-dimension" text CHECK
+        (
+            "quality-dimension" IN(
+                'openness',
+                'FAIRness',
+                'sustainability'
+            )
+        ) NOT NULL,
   "release-date" date,
   version text,
   doi text,
