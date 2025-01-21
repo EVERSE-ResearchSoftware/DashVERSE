@@ -1,3 +1,9 @@
 *.bck
 *.secret
 *secret*
+
+
+venv
+.venv
+venv3
+.venv3
