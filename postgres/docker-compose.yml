@@ -7,26 +7,12 @@ services:
     hostname: postgres
     # set shared memory limit when using docker-compose
     shm_size: 128mb
-    # or set shared memory limit when deploy via swarm stack
-    #volumes:
-    #  - type: tmpfs
-    #    target: /dev/shm
-    #    tmpfs:
-    #      size: 134217728 # 128*2^20 bytes = 128Mb
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-
-  # adminer:
-  #   image: adminer
-  #   restart: always
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - 8080:8080
 
   pgadmin:
     image: dpage/pgadmin4:8.14.0
@@ -38,7 +24,6 @@ services:
       - PGADMIN_CONFIG_SERVER_MODE=False
       - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
       - PGPASSFILE=/pgpass
-    # entrypoint: /bin/sh -c "chmod **0**600 /pgpass; /entrypoint.sh;"
     entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
     user: root
     configs:
