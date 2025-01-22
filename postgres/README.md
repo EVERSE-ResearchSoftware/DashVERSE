@@ -4,12 +4,24 @@ This folder contains code to prepare and test the database. It contains SQL scri
 
 ## Starting and stopping the database
 
+To start run:
+
 ```shell
+cd server
 docker compose up
+```
+
+To stop run:
+
+```shell
 docker compose down --volumes --remove-orphans
 ```
 
 ## Connecting the database
+
+Install the `postresql` package provided for your sytstem.
+
+To connect to the PostgreSQL server run:
 
 ```shell
 psql --username root --port 5432 --host 0.0.0.0 everse
