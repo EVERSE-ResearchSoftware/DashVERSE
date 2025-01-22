@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS indicators (
   identifier text NOT NULL UNIQUE,
   name text NOT NULL,
   description text NOT NULL,
-  keywords text UNIQUE CHECK
+  keywords text CHECK
         (
             "keywords" IN(
                 'keyword-1',
@@ -36,10 +36,10 @@ CREATE SEQUENCE IF NOT EXISTS person_id_seq;
 CREATE TABLE IF NOT EXISTS person (
   id bigint NOT NULL PRIMARY KEY DEFAULT nextval('person_id_seq'),
   name text NOT NULL UNIQUE,
-  orcid text,
-  github text,
-  gitlab text,
-  email text NOT NULL,
+  orcid text UNIQUE,
+  github text UNIQUE,
+  gitlab text UNIQUE,
+  email text NOT NULL UNIQUE,
   affiliation text,
   "image-url" text,
   organization_id bigint
