@@ -111,18 +111,24 @@ extraSecretEnv: {
   #  SUPERSET_SECRET_KEY: 'CHANGE_ME_TO_A_COMPLEX_RANDOM_SECRET'
 
 # -- Extra files to be mounted as ConfigMap on the path specified in `extraConfigMountPath`
-extraConfigs: {}
-  # import_datasources.yaml: |
-  #     databases:
-  #     - allow_file_upload: true
-  #       allow_ctas: true
-  #       allow_cvas: true
-  #       database_name: example-db
-  #       extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
-  #         metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_file_upload\": []\r\n\
-  #         }"
-  #       sqlalchemy_uri: example://example-db.local
-  #       tables: []
+# extraConfigs: {}
+extraConfigs:
+  import_datasources.yaml: |
+      databases:
+      - allow_file_upload: true
+        allow_ctas: true
+        allow_cvas: true
+        allow_run_async: true
+        allow_csv_upload: true
+        allow_dml: true
+        allow_multi_schema_metadata_fetch: true
+        database_name: superset-postgresql
+        extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
+          metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_file_upload\": []\r\n\
+          }"
+        sqlalchemy_uri: 'postgresql://superset:superset@superset-postgresql:5432/superset'
+        tables: []
+
 
 # -- Extra files to be mounted as Secrets on the path specified in `configMountPath`
 extraSecrets: {}
