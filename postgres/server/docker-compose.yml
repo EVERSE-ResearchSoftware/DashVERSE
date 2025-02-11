@@ -8,14 +8,16 @@ services:
     # set shared memory limit when using docker-compose
     shm_size: 512mb
     ports:
-      - "5432:5432"
+      - "5431:5431"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+      PGPORT: 5431
+    network_mode: "host"
 
   pgadmin:
-    image: dpage/pgadmin4:8.14.0
+    image: dpage/pgadmin4:9.0.0
     ports:
       - 5050:80
     environment:
@@ -33,14 +35,31 @@ services:
         target: /pgpass
     depends_on:
       - "db"
+    # extra_hosts:
+    # - "host.docker.internal:host-gateway"
+    # - "host.docker.internal:172.17.0.1"
+    network_mode: "host"
 
 configs:
   pgpass:
-    content: db:5432:*:postgres:postgres
+    # content: db:5431:*:postgres:postgres
+    content: |
+      0.0.0.0:5431:*:postgres:postgres
+      0.0.0.0:5432:*:superset:superset
   pgadmin_servers.json:
     content: |
       {"Servers": {
           "1": {
+            "Group": "Servers",
+            "Name": "Docker Postgres Server",
+            "Host": "0.0.0.0",
+            "Port": 5431,
+            "MaintenanceDB": "postgres",
+            "Username": "postgres",
+            "PassFile": "/pgpass",
+            "SSLMode": "prefer"
+          },
+          "2": {
             "Group": "Servers",
             "Name": "Superset Postgres Server",
             "Host": "0.0.0.0",
@@ -49,16 +68,6 @@ configs:
             "Username": "superset",
             "PassFile": "/pgpass",
             "SSLMode": "prefer"
-          },
-          "2": {
-            "Group": "Servers",
-            "Name": "Local Postgres Server",
-            "Host": "db",
-            "Port": 5432,
-            "MaintenanceDB": "postgres",
-            "Username": "postgres",
-            "PassFile": "/pgpass",
-            "SSLMode": "prefer"
-          },
+          }
         }
       }
