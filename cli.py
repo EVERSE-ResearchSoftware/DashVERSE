@@ -93,13 +93,13 @@ class DashverseCli():
         })
 
 
-    def create_supersetdataset(self):
+    def create_dataset_for_table(self, table_name):
         url = f"{self.api_url}/dataset/"
         payload = {
             "catalog": "superset",
             "database": 1,
             "schema": "public",
-            "table_name": "dimensions"
+            "table_name": f"{table_name}"
         }
         response = self.session.post(
             url,
@@ -120,12 +120,17 @@ class DashverseCli():
             raise Exception(f"Could not parse response from {url} as JSON, see the server logs)")
 
         dataset_id = response_json["id"]
-        print(f"Status {response.status_code}: Dataset {dataset_id} was created succesfully!")
+        print(f"Status {response.status_code}: Dataset {dataset_id} was created for the {table_name} table!")
 
         # log the response
-        logging.info(f"Status {response.status_code}: Dataset {dataset_id} was created succesfully!")
+        logging.info(f"Status {response.status_code}: Dataset {dataset_id} was created for the {table_name} table")
         logging.info(json.dumps(response.json(), indent=4))
 
+
+    def create_everse_datasets(self):
+        cli.create_dataset_for_table(table_name="indicators")
+        cli.create_dataset_for_table(table_name="dimensions")
+        cli.create_dataset_for_table(table_name="software")
 
 if __name__ == "__main__":
 
@@ -136,7 +141,7 @@ if __name__ == "__main__":
 
     cli.get_superset_access_token()
     cli.get_superset_csrf_token()
-    cli.create_supersetdataset()
+    cli.create_everse_datasets()
 
     # cli.showInfo()
 
