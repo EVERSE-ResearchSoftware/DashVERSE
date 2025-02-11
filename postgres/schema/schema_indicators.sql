@@ -1,3 +1,4 @@
+-- https://github.com/EVERSE-ResearchSoftware/schemas/tree/main/quality_indicators
 
 CREATE SEQUENCE IF NOT EXISTS indicators_id_seq;
 
