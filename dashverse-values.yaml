@@ -122,13 +122,15 @@ extraConfigs:
         allow_csv_upload: true
         allow_dml: true
         allow_multi_schema_metadata_fetch: true
+        cache_timeout: null
+        expose_in_sqllab: true
         database_name: superset-postgresql
+        version: 1.0.0
         extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
           metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_file_upload\": []\r\n\
           }"
         sqlalchemy_uri: 'postgresql://superset:superset@superset-postgresql:5432/superset'
         tables: []
-
 
 # -- Extra files to be mounted as Secrets on the path specified in `configMountPath`
 extraSecrets: {}
