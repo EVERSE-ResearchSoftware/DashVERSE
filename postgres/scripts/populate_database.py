@@ -7,10 +7,12 @@ import random
 # Initialize Faker
 fake = Faker()
 
+
 # Load database connection details from a JSON file
 def load_db_config(file_path):
     with open(file_path, "r") as file:
         return json.load(file)
+
 
 # Insert data into the 'organization' table
 def populate_organization(cursor, num_records=10):
@@ -30,6 +32,7 @@ def populate_organization(cursor, num_records=10):
         organizations.append(cursor.fetchone()[0])
     return organizations
 
+
 # Insert data into the 'person' table
 def populate_person(cursor, organizations, num_records=20):
     people = []
@@ -48,16 +51,26 @@ def populate_person(cursor, organizations, num_records=20):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
-            (name, orcid, github, gitlab, email, affiliation, image_url, organization_id),
+            (
+                name,
+                orcid,
+                github,
+                gitlab,
+                email,
+                affiliation,
+                image_url,
+                organization_id,
+            ),
         )
         people.append(cursor.fetchone()[0])
     return people
 
+
 # Insert data into the 'indicators' table
 def populate_indicators(cursor, authors, contacts, num_records=50):
-    keywords_options = ['keyword-1', 'keyword-2', 'keyword-3']
-    status_options = ['active', 'deprecated']
-    quality_dimensions = ['openness', 'FAIRness', 'sustainability']
+    keywords_options = ["keyword-1", "keyword-2", "keyword-3"]
+    status_options = ["active", "deprecated"]
+    quality_dimensions = ["openness", "FAIRness", "sustainability"]
     for _ in range(num_records):
         identifier = fake.uuid4()
         name = fake.sentence(nb_words=4)
@@ -79,29 +92,43 @@ def populate_indicators(cursor, authors, contacts, num_records=50):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
-                identifier, name, description, keywords, status, quality_dimension,
-                release_date, version, doi, authors_id, contacts_id,
+                identifier,
+                name,
+                description,
+                keywords,
+                status,
+                quality_dimension,
+                release_date,
+                version,
+                doi,
+                authors_id,
+                contacts_id,
             ),
         )
 
+
 # Main function to populate all tables
-def main(num_records):
+def main(num_records, db_file):
     try:
         # Load database config
-        db_config = load_db_config("db_config.json")
+        db_config = load_db_config(db_file)
 
         # Connect to the database
         conn = psycopg2.connect(**db_config)
         cursor = conn.cursor()
 
-        print(f"Populating organization table with {num_records['organizations']} records...")
-        organizations = populate_organization(cursor, num_records['organizations'])
+        print(
+            f"Populating organization table with {num_records['organizations']} records..."
+        )
+        organizations = populate_organization(cursor, num_records["organizations"])
 
         print(f"Populating person table with {num_records['people']} records...")
-        people = populate_person(cursor, organizations, num_records['people'])
+        people = populate_person(cursor, organizations, num_records["people"])
 
-        print(f"Populating indicators table with {num_records['indicators']} records...")
-        populate_indicators(cursor, people, people, num_records['indicators'])
+        print(
+            f"Populating indicators table with {num_records['indicators']} records..."
+        )
+        populate_indicators(cursor, people, people, num_records["indicators"])
 
         # Commit changes
         conn.commit()
@@ -113,17 +140,41 @@ def main(num_records):
         cursor.close()
         conn.close()
 
+
 if __name__ == "__main__":
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Populate a PostgreSQL database with mock data.")
-    parser.add_argument("--organizations", type=int, default=10, help="Number of organization records to generate.")
-    parser.add_argument("--people", type=int, default=20, help="Number of person records to generate.")
-    parser.add_argument("--indicators", type=int, default=50, help="Number of indicator records to generate.")
+    parser = argparse.ArgumentParser(
+        description="Populate a PostgreSQL database with mock data."
+    )
+    parser.add_argument(
+        "--db-file",
+        type=str,
+        default="db_config.json",
+        help="Path to the JSON file containing the database credentials (default: db_config.json).",
+    )
+    parser.add_argument(
+        "--organizations",
+        type=int,
+        default=10,
+        help="Number of organization records to generate.",
+    )
+    parser.add_argument(
+        "--people", type=int, default=20, help="Number of person records to generate."
+    )
+    parser.add_argument(
+        "--indicators",
+        type=int,
+        default=50,
+        help="Number of indicator records to generate.",
+    )
     args = parser.parse_args()
 
     # Pass the parsed arguments to the main function
-    main({
-        "organizations": args.organizations,
-        "people": args.people,
-        "indicators": args.indicators,
-    })
+    main(
+        {
+            "organizations": args.organizations,
+            "people": args.people,
+            "indicators": args.indicators,
+        },
+        args.db_file,
+    )
