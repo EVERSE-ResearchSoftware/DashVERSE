@@ -19,12 +19,13 @@ services:
   pgadmin:
     image: dpage/pgadmin4:9.0.0
     ports:
-      - 5050:80
+      - 5050:5050
     environment:
       - PGADMIN_DEFAULT_EMAIL=pgadmin@everse.software
       - PGADMIN_DEFAULT_PASSWORD=postgres
       - PGADMIN_CONFIG_SERVER_MODE=False
       - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+      - PGADMIN_LISTEN_PORT=5050
       - PGPASSFILE=/pgpass
     entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
     user: root
