@@ -54,7 +54,7 @@ Poetry is used for dependency management of the Python packages.
 
 ## Step-1 Setting up a Kubernetes Cluster
 
-This step will set up a Kubernetes cluster using minikube. The kubernetes cluster will be deployed using Docker driver. For the alternative drivers have a look at [this link](https://minikube.sigs.k8s.io/docs/drivers/).
+This step will set up a Kubernetes cluster using minikube.
 
 ### Check versions
 
@@ -72,8 +72,16 @@ Kustomize Version: v5.4.2
 
 ### Start the cluster
 
+ The kubernetes cluster will be deployed using Docker driver. For the alternative drivers have a look at [this link](https://minikube.sigs.k8s.io/docs/drivers/).
+
 ```shell
-minikube start --driver=docker
+minikube start --cpus='4' --memory='8g' --driver=docker  # or podman
+```
+
+List the pods:
+
+```shell
+minikube kubectl -- get pods -A
 ```
 
 ## Step-2 Deploy a Superset instance
@@ -93,14 +101,90 @@ minikube start --driver=docker
 - Install and run
 
     ```shell
-    helm upgrade --install --values dashverse-values.yaml superset superset/superset
+    helm upgrade --install \
+        --debug --cleanup-on-fail \
+        --values dashverse-values.yaml superset superset/superset
     ```
 
 - Create a tunnel between the superset pod and your localhost
 
+    For the frontend:
+
     ```shell
     kubectl port-forward service/superset 8088:8088 --namespace default
     ```
+
+## Step-3 Set up the database
+
+To be able to access the database service, create a tunnel between the database pod and your localhost:
+
+```shell
+kubectl port-forward service/superset-postgresql 5432:5432 --namespace default
+```
+
+You should now be able to access the database service at `0.0.0.0:5432`
+
+### The database schema
+
+<!-- cd postgres
+cat ./schema/schema_*.sql > db_schema.sql
+
+python scripts/execute_sql.py --db-file db_config_superset.json  --sql-file ./schema/db_schema.sql -->
+
+```shell
+eval (poetry env activate)
+poetry install
+
+cd PydanticModel
+python main.py --config db_config.json
+```
+
+### Add sample data to the database
+
+```shell
+cd postgres/docker
+docker compose -f docker-compose.yml up pgadmin
+```
+
+For pgadmin visit http://localhost:5050/browser/
+
+#### Adding data using pgadmin
+
+```text
+click
+  --> Servers
+  --> "Superset Postgres Server"
+  --> Databases
+  -- Schemas
+  --> everse
+  --> Tables
+Right click a table and click "View/Edit Data" --> "All Rows"
+Add a row in the bottom part of the screen
+```
+
+#### Adding data using sql
+
+```shell
+cd PydanticModel
+python populate_data.py --config db_config.json --num_indicator 10 --num_dimension 10 --num_software 10 --num_assessment 10 --num_content_relation 10
+```
+
+To remove all the database entries
+
+```shell
+python populate_data.py --config db_config.json --clear
+```
+
+## Configuring superset datasets, charts, dashboard
+
+```shell
+cd cli
+python example_usage.py --config config.json
+```
+
+### Superset Frontend
+
+http://localhost:8088
 
 ## Testing
 
