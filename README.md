@@ -135,7 +135,7 @@ python scripts/execute_sql.py --db-file db_config_superset.json  --sql-file ./sc
 eval (poetry env activate)
 poetry install
 
-cd PydanticModel
+cd DBModel
 python main.py --config db_config.json
 ```
 
@@ -165,7 +165,7 @@ Add a row in the bottom part of the screen
 #### Adding data using sql
 
 ```shell
-cd PydanticModel
+cd DBModel
 python populate_data.py --config db_config.json --num_indicator 10 --num_dimension 10 --num_software 10 --num_assessment 10 --num_content_relation 10
 ```
 
