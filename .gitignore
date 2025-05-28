@@ -1,6 +1,7 @@
 *.bck
 *.secret
 *secret*
+*.log
 
 *.pyc
 
@@ -10,5 +11,5 @@ venv3
 .venv3
 
 *cred.json
-*credentials*
+*credential*
 *credentials.json
