@@ -13,7 +13,7 @@ The dashboard prototype for the [EVERSE project](https://everse.software/).
 
 - Python (3.12)
 - Poetry (1.8.5)
-- Docker (27.4.1)
+- Podman (5.4.1)
 - minikube (v1.34.0)
 - helm (v3.16.4)
 
@@ -37,6 +37,10 @@ Website: <https://github.com/pyenv/pyenv?tab=readme-ov-file#installation>
 Poetry is used for dependency management of the Python packages.
 
 <https://python-poetry.org/docs/#installation>
+
+### Podman
+
+<https://podman.io/docs/installation>
 
 ### Docker
 
@@ -72,10 +76,10 @@ Kustomize Version: v5.4.2
 
 ### Start the cluster
 
- The kubernetes cluster will be deployed using Docker driver. For the alternative drivers have a look at [this link](https://minikube.sigs.k8s.io/docs/drivers/).
+ The kubernetes cluster will be deployed using Podman driver. For the alternative drivers have a look at [this link](https://minikube.sigs.k8s.io/docs/drivers/).
 
 ```shell
-minikube start --cpus='4' --memory='8g' --driver=docker  # or podman
+minikube start --cpus='4' --memory='8g' --driver=podman  # or docker
 ```
 
 List the pods:
@@ -101,17 +105,24 @@ minikube kubectl -- get pods -A
 - Install and run
 
     ```shell
-    helm upgrade --install \
-        --debug --cleanup-on-fail \
-        --values dashverse-values.yaml superset superset/superset
+    helm upgrade --install superset superset/superset \
+        --values dashverse-values.yaml \
+        --namespace superset --create-namespace \
+        --debug --cleanup-on-fail
     ```
+
+List the pods:
+
+```shell
+minikube kubectl -- get pods -A
+```
 
 - Create a tunnel between the superset pod and your localhost
 
     For the frontend:
 
     ```shell
-    kubectl port-forward service/superset 8088:8088 --namespace default
+    kubectl port-forward service/superset 8088:8088 --namespace superset
     ```
 
 ## Step-3 Set up the database
@@ -119,7 +130,7 @@ minikube kubectl -- get pods -A
 To be able to access the database service, create a tunnel between the database pod and your localhost:
 
 ```shell
-kubectl port-forward service/superset-postgresql 5432:5432 --namespace default
+kubectl port-forward service/superset-postgresql 5432:5432 --namespace superset
 ```
 
 You should now be able to access the database service at `0.0.0.0:5432`
