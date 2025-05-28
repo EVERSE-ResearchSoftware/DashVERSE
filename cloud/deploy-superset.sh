@@ -77,15 +77,6 @@ EOF
 
 echo "Generated temporary secrets file: $TEMP_SECRETS_FILE"
 
-# Display the generated admin password (for initial login)
-echo ""
-echo "=========================================================="
-echo "  SUPERSET ADMIN USER PASSWORD (for 'admin' user): "
-echo "  $ADMIN_PASSWORD"
-echo "  PLEASE SAVE THIS SECURELY or CHANGE IT IMMEDIATELY AFTER LOGIN."
-echo "=========================================================="
-echo ""
-
 # Deploy Superset using Helm
 # The --values flag order matters: later files override earlier ones.
 # So, temp-superset-generated-secrets.yaml will override conflicting values from dashverse-values-with-ingress.yaml
@@ -95,6 +86,16 @@ helm upgrade --install superset superset/superset \
     --values "$TEMP_SECRETS_FILE" \
     --namespace superset --create-namespace \
     --debug --cleanup-on-fail
+
+# Display the generated admin password (for initial login)
+echo ""
+echo "=========================================================="
+echo "  SUPERSET ADMIN USER PASSWORD (for 'admin' user): "
+echo "  $ADMIN_PASSWORD"
+echo "  PLEASE SAVE THIS SECURELY or CHANGE IT IMMEDIATELY AFTER LOGIN."
+echo "=========================================================="
+echo ""
+
 
 # Clean up the temporary secrets file
 echo "Helm deployment finished. Cleaning up temporary secrets file..."
@@ -106,4 +107,9 @@ echo "  kubectl get secret -n superset superset-superset-env -o yaml"
 echo "  kubectl get secret -n superset superset-superset-config -o yaml"
 echo "(Remember to base64 decode values if you inspect the raw secret YAML)"
 echo "To access Superset in Minikube, you might use 'minikube service superset -n superset'."
+echo
+
+export NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services superset)
+export NODE_IP=$(kubectl get nodes --namespace superset -o jsonpath="{.items[0].status.addresses[0].address}")
+echo http://$NODE_IP:$NODE_PORT
 echo
