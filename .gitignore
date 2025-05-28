@@ -2,8 +2,13 @@
 *.secret
 *secret*
 
+*.pyc
 
 venv
 .venv
 venv3
 .venv3
+
+*cred.json
+*credentials*
+*credentials.json
