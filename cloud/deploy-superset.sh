@@ -18,6 +18,16 @@ ADMIN_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 16)
 # Websocket JWT Secret (if websockets are enabled)
 WEBSOCKET_JWT_SECRET=$(openssl rand -base64 32)
 
+# save deployment secrets in a file
+CREDENTIALS_FILE_PREFIX=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo)
+CREDENTIALS_FILE="${CREDENTIALS_FILE_PREFIX}-deployment-secrets.json"
+echo "SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}" > $CREDENTIALS_FILE
+echo "GUEST_TOKEN_JWT_SECRET: ${GUEST_TOKEN_JWT_SECRET}" >> $CREDENTIALS_FILE
+echo "DB_PASSWORD: ${DB_PASSWORD}" >> $CREDENTIALS_FILE
+echo "REDIS_PASSWORD: ${REDIS_PASSWORD}" >> $CREDENTIALS_FILE
+echo "ADMIN_PASSWORD: ${ADMIN_PASSWORD}" >> $CREDENTIALS_FILE
+echo "WEBSOCKET_JWT_SECRET: ${WEBSOCKET_JWT_SECRET}" >> $CREDENTIALS_FILE
+
 
 # Create a temporary YAML file with the generated secrets
 TEMP_SECRETS_FILE="temp-superset-generated-secrets.yaml"
