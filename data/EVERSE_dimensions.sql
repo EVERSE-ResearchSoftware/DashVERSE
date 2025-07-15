@@ -1,0 +1,18 @@
+INSERT INTO everse.dimensions (identifier, name)
+VALUES ('DIM-ACC', 'Accessibility'),
+    ('DIM-COM', 'Community'),
+    ('DIM-CNT', 'Contribution'),
+    ('DIM-DOC', 'Documentation'),
+    ('DIM-FIN', 'Findability'),
+    ('DIM-FUN', 'Fundability'),
+    ('DIM-INT', 'Interoperability'),
+    ('DIM-ISS', 'Issue Tracking'),
+    ('DIM-LIC', 'Licensing'),
+    ('DIM-MON', 'Monitoring'),
+    ('DIM-SEC', 'Security'),
+    ('DIM-SRC', 'Source code'),
+    ('DIM-SUS', 'Sustainability'),
+    ('DIM-TST', 'Testing'),
+    ('DIM-USB', 'Usability'),
+    ('DIM-VER', 'Versioning'),
+    ('DIM-UNC', 'Uncategorised');
