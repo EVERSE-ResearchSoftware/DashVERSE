@@ -144,7 +144,7 @@ python scripts/execute_sql.py --db-file db_config_superset.json  --sql-file ./sc
 
 ```shell
 eval (poetry env activate)
-poetry install
+poetry install --no-root
 
 cd DBModel
 python main.py --config db_config.json
