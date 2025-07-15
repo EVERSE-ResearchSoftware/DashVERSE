@@ -1,7 +1,7 @@
 {
     "dbname": "superset",
-    "user": "superset",
+    "user": "postgres",
     "password": "superset",
-    "host": "0.0.0.0",
+    "host": "superset-postgresql",
     "port": 5432
 }
