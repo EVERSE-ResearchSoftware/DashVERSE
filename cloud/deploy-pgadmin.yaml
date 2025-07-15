@@ -1,0 +1,111 @@
+---
+# 1. Persistent Volume Claim for pgAdmin
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgadmin-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# 2. pgAdmin Application Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+  labels:
+    app: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+
+        - name: pgadmin
+          image: dpage/pgadmin4:latest
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: "admin@example.com"
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: POSTGRES_PASSWORD
+
+            - name: PGADMIN_SERVER_NAMES
+              value: "Superset PostgreSQL"
+            - name: PGADMIN_SERVER_GROUPS
+              value: "Superset"
+            - name: PGADMIN_SERVER_URLS
+              value: "superset-postgresql:5432"
+
+            # Database-specific connection details, pulled from existing secret.
+            - name: PGADMIN_SERVER_URLS_SUPERSER_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_NAME
+            - name: PGADMIN_SERVER_URLS_SUPERSER_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_USER
+            - name: PGADMIN_SERVER_URLS_SUPERSER_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_PASSWORD
+            - name: PGADMIN_SERVER_URLS_SUPERSER_DB_SSLMODE
+              value: "prefer"
+          volumeMounts:
+            - name: pgadmin-data
+              mountPath: /var/lib/pgadmin
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+
+        - name: pgadmin-data
+          persistentVolumeClaim:
+            claimName: pgadmin-pvc
+
+---
+# 3. pgAdmin Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin
+  labels:
+    app: pgadmin
+spec:
+  selector:
+    app: pgadmin
+  # ports:
+  #   - protocol: TCP
+  #     port: 80
+  #     targetPort: 80
+  # type: LoadBalancer # Change to 'ClusterIP' if you only want to access it from within the cluster
+  ports:
+    - name: http-pgadmin
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30180
+  type: NodePort
