@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        // ESLint/Prettier formatter
+        "esbenp.prettier-vscode",
+        // direnv support
+        "mkhl.direnv",
+        "EditorConfig.EditorConfig",
+    ]
+}
