@@ -1,0 +1,97 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgrest
+  namespace: superset
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgrest-app
+  template:
+    metadata:
+      labels:
+        app: postgrest-app
+    spec:
+      containers:
+
+        - name: postgrest
+          image: postgrest/postgrest:v13.0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+              name: http-postgrest
+          env:
+            # - name: PGRST_DB_URI
+            #   value: "postgres://superset:superset@superset-postgresql:5432/superset"
+            - name: PGRST_DB_URI
+              value: "postgres://authenticator:superset@superset-postgresql:5432/superset"
+            - name: PGRST_DB_SCHEMA
+              value: everse
+            - name: PGRST_DB_ANON_ROLE
+              value: web_anon
+            - name: PGRST_JWT_SECRET
+              value: yT0hP1ZMC4LrLOO4N/epjU0gL1qEZLYMYreeYIQlaKA=
+            # - name: PGRST_DB_ROOT_SPEC
+            #  value: root
+            - name: GHCRTS
+              value: '-qg -I0'
+            - name: PGRST_DB_POOL
+              value: '10'
+            - name: PGRST_DB_POOL_TIMEOUT
+              value: '300'
+            - name: PGRST_SERVER_CORS_ALLOWED_ORIGINS
+              value: "https://apidocs.YOUR_DOMAIN,https://api.YOUR_DOMAIN,https://db.YOUR_DOMAIN"
+
+        - name: swagger
+          image: swaggerapi/swagger-ui
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+              name: http-swagger
+          env:
+            # IMPORTANT: Changed API_URL to point to a path on the same origin
+            # The Cloudflare Tunnel config will route /api/ to the internal postgrest service
+            # - name: API_URL
+            #   value: https://postgrest:3000
+            - name: API_URL
+              value: https://db.YOUR_DOMAIN
+            - name: LAYOUT
+              value: BaseLayout
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgrest
+  namespace: superset
+spec:
+  selector:
+    app: postgrest-app
+  ports:
+    - name: http-postgrest
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30000
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: swagger
+  namespace: superset
+spec:
+  selector:
+    app: postgrest-app
+  ports:
+    - name: http-swagger
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
