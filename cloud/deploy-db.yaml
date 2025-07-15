@@ -1,0 +1,312 @@
+---
+# 1. DB secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: superset-postgresql-secrets
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: "superset"
+  SUPERSET_DB_USER: "superset"
+  SUPERSET_DB_PASSWORD: "superset"
+  SUPERSET_DB_NAME: "superset"
+
+---
+# 2. Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: superset-postgresql-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi # Request 5 GB of storage
+
+---
+# 3. Initialization Scripts
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: superset-postgresql-init-scripts
+data:
+  init.sql: |
+    -- Create the database for Superset
+    -- CREATE DATABASE superset;
+    \c superset
+
+    -- Create the user for Superset and grant privileges
+    CREATE USER superset WITH PASSWORD 'superset'; -- Ensure this matches SUPERSET_DB_PASSWORD in the Secret!
+    GRANT ALL PRIVILEGES ON DATABASE superset TO superset;
+    ALTER DATABASE superset OWNER TO superset;
+    GRANT USAGE on schema public to superset;
+    GRANT USAGE on all sequences in schema public to superset;
+
+    GRANT USAGE ON SCHEMA everse TO superset;
+    GRANT USAGE on all sequences in schema everse to superset;
+    GRANT ALL ON everse.dimensions TO superset;
+    GRANT ALL ON everse.indicators TO superset;
+    GRANT ALL ON everse.software TO superset;
+    GRANT ALL ON everse.assessment TO superset;
+
+    -- Postgrest specific
+    COMMENT ON SCHEMA everse IS
+    $$DashVERSE API
+
+    A RESTful API that serves DashVERSE data.$$;
+
+    -- Postgrest anon role
+    CREATE ROLE web_anon NOLOGIN;
+    GRANT USAGE ON SCHEMA everse TO web_anon;
+    -- -- GRANT SELECT, INSERT, UPDATE, DELETE ON everse.assessment TO web_anon;
+    -- -- GRANT USAGE, SELECT ON SEQUENCE everse.assessment_id_seq TO web_anon;
+    GRANT SELECT ON everse.dimensions TO web_anon;
+    GRANT SELECT ON everse.indicators TO web_anon;
+    GRANT SELECT ON everse.software TO web_anon;
+    GRANT SELECT ON everse.assessment TO web_anon;
+
+    -- Postgrest authenticator role
+    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD 'superset';
+    GRANT web_anon to authenticator;
+
+    -- Postgrest cli user role
+    CREATE ROLE cli_user NOLOGIN;
+    GRANT cli_user TO authenticator;
+    GRANT USAGE ON SCHEMA everse TO cli_user;
+    GRANT ALL ON everse.dimensions TO cli_user;
+    GRANT ALL ON everse.indicators TO cli_user;
+    GRANT ALL ON everse.software TO cli_user;
+    GRANT ALL ON everse.assessment TO cli_user;
+
+    GRANT ALL ON SEQUENCE everse.assessment_id_seq to cli_user;
+
+    INSERT INTO everse.dimensions (identifier, name)
+    VALUES ('DIM-ACC', 'Accessibility'),
+        ('DIM-COM', 'Community'),
+        ('DIM-CNT', 'Contribution'),
+        ('DIM-DOC', 'Documentation'),
+        ('DIM-FIN', 'Findability'),
+        ('DIM-FUN', 'Fundability'),
+        ('DIM-INT', 'Interoperability'),
+        ('DIM-ISS', 'Issue Tracking'),
+        ('DIM-LIC', 'Licensing'),
+        ('DIM-MON', 'Monitoring'),
+        ('DIM-SEC', 'Security'),
+        ('DIM-SRC', 'Source code'),
+        ('DIM-SUS', 'Sustainability'),
+        ('DIM-TST', 'Testing'),
+        ('DIM-USB', 'Usability'),
+        ('DIM-VER', 'Versioning'),
+        ('DIM-UNC', 'Uncategorised');
+
+    -- -- OpenAPI settings
+    -- create or replace function everse.root() returns json as $_$
+    -- declare
+    -- openapi json = $$
+    --   {
+    --     "swagger": "2.0",
+    --     "info": {
+    --       "version": "0.1.0",
+    --       "title": "DashVERSE API",
+    --       "description": "DashVERSE API"
+    --     },
+    --     "host": "db.dashverse.cloud",
+    --     "basePath": "/",
+    --     "schemes": [
+    --       "https"
+    --     ]
+    --   }
+    -- $$;
+    -- begin
+    --   return openapi;
+    -- end
+    -- $_$ language plpgsql;
+
+---
+# 4. PostgreSQL Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset-postgresql
+  labels:
+    app: superset-postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: superset-postgresql
+  template:
+    metadata:
+      labels:
+        app: superset-postgresql
+    spec:
+      containers:
+        - name: superset-postgresql
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_NAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_SUPERSET_USER
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_USER
+            - name: POSTGRES_SUPERSET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_PASSWORD
+            - name: POSTGRES_SUPERSET_DB
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_NAME
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: superset-postgresql-data-pvc
+
+---
+# 5. PostgreSQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: superset-postgresql
+  labels:
+    app: superset-postgresql
+spec:
+  selector:
+    app: superset-postgresql
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+
+---
+# 6. Initialization Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: superset-postgresql-init-job
+spec:
+  template:
+    metadata:
+      name: superset-postgresql-init-job
+    spec:
+      restartPolicy: OnFailure
+      containers:
+
+        - name: init-python-container
+          image: everse-db-scripts:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              echo "Waiting for Superset PostgreSQL to be ready for Python script execution..."
+              until pg_isready -h superset-postgresql -p 5432 -U postgres; do
+                echo "Superset PostgreSQL not ready yet, sleeping..."
+                sleep 5
+              done
+              echo "Superset PostgreSQL is ready. Executing Python setup script..."
+
+              # Execute your Python script
+              cd /app
+              python3 -m venv venv
+              . ./venv/bin/activate
+              pip3 install --no-cache-dir -r requirements.txt
+              ls
+              cat db_config.json
+              python3 main.py --config db_config.json
+
+              echo "Python setup script executed."
+
+
+              echo "Superset PostgreSQL is ready. Executing SQL initialization scripts..."
+
+              PGPASSWORD="${POSTGRES_PASSWORD}" psql -h superset-postgresql -p 5432 -U postgres -f /scripts/init.sql
+              echo "SQL Initialization scripts executed."
+
+          env:
+            - name: DB_HOST
+              value: "superset-postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: SUPERSET_DB_PASSWORD
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: superset-postgresql-secrets
+                  key: POSTGRES_PASSWORD
+
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
+
+        # # Container for SQL initialization
+        # - name: init-sql-container
+        #   image: postgres:17
+        #   command: ["/bin/bash", "-c"]
+        #   args:
+        #     - |
+        #       echo "Waiting for Superset PostgreSQL to be ready for SQL initialization..."
+        #       until pg_isready -h superset-postgresql -p 5432 -U postgres; do
+        #         echo "Superset PostgreSQL not ready yet, sleeping..."
+        #         sleep 5
+        #       done
+        #       echo "Superset PostgreSQL is ready. Executing SQL initialization scripts..."
+
+        #       PGPASSWORD="${POSTGRES_PASSWORD}" psql -h superset-postgresql -p 5432 -U postgres -f /scripts/init.sql
+        #       echo "SQL Initialization scripts executed."
+        #   env:
+        #     - name: POSTGRES_PASSWORD
+        #       valueFrom:
+        #         secretKeyRef:
+        #           name: superset-postgresql-secrets
+        #           key: POSTGRES_PASSWORD
+        #   volumeMounts:
+        #     - name: init-scripts
+        #       mountPath: /scripts
+
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: superset-postgresql-init-scripts
