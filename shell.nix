@@ -2,5 +2,14 @@
 { pkgs ? import <nixpkgs> {}}:
 
 pkgs.mkShell {
-  packages = [ pkgs.hello ];
+  name = "dashverse-shell";
+  packages = with pkgs; [
+    python313
+    minikube
+    podman
+    poetry
+    kubernetes
+    kubernetes-helm
+    kubectl
+  ];
 }
