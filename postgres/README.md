@@ -39,6 +39,14 @@ The [scripts](scripts) folder contains Python scripts to help doing some operati
 
 See [SQL_executor.md](SQL_executor.md)
 
+```shell
+python scripts/execute_sql.py --db-file db_config_superset.json  --sql-file ./schema/db_schema_indicator.sql
+```
+
 ### Adding sample data with `populate_database.py`
 
 See [Sample_data.md](Sample_data.md)
+
+```shell
+python scripts/populate_database.py --db-file db_config_superset.json --organizations 15 --people 30 --indicators 100
+```
