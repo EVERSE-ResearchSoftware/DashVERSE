@@ -10,16 +10,28 @@ If you would like to run the setup on a cloud (your own server)
     minikube start --cpus='4' --memory='4g' --driver=podman
     ```
 
+1. Generate Secrets for deployment
+
+    ```shell
+    cd cloud
+
+    bash generate-variables.sh
+    ```
+
 1. Build database initialization container
 
     ```shell
     cd DBModel
+
+    #docker rmi -f $(docker images 'everse-db-scripts' -a -q) # remove existing image
 
     docker build --no-cache -t ghcr.io/everse-researchsoftware/postgresql-setup-script:latest -t everse-db-scripts:latest .
 
     minikube image load everse-db-scripts:latest
     minikube image ls
     ```
+
+**Note:** Do not make this Docker image publicly available as it contains database password!
 
 1. Create a namespace
 
@@ -29,6 +41,14 @@ If you would like to run the setup on a cloud (your own server)
     kubectl create namespace superset
     ```
 
+1. Add Secrets to the cluster
+
+    ```shell
+    cd cloud
+
+    kubectl apply -f RCgQgzJN28clh-superset-deployment-secrets.yaml --namespace superset
+    ```
+
 
 1. Deploy db using `deploy-db.yaml`
 
@@ -36,8 +56,9 @@ If you would like to run the setup on a cloud (your own server)
     kubectl apply -f deploy-db.yaml --namespace superset
     kubectl get pods -A
 
-    kubectl logs --namespace superset superset-postgresql-init-job-4mgrp -c init-sql-container
-    kubectl logs --namespace superset superset-postgresql-init-job-4mgrp -c init-python-container
+    JOB_POD_NAME=$(kubectl get pods --namespace superset | grep "postgresql-init-job" | cut -d" " -f1)
+    kubectl logs --namespace superset $JOB_POD_NAME -c init-python-container
+    # kubectl logs --namespace superset $JOB_POD_NAME -c init-sql-container
     ```
 
 1. **OPTIONAL** - Deploy pgadmin
@@ -56,7 +77,7 @@ If you would like to run the setup on a cloud (your own server)
         Host name --> superset-postgresql
         Port --> 5432
         Username --> superset
-        Password --> see `superset-postgresql-secrets`
+        Password --> see `XXXXXXXXXXXXX-superset-deployment-secrets` file
     ```
 
 1. Deploy API using `deploy-postgrest.yaml`
