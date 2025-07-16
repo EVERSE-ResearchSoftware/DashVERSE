@@ -143,6 +143,16 @@ kubectl get --namespace superset deployments.apps
 kubectl get pods --namespace superset
 ```
 
+### Connect to Postgresql server
+
+```shell
+kubectl get pods --namespace superset
+kubectl exec -ti superset-postgresql-6c8dd65c-5k4d4 --namespace superset -- bash
+psql -U postgres -d postgres -h localhost
+```
+
+**Note**: use your own username and password for the `psql` command
+
 ### Delete the cluster
 
 ```shell
