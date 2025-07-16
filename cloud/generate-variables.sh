@@ -12,6 +12,9 @@ GUEST_TOKEN_JWT_SECRET=$(openssl rand -base64 42)
 DB_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 20)
 REDIS_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 20)
 
+# Pgadmin password (alphanumeric with underscore, 16 chars long)
+PGADMIN_DEFAULT_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 16)
+
 # Superset Admin password (alphanumeric with underscore, 16 chars long)
 ADMIN_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 16)
 
@@ -46,6 +49,8 @@ stringData:
   POSTGREST_DB_URI: 'postgres://authenticator:$DB_PASSWORD@superset-postgresql:5432/superset'
   POSTGREST_API_URL: 'https://db.dashverse.cloud'
   POSTGREST_SERVER_CORS_ALLOWED_ORIGINS: 'https://apidocs.dashverse.cloud,https://api.dashverse.cloud,https://db.dashverse.cloud'
+  PGADMIN_DEFAULT_EMAIL: 'admin@example.com'
+  PGADMIN_DEFAULT_PASSWORD: '$PGADMIN_DEFAULT_PASSWORD'
 EOF
 echo "Generated secrets file: $SECRETS_FILE_NAME"
 
@@ -64,6 +69,8 @@ export GUEST_TOKEN_JWT_SECRET='$GUEST_TOKEN_JWT_SECRET'
 export POSTGREST_DB_URI='postgres://authenticator:$DB_PASSWORD@superset-postgresql:5432/superset'
 export POSTGREST_API_URL='https://db.dashverse.cloud'
 export POSTGREST_SERVER_CORS_ALLOWED_ORIGINS='https://apidocs.dashverse.cloud,https://api.dashverse.cloud,https://db.dashverse.cloud'
+export PGADMIN_DEFAULT_EMAIL='admin@example.com'
+export PGADMIN_DEFAULT_PASSWORD='$PGADMIN_DEFAULT_PASSWORD'
 EOF
 echo "Generated secrets file: secrets.env"
 
