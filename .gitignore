@@ -1,6 +1,13 @@
 *.bck
+*.backup
+*.swp
+
 *.secret
 *secret*
+*cred.json
+*credential*
+*credentials.json
+
 *.log
 
 *.pyc
@@ -10,6 +17,4 @@ venv
 venv3
 .venv3
 
-*cred.json
-*credential*
-*credentials.json
+.direnv
