@@ -24,7 +24,7 @@ data:
     \c superset
 
     -- Create the user for Superset and grant privileges
-    CREATE USER superset WITH PASSWORD '$SUPERSET_DB_PASSWORD' -- TODO: Ensure this matches SUPERSET_DB_PASSWORD in the Secret!
+    CREATE USER superset WITH PASSWORD '$SUPERSET_DB_PASSWORD';
     GRANT ALL PRIVILEGES ON DATABASE superset TO superset;
     ALTER DATABASE superset OWNER TO superset;
     GRANT USAGE on schema public to superset;
@@ -54,7 +54,7 @@ data:
     GRANT SELECT ON everse.assessment TO web_anon;
 
     -- Postgrest authenticator role
-    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD '$SUPERSET_DB_PASSWORD'; -- TODO: update password
+    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD '$SUPERSET_DB_PASSWORD';
     GRANT web_anon to authenticator;
 
     -- Postgrest cli user role
