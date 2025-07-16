@@ -1,18 +1,5 @@
 ---
-# 1. DB secrets
-apiVersion: v1
-kind: Secret
-metadata:
-  name: superset-postgresql-secrets
-type: Opaque
-stringData:
-  POSTGRES_PASSWORD: "superset"
-  SUPERSET_DB_USER: "superset"
-  SUPERSET_DB_PASSWORD: "superset"
-  SUPERSET_DB_NAME: "superset"
-
----
-# 2. Persistent Volume Claim
+# 1. Persistent Volume Claim
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -25,7 +12,7 @@ spec:
       storage: 5Gi # Request 5 GB of storage
 
 ---
-# 3. Initialization Scripts
+# 2. Initialization Scripts
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -37,7 +24,7 @@ data:
     \c superset
 
     -- Create the user for Superset and grant privileges
-    CREATE USER superset WITH PASSWORD 'superset'; -- Ensure this matches SUPERSET_DB_PASSWORD in the Secret!
+    CREATE USER superset WITH PASSWORD '$SUPERSET_DB_PASSWORD' -- TODO: Ensure this matches SUPERSET_DB_PASSWORD in the Secret!
     GRANT ALL PRIVILEGES ON DATABASE superset TO superset;
     ALTER DATABASE superset OWNER TO superset;
     GRANT USAGE on schema public to superset;
@@ -67,7 +54,7 @@ data:
     GRANT SELECT ON everse.assessment TO web_anon;
 
     -- Postgrest authenticator role
-    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD 'superset';
+    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD '$SUPERSET_DB_PASSWORD'; -- TODO: update password
     GRANT web_anon to authenticator;
 
     -- Postgrest cli user role
@@ -124,7 +111,7 @@ data:
     -- $_$ language plpgsql;
 
 ---
-# 4. PostgreSQL Deployment
+# 3. PostgreSQL Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -149,31 +136,34 @@ spec:
               name: postgres
           env:
             - name: POSTGRES_USER
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: superset-deployment-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_NAME
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_SUPERSET_USER
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_USER
             - name: POSTGRES_SUPERSET_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_PASSWORD
             - name: POSTGRES_SUPERSET_DB
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_NAME
           volumeMounts:
             - name: postgres-data
@@ -191,7 +181,7 @@ spec:
             claimName: superset-postgresql-data-pvc
 
 ---
-# 5. PostgreSQL Service
+# 4. PostgreSQL Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -208,7 +198,7 @@ spec:
   type: ClusterIP
 
 ---
-# 6. Initialization Job
+# 5. Initialization Job
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -259,22 +249,22 @@ spec:
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_NAME
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: SUPERSET_DB_PASSWORD
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: superset-postgresql-secrets
+                  name: superset-deployment-secrets
                   key: POSTGRES_PASSWORD
 
           volumeMounts:
@@ -300,7 +290,7 @@ spec:
         #     - name: POSTGRES_PASSWORD
         #       valueFrom:
         #         secretKeyRef:
-        #           name: superset-postgresql-secrets
+        #           name: superset-deployment-secrets
         #           key: POSTGRES_PASSWORD
         #   volumeMounts:
         #     - name: init-scripts
