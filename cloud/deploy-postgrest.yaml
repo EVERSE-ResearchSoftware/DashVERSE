@@ -24,8 +24,6 @@ spec:
               protocol: TCP
               name: http-postgrest
           env:
-            # - name: PGRST_DB_URI
-            #   value: "postgres://superset:superset@superset-postgresql:5432/superset"
             - name: PGRST_DB_URI
               valueFrom:
                 secretKeyRef:
