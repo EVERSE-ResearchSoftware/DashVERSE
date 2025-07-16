@@ -17,7 +17,7 @@ spec:
       containers:
 
         - name: postgrest
-          image: postgrest/postgrest:v13.0.2
+          image: postgrest/postgrest:v13.0.4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -27,13 +27,19 @@ spec:
             # - name: PGRST_DB_URI
             #   value: "postgres://superset:superset@superset-postgresql:5432/superset"
             - name: PGRST_DB_URI
-              value: "postgres://authenticator:superset@superset-postgresql:5432/superset"
+              valueFrom:
+                secretKeyRef:
+                  name: superset-deployment-secrets
+                  key: POSTGREST_DB_URI
             - name: PGRST_DB_SCHEMA
               value: everse
             - name: PGRST_DB_ANON_ROLE
               value: web_anon
             - name: PGRST_JWT_SECRET
-              value: yT0hP1ZMC4LrLOO4N/epjU0gL1qEZLYMYreeYIQlaKA=
+              valueFrom:
+                secretKeyRef:
+                  name: superset-deployment-secrets
+                  key: WEBSOCKET_JWT_SECRET
             # - name: PGRST_DB_ROOT_SPEC
             #  value: root
             - name: GHCRTS
@@ -43,7 +49,10 @@ spec:
             - name: PGRST_DB_POOL_TIMEOUT
               value: '300'
             - name: PGRST_SERVER_CORS_ALLOWED_ORIGINS
-              value: "https://apidocs.YOUR_DOMAIN,https://api.YOUR_DOMAIN,https://db.YOUR_DOMAIN"
+              valueFrom:
+                secretKeyRef:
+                  name: superset-deployment-secrets
+                  key: POSTGREST_SERVER_CORS_ALLOWED_ORIGINS
 
         - name: swagger
           image: swaggerapi/swagger-ui
@@ -58,7 +67,10 @@ spec:
             # - name: API_URL
             #   value: https://postgrest:3000
             - name: API_URL
-              value: https://db.YOUR_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: superset-deployment-secrets
+                  key: POSTGREST_API_URL
             - name: LAYOUT
               value: BaseLayout
 
