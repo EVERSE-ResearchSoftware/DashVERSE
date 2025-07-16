@@ -47,7 +47,8 @@ If you would like to run the setup on a cloud (your own server)
     ```
 
     To add the postgresql database to pgadmin:
-    ```
+
+    ```shell
     Add a New server:
       General:
         Name --> postgres
@@ -97,7 +98,6 @@ If you would like to run the setup on a cloud (your own server)
 
 1. Set DNS to point to your server ( you will need to setup a reverse proxy to be able to access the service)
 
-
 ## Clean up
 
 ### Delete services, deployments, volumes
@@ -140,7 +140,16 @@ kubectl get --namespace superset services
 kubectl get --namespace superset deployments
 kubectl get --namespace superset deployments.apps
 
+kubectl get pods --all-namespaces
 kubectl get pods --namespace superset
+
+kubectl describe pods --namespace superset
+
+kubectl cluster-info
+
+kubectl get pods -l app=superset-postgresql --namespace superset
+kubectl get jobs -l job-name=superset-postgresql-init-job --namespace superset
+kubectl logs -f <superset-postgresql-init-job-pod-name> --namespace superset
 ```
 
 ### Connect to Postgresql server
