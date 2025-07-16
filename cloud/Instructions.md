@@ -124,6 +124,25 @@ kubectl delete pvc --namespace superset superset-postgresql-data-pvc
 kubectl get pvc --namespace superset
 ```
 
+### Get info
+
+```shell
+
+minikube --namespace superset service list
+#minikube --namespace superset service --all
+minikube --namespace superset service superset-postgresql --url
+minikube --namespace superset service superset --url
+minikube --namespace superset service postgrest --url
+minikube --namespace superset service swagger --url
+minikube --namespace superset service pgadmin --url
+
+kubectl get --namespace superset services
+kubectl get --namespace superset deployments
+kubectl get --namespace superset deployments.apps
+
+kubectl get pods --namespace superset
+```
+
 ### Delete the cluster
 
 ```shell
