@@ -1,5 +1,7 @@
 # Cloud setup
 
+## Deployment
+
 If you would like to run the setup on a cloud (your own server)
 
 1. Build database initialization container
@@ -88,3 +90,30 @@ If you would like to run the setup on a cloud (your own server)
 1. Set up the domain name for your server
 
 1. Set DNS to point to your server ( you will need to setup a reverse proxy to be able to access the service)
+
+
+## Clean up
+
+### Delete services, deployments, volumes
+
+```shell
+kubectl delete service --namespace superset superset
+kubectl delete service --namespace superset postgrest
+kubectl delete service --namespace superset swagger
+kubectl delete service --namespace superset pgadmin
+kubectl delete service --namespace superset superset-postgresql
+kubectl delete service --namespace superset superset-redis-headless
+kubectl delete service --namespace superset superset-redis-master
+kubectl get --namespace superset services
+
+kubectl delete deployment --namespace superset pgadmin
+kubectl delete deployment --namespace superset superset
+kubectl delete deployment --namespace superset postgrest
+kubectl delete deployment --namespace superset superset-postgresql
+kubectl delete deployment --namespace superset superset-worker
+kubectl get deployments --namespace superset
+
+kubectl delete pvc --namespace superset pgadmin-pvc
+kubectl delete pvc --namespace superset superset-postgresql-data-pvc
+kubectl get pvc --namespace superset
+```
