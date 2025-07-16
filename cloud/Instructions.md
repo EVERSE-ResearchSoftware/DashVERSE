@@ -4,6 +4,12 @@
 
 If you would like to run the setup on a cloud (your own server)
 
+1. Start a cluster using `minikube` and `podman`
+
+    ```shell
+    minikube start --cpus='4' --memory='4g' --driver=podman
+    ```
+
 1. Build database initialization container
 
     ```shell
