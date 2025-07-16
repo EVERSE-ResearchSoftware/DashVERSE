@@ -123,13 +123,3 @@ export NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0]
 export NODE_IP=$(kubectl get nodes --namespace superset -o jsonpath="{.items[0].status.addresses[0].address}")
 echo http://$NODE_IP:$NODE_PORT
 echo
-
-
-# Postgrest
-kubectl apply -f deploy-postgrest.yaml --namespace superset
-kubectl get --namespace superset services
-
-# kubectl delete service postgrest-service --namespace superset
-# kubectl delete deployment postgrest-deployment --namespace superset
-
-
