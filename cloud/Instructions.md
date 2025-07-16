@@ -117,3 +117,10 @@ kubectl delete pvc --namespace superset pgadmin-pvc
 kubectl delete pvc --namespace superset superset-postgresql-data-pvc
 kubectl get pvc --namespace superset
 ```
+
+### Delete the cluster
+
+```shell
+minikube stop
+minikube delete --purge --all
+```
