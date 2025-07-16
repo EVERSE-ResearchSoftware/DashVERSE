@@ -38,10 +38,10 @@ data:
     GRANT ALL ON everse.assessment TO superset;
 
     -- Postgrest specific
-    COMMENT ON SCHEMA everse IS
-    $$DashVERSE API
-
-    A RESTful API that serves DashVERSE data.$$;
+    -- COMMENT ON SCHEMA everse IS
+    -- $$DashVERSE API
+    --
+    -- A RESTful API that serves DashVERSE data.$$;
 
     -- Postgrest anon role
     CREATE ROLE web_anon NOLOGIN;
@@ -98,7 +98,7 @@ data:
     --       "title": "DashVERSE API",
     --       "description": "DashVERSE API"
     --     },
-    --     "host": "db.dashverse.cloud",
+    --     "host": "db.$DOMAIN_NAME",
     --     "basePath": "/",
     --     "schemes": [
     --       "https"
@@ -218,7 +218,7 @@ spec:
           args:
             - |
               echo "Waiting for Superset PostgreSQL to be ready for Python script execution..."
-              until pg_isready -h superset-postgresql -p 5432 -U postgres; do
+              until pg_isready -h superset-postgresql -p 5432 -U $SUPERSET_DB_USER; do
                 echo "Superset PostgreSQL not ready yet, sleeping..."
                 sleep 5
               done
@@ -229,16 +229,15 @@ spec:
               python3 -m venv venv
               . ./venv/bin/activate
               pip3 install --no-cache-dir -r requirements.txt
-              ls
-              cat db_config.json
+              # ls
+              # cat db_config.json
               python3 main.py --config db_config.json
 
               echo "Python setup script executed."
 
-
               echo "Superset PostgreSQL is ready. Executing SQL initialization scripts..."
 
-              PGPASSWORD="${POSTGRES_PASSWORD}" psql -h superset-postgresql -p 5432 -U postgres -f /scripts/init.sql
+              PGPASSWORD="$POSTGRES_PASSWORD" psql -h superset-postgresql -p 5432 -U $POSTGRES_USER -f /scripts/init.sql
               echo "SQL Initialization scripts executed."
 
           env:
