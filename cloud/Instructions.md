@@ -119,7 +119,27 @@ If you would like to run the setup on a cloud (your own server)
 1. Deploy superset using `dashverse-values-with-ingress.yaml`
 
     ```shell
-    helm upgrade --install superset superset/superset --values dashverse-values-with-ingress.yaml --namespace superset --create-namespace --debug --cleanup-on-fail
+    envsubst < dashverse-values-with-ingress.yaml > dashverse-superset-values-with-secrets.yaml
+
+    helm upgrade --install superset superset/superset --values dashverse-superset-values-with-secrets.yaml --namespace superset --create-namespace --debug --cleanup-on-fail
+
+    rm -f dashverse-superset-values-with-secrets.yaml
+    ```
+
+    ```shell
+    kubectl describe job --namespace superset superset-init-db
+    ```
+
+    ```shell
+    kubectl logs --namespace superset  superset-init-db-7nccv
+    ```
+
+    ```shell
+    kubectl get pods --namespace superset  -l job-name=superset-init-db
+    ```
+
+    ```shell
+    kubectl describe pod --namespace superset superset-init-db-hczfw
     ```
 
 1. Get the application URL by running these commands:
