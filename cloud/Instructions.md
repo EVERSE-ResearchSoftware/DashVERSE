@@ -35,8 +35,7 @@ If you would like to run the setup on a cloud (your own server)
     ```shell
     cd DBModel
 
-    # docker image prune
-    # docker rmi -f $(docker images 'everse-db-scripts' -a -q) # remove existing image
+    #docker rmi -f $(docker images 'everse-db-scripts' -a -q) # remove existing image
 
     docker build --no-cache -t ghcr.io/everse-researchsoftware/postgresql-setup-script:latest -t everse-db-scripts:latest .
 
@@ -78,25 +77,6 @@ If you would like to run the setup on a cloud (your own server)
     JOB_POD_NAME=$(kubectl get pods --namespace superset | grep "postgresql-init-job" | cut -d" " -f1)
     kubectl logs --namespace superset $JOB_POD_NAME -c init-python-container
     # kubectl logs --namespace superset $JOB_POD_NAME -c init-sql-container
-    ```
-
-1. **OPTIONAL** - Deploy pgadmin
-
-    ```shell
-    kubectl apply -f deploy-pgadmin.yaml --namespace superset
-    ```
-
-    To add the postgresql database to pgadmin:
-
-    ```shell
-    Add a New server:
-      General:
-        Name --> postgres
-      Connection:
-        Host name --> superset-postgresql
-        Port --> 5432
-        Username --> superset
-        Password --> see `XXXXXXXXXXXXX-superset-deployment-secrets` file
     ```
 
 1. Deploy API using `deploy-postgrest.yaml`
@@ -158,6 +138,28 @@ If you would like to run the setup on a cloud (your own server)
       echo "superset: " http://$NODE_IP:$SUPERSET_NODE_PORT
       echo "postgrest: " http://$NODE_IP:$POSTGREST_NODE_PORT
       echo "swagger: " http://$NODE_IP:$SWAGGER_NODE_PORT
+    ```
+
+1. **OPTIONAL** - Deploy pgadmin
+
+    ```shell
+    cd cloud
+    source ./XXXXXX-secrets.env
+
+    envsubst < deploy-pgadmin.yaml | kubectl apply --namespace superset -f -
+    ```
+
+    To add the postgresql database to pgadmin:
+
+    ```shell
+    Add a New server:
+      General:
+        Name --> postgres
+      Connection:
+        Host name --> superset-postgresql
+        Port --> 5432
+        Username --> $POSTGRES_USER in `XXXXXXXXXXXXX-superset-deployment-secrets` file
+        Password --> see $POSTGRES_PASSWORD in `XXXXXXXXXXXXX-superset-deployment-secrets` file
     ```
 
 1. Set up the domain name for your server
