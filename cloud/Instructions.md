@@ -18,6 +18,18 @@ If you would like to run the setup on a cloud (your own server)
     bash generate-variables.sh
     ```
 
+    This will generate or update the files below:
+
+    - DBModel/db_config.json
+    - XXXXXXXXXXXXX-superset-deployment-secrets.yaml
+    - XXXXXXXXXXXXX-secrets.env
+
+    **Warning:** Do not share or push any of these generated files with anyone!
+
+    ```shell
+    source ./XXXXXX-secrets.env
+    ```
+
 1. Build database initialization container
 
     ```shell
@@ -31,7 +43,7 @@ If you would like to run the setup on a cloud (your own server)
     minikube image ls
     ```
 
-**Note:** Do not make this Docker image publicly available as it contains database password!
+    **Warning:** Do not make this Docker image publicly available as it contains database password!
 
 1. Create a namespace
 
@@ -49,12 +61,18 @@ If you would like to run the setup on a cloud (your own server)
     kubectl apply -f RCgQgzJN28clh-superset-deployment-secrets.yaml --namespace superset
     ```
 
-
 1. Deploy db using `deploy-db.yaml`
 
     ```shell
-    kubectl apply -f deploy-db.yaml --namespace superset
+    cd cloud
+
+    #kubectl apply -f deploy-db.yaml --namespace superset
+
+    envsubst < deploy-db.yaml | kubectl apply --namespace superset -f -
+
     kubectl get pods -A
+
+    kubectl describe pod --namespace superset superset-postgresql-774c87bbfc-vn5mk
 
     JOB_POD_NAME=$(kubectl get pods --namespace superset | grep "postgresql-init-job" | cut -d" " -f1)
     kubectl logs --namespace superset $JOB_POD_NAME -c init-python-container
