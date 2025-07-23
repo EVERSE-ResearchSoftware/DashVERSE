@@ -689,7 +689,7 @@ supersetWebsockets:
           "ssl": false,
         },
       "redisStreamPrefix": "async-events-",
-      "jwtSecret": "CHANGE-ME",
+      "jwtSecret": "$WEBSOCKET_JWT_SECRET",
       "jwtCookieName": "async-token",
     }
   service:
