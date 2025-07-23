@@ -101,7 +101,13 @@ If you would like to run the setup on a cloud (your own server)
 1. Deploy API using `deploy-postgrest.yaml`
 
     ```shell
-    kubectl apply -f deploy-postgrest.yaml --namespace superset
+    cd cloud
+    source ./XXXXXX-secrets.env
+
+    envsubst < deploy-postgrest.yaml | kubectl apply --namespace superset -f -
+
+    POSTGREST_POD_NAME=$(kubectl get pods --namespace superset | grep "postgrest-" | cut -d" " -f1)
+    kubectl logs --namespace superset $POSTGREST_POD_NAME --all-containers
     ```
 
     Test using:
