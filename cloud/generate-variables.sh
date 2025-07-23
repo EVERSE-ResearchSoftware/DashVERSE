@@ -30,6 +30,7 @@ FILE_PREFIX=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo)
 # SECRETS_FILE_NAME="${FILE_PREFIX}--${FILE_DATE}-superset-deployment-secrets.yaml"
 SECRETS_FILE_NAME="${FILE_PREFIX}-superset-deployment-secrets.yaml"
 SECRETS_ENV_FILE_NAME="${FILE_PREFIX}-secrets.env"
+JWT_SCRIPT_FILE="${FILE_PREFIX}-generate_jwt.sh"
 
 
 cat <<EOF > "$SECRETS_FILE_NAME"
@@ -60,6 +61,7 @@ stringData:
   PGADMIN_DEFAULT_EMAIL: 'admin@example.com'
   PGADMIN_DEFAULT_PASSWORD: '$PGADMIN_DEFAULT_PASSWORD'
 EOF
+
 echo "Generated secrets file: $SECRETS_FILE_NAME"
 
 
@@ -88,6 +90,7 @@ export POSTGREST_SERVER_CORS_ALLOWED_ORIGINS='https://apidocs.$EVERSE_DOMAIN_NAM
 export PGADMIN_DEFAULT_EMAIL='admin@example.com'
 export PGADMIN_DEFAULT_PASSWORD='$PGADMIN_DEFAULT_PASSWORD'
 EOF
+
 echo "Generated secrets file: $SECRETS_ENV_FILE_NAME"
 
 
@@ -101,4 +104,30 @@ cat <<EOF > "$DB_CONFIG_FILE_NAME"
     "port": 5432
 }
 EOF
+
 echo "Generated db config file: $DB_CONFIG_FILE_NAME"
+
+
+export DOLLAR='$'
+export JWT_SECRET=$WEBSOCKET_JWT_SECRET
+cat <<'EOF' | envsubst > "$JWT_SCRIPT_FILE"
+#!/bin/bash
+set -e
+
+_base64 () { openssl base64 -e -A | tr '+/' '-_' | tr -d '='; }
+header=$(echo -n '{"alg":"HS256","typ":"JWT"}' | _base64)
+exp=$(( EPOCHSECONDS + 30*24*60*60 ))  # 1 month
+payload=$(echo -n "{\"role\":\"cli_user\",\"exp\":"${DOLLAR}exp"}" | _base64)
+signature=$(echo -n "${DOLLAR}header.${DOLLAR}payload" | openssl dgst -sha256 -hmac "$JWT_SECRET" -binary | _base64)
+JWT=${DOLLAR}header.${DOLLAR}payload.${DOLLAR}signature
+
+echo
+echo "JWT: ${DOLLAR}JWT"
+echo
+echo "You can export it before running API calls:"
+echo "export EVERSE_TOKEN=${DOLLAR}JWT"
+echo
+
+EOF
+
+echo "Created a script for JWT generation: $JWT_SCRIPT_FILE"
