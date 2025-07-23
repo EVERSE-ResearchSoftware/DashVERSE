@@ -162,6 +162,7 @@ If you would like to run the setup on a cloud (your own server)
         Password --> see $POSTGRES_PASSWORD in `XXXXXXXXXXXXX-superset-deployment-secrets` file
     ```
 
+
 1. Set up the domain name for your server
 
 1. Set DNS to point to your server ( you will need to setup a reverse proxy to be able to access the service)
@@ -171,24 +172,33 @@ If you would like to run the setup on a cloud (your own server)
 ### Delete services, deployments, volumes
 
 ```shell
-kubectl delete service --namespace superset superset
+kubectl delete service --namespace superset superset-postgresql
+
 kubectl delete service --namespace superset postgrest
 kubectl delete service --namespace superset swagger
+
 kubectl delete service --namespace superset pgadmin
-kubectl delete service --namespace superset superset-postgresql
+
+kubectl delete service --namespace superset superset
 kubectl delete service --namespace superset superset-redis-headless
 kubectl delete service --namespace superset superset-redis-master
+
 kubectl get --namespace superset services
 
-kubectl delete deployment --namespace superset pgadmin
-kubectl delete deployment --namespace superset superset
-kubectl delete deployment --namespace superset postgrest
 kubectl delete deployment --namespace superset superset-postgresql
+kubectl delete deployment --namespace superset postgrest
+
+kubectl delete deployment --namespace superset pgadmin
+
+kubectl delete deployment --namespace superset superset
 kubectl delete deployment --namespace superset superset-worker
+
 kubectl get deployments --namespace superset
 
 kubectl delete pvc --namespace superset pgadmin-pvc
+
 kubectl delete pvc --namespace superset superset-postgresql-data-pvc
+
 kubectl get pvc --namespace superset
 ```
 
@@ -229,6 +239,18 @@ psql -U postgres -d postgres -h localhost
 ```
 
 **Note**: use your own username and password for the `psql` command
+
+### Dashboard
+
+```shell
+minikube dashboard --url
+```
+
+```shell
+kubectl proxy --address='0.0.0.0' --disable-filter=true
+```
+
+http://SERVER_IP:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/workloads?namespace=superset
 
 ### Delete the cluster
 
