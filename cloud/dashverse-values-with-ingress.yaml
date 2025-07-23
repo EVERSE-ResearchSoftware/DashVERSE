@@ -902,7 +902,7 @@ redis:
     ## Name of the key containing the secret.
     existingSecretKey: ""
     ## Redis password
-    password: superset
+    password: $REDIS_PASSWORD
   ##
   ## Master configuration
   ##
