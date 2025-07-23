@@ -332,9 +332,9 @@ supersetNode:
     # You need to change below configuration incase bringing own PostgresSQL instance and also set postgresql.enabled:false
     db_host: "{{ .Release.Name }}-postgresql"
     db_port: "5432"
-    db_user: superset
-    db_pass: superset
-    db_name: superset
+    db_user: "$POSTGRES_USER"
+    db_pass: "$POSTGRES_PASSWORD"
+    db_name: "$SUPERSET_DB_NAME"
   env: {}
   # -- If true, forces deployment to reload on each upgrade
   forceReload: true
