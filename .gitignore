@@ -8,8 +8,10 @@
 *credential*
 *credentials.json
 
-*.log
+**/DBModel/db_config.json
+*-generate_jwt.sh
 
+*.log
 *.pyc
 
 venv
