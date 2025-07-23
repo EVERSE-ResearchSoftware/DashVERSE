@@ -35,7 +35,8 @@ If you would like to run the setup on a cloud (your own server)
     ```shell
     cd DBModel
 
-    #docker rmi -f $(docker images 'everse-db-scripts' -a -q) # remove existing image
+    # docker image prune
+    # docker rmi -f $(docker images 'everse-db-scripts' -a -q) # remove existing image
 
     docker build --no-cache -t ghcr.io/everse-researchsoftware/postgresql-setup-script:latest -t everse-db-scripts:latest .
 
