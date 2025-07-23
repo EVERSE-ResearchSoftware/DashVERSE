@@ -350,7 +350,7 @@ supersetNode:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -timeout 120s
 
   # -- Launch additional containers into supersetNode pod
   extraContainers: []
@@ -448,7 +448,7 @@ supersetWorker:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -wait "tcp://$REDIS_HOST:$REDIS_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -wait "tcp://${DOLLAR}REDIS_HOST:${DOLLAR}REDIS_PORT" -timeout 120s
   # -- Launch additional containers into supersetWorker pod
   extraContainers: []
   # -- Annotations to be added to supersetWorker deployment
@@ -485,7 +485,7 @@ supersetWorker:
       command:
         - sh
         - -c
-        - celery -A superset.tasks.celery_app:app inspect ping -d celery@$HOSTNAME
+        - celery -A superset.tasks.celery_app:app inspect ping -d celery@${DOLLAR}HOSTNAME
     initialDelaySeconds: 120
     timeoutSeconds: 60
     failureThreshold: 3
@@ -530,7 +530,7 @@ supersetCeleryBeat:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -wait "tcp://$REDIS_HOST:$REDIS_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -wait "tcp://${DOLLAR}REDIS_HOST:${DOLLAR}REDIS_PORT" -timeout 120s
   # -- Launch additional containers into supersetCeleryBeat pods
   extraContainers: []
   # -- Annotations to be added to supersetCeleryBeat deployment
@@ -623,7 +623,7 @@ supersetCeleryFlower:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -wait "tcp://$REDIS_HOST:$REDIS_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -wait "tcp://${DOLLAR}REDIS_HOST:${DOLLAR}REDIS_PORT" -timeout 120s
   # -- Launch additional containers into supersetCeleryFlower pods
   extraContainers: []
   # -- Annotations to be added to supersetCeleryFlower deployment
@@ -787,7 +787,7 @@ init:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -timeout 120s
   # -- A Superset init script
   # @default -- a script to create admin user and initialize roles
   initscript: |-
