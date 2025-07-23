@@ -770,11 +770,11 @@ init:
   loadExamples: false
   createAdmin: true
   adminUser:
-    username: admin
-    firstname: Superset
+    firstname: EVERSE
     lastname: Admin
-    email: admin@dashverse.cloud
-    password: admin
+    username: $SUPERSET_ADMIN_USER
+    email: $SUPERSET_ADMIN_EMAIL
+    password: $SUPERSET_ADMIN_PASSWORD
   # -- List of initContainers
   # @default -- a container waiting for postgres
   initContainers:
