@@ -130,4 +130,5 @@ echo
 
 EOF
 
+chmod +x "$JWT_SCRIPT_FILE"
 echo "Created a script for JWT generation: $JWT_SCRIPT_FILE"
