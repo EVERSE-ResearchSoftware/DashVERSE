@@ -56,156 +56,262 @@ Poetry is used for dependency management of the Python packages.
 
 </details>
 
-## Step-1 Setting up a Kubernetes Cluster
 
-This step will set up a Kubernetes cluster using minikube.
+## Deployment
 
-### Check versions
+If you would like to run the setup on a cloud (your own server)
 
-```shell
-$ minikube version
-minikube version: v1.34.0
-commit: 210b148df93a80eb872ecbeb7e35281b3c582c61
-```
-
-```shell
-$ kubectl version --client
-Client Version: v1.31.1
-Kustomize Version: v5.4.2
-```
-
-### Start the cluster
-
- The kubernetes cluster will be deployed using Podman driver. For the alternative drivers have a look at [this link](https://minikube.sigs.k8s.io/docs/drivers/).
-
-```shell
-minikube start --cpus='4' --memory='8g' --driver=podman  # or docker
-```
-
-List the pods:
-
-```shell
-minikube kubectl -- get pods -A
-```
-
-## Step-2 Deploy a Superset instance
-
-- Add the Superset helm repository
+1. Start a cluster using `minikube` and `podman`
 
     ```shell
-    helm repo add superset https://apache.github.io/superset
+    minikube start --cpus='4' --memory='4g' --driver=podman
     ```
 
-- View charts in repo
+The rest of the instructions need to be followed in `deployment` folder.
+
+1. Generate Secrets for deployment
 
     ```shell
-    helm search repo superset
+    cd cloud
+
+    bash generate-variables.sh
     ```
 
-- Install and run
+    This will generate or update the files below:
+
+    - DBModel/db_config.json
+    - XXXXXXXXXXXXX-superset-deployment-secrets.yaml
+    - XXXXXXXXXXXXX-secrets.env
+
+    **Warning:** Do not share or push any of these generated files with anyone!
 
     ```shell
-    helm upgrade --install superset superset/superset \
-        --values dashverse-values.yaml \
-        --namespace superset --create-namespace \
-        --debug --cleanup-on-fail
+    source ./XXXXXX-secrets.env
     ```
 
-List the pods:
-
-```shell
-minikube kubectl -- get pods -A
-```
-
-- Create a tunnel between the superset pod and your localhost
-
-    For the frontend:
+1. Build database initialization container
 
     ```shell
-    kubectl port-forward service/superset 8088:8088 --namespace superset
+    cd DBModel
+
+    # docker image prune
+    # docker rmi -f $(docker images 'everse-db-scripts' -a -q) # remove existing image
+
+    docker build --no-cache -t ghcr.io/everse-researchsoftware/postgresql-setup-script:latest -t everse-db-scripts:latest .
+
+    minikube image load everse-db-scripts:latest
+    minikube image ls
     ```
 
-## Step-3 Set up the database
+    **Warning:** Do not make this Docker image publicly available as it contains database password!
 
-To be able to access the database service, create a tunnel between the database pod and your localhost:
+1. Create a namespace
 
-```shell
-kubectl port-forward service/superset-postgresql 5432:5432 --namespace superset
-```
+    ```shell
+    cd cloud
 
-You should now be able to access the database service at `0.0.0.0:5432`
+    kubectl create namespace superset
+    ```
 
-### The database schema
+1. Add Secrets to the cluster
 
-<!-- cd postgres
-cat ./schema/schema_*.sql > db_schema.sql
+    ```shell
+    cd cloud
 
-python scripts/execute_sql.py --db-file db_config_superset.json  --sql-file ./schema/db_schema.sql -->
+    kubectl apply -f RCgQgzJN28clh-superset-deployment-secrets.yaml --namespace superset
+    ```
 
-```shell
-eval (poetry env activate)
-poetry install --no-root
+1. Deploy db using `deploy-db.yaml`
 
-cd DBModel
-python main.py --config db_config.json
-```
+    ```shell
+    cd cloud
 
-### Add sample data to the database
+    #kubectl apply -f deploy-db.yaml --namespace superset
 
-```shell
-cd postgres/docker
-docker compose -f docker-compose.yml up pgadmin
-```
+    envsubst < deploy-db.yaml | kubectl apply --namespace superset -f -
 
-For pgadmin visit http://localhost:5050/browser/
+    kubectl get pods -A
 
-#### Adding data using pgadmin
+    kubectl describe pod --namespace superset superset-postgresql-774c87bbfc-vn5mk
 
-```text
-click
-  --> Servers
-  --> "Superset Postgres Server"
-  --> Databases
-  -- Schemas
-  --> everse
-  --> Tables
-Right click a table and click "View/Edit Data" --> "All Rows"
-Add a row in the bottom part of the screen
-```
+    JOB_POD_NAME=$(kubectl get pods --namespace superset | grep "postgresql-init-job" | cut -d" " -f1)
+    kubectl logs --namespace superset $JOB_POD_NAME -c init-python-container
+    # kubectl logs --namespace superset $JOB_POD_NAME -c init-sql-container
+    ```
 
-#### Adding data using sql
+1. Deploy API using `deploy-postgrest.yaml`
 
-```shell
-cd DBModel
-python populate_data.py --config db_config.json --num_indicator 10 --num_dimension 10 --num_software 10 --num_assessment 10 --num_content_relation 10
-```
+    ```shell
+    cd cloud
+    source ./XXXXXX-secrets.env
 
-To remove all the database entries
+    envsubst < deploy-postgrest.yaml | kubectl apply --namespace superset -f -
 
-```shell
-python populate_data.py --config db_config.json --clear
-```
+    POSTGREST_POD_NAME=$(kubectl get pods --namespace superset | grep "postgrest-" | cut -d" " -f1)
+    kubectl logs --namespace superset $POSTGREST_POD_NAME --all-containers
+    ```
 
-## Configuring superset datasets, charts, dashboard
+    Test using:
 
-```shell
-cd cli
-python example_usage.py --config config.json
-```
+    ```shell
+    curl https://db.YOUR_DOMAIN/assessment
+    ```
 
-### Superset Frontend
+1. Deploy superset using `dashverse-values-with-ingress.yaml`
 
-http://localhost:8088
+    ```shell
+    envsubst < dashverse-values-with-ingress.yaml > dashverse-superset-values-with-secrets.yaml
 
-## Testing
+    helm upgrade --install superset superset/superset --values dashverse-superset-values-with-secrets.yaml --namespace superset --create-namespace --debug --cleanup-on-fail
 
-### API endpoints
+    rm -f dashverse-superset-values-with-secrets.yaml
+    ```
 
-Thedocumentation for the API is at <http://localhost:8088/swagger/v1>
+    ```shell
+    kubectl describe job --namespace superset superset-init-db
+    ```
+
+    ```shell
+    kubectl logs --namespace superset  superset-init-db-7nccv
+    ```
+
+    ```shell
+    kubectl get pods --namespace superset  -l job-name=superset-init-db
+    ```
+
+    ```shell
+    kubectl describe pod --namespace superset superset-init-db-hczfw
+    ```
+
+1. Get the application URL by running these commands:
+
+    ```shell
+    kubectl get --namespace superset services
+    ```
+
+    ```shell
+      export SUPERSET_NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services superset)
+      export POSTGREST_NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services postgrest)
+      export SWAGGER_NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services swagger)
+
+      export NODE_IP=$(kubectl get nodes --namespace superset -o jsonpath="{.items[0].status.addresses[0].address}")
+      echo "superset: " http://$NODE_IP:$SUPERSET_NODE_PORT
+      echo "postgrest: " http://$NODE_IP:$POSTGREST_NODE_PORT
+      echo "swagger: " http://$NODE_IP:$SWAGGER_NODE_PORT
+    ```
+
+1. **OPTIONAL** - Deploy pgadmin
+
+    ```shell
+    cd cloud
+    source ./XXXXXX-secrets.env
+
+    envsubst < deploy-pgadmin.yaml | kubectl apply --namespace superset -f -
+    ```
+
+    To add the postgresql database to pgadmin:
+
+    ```shell
+    Add a New server:
+      General:
+        Name --> postgres
+      Connection:
+        Host name --> superset-postgresql
+        Port --> 5432
+        Username --> $POSTGRES_USER in `XXXXXXXXXXXXX-superset-deployment-secrets` file
+        Password --> see $POSTGRES_PASSWORD in `XXXXXXXXXXXXX-superset-deployment-secrets` file
+    ```
+
+1. Set up the domain name for your server
+
+1. Set DNS to point to your server ( you will need to setup a reverse proxy to be able to access the service)
 
 ## Clean up
 
-The command below will remove the kubernetes cluster and purge all the data.
+### Delete services, deployments, volumes
+
+```shell
+kubectl delete service --namespace superset superset-postgresql
+
+kubectl delete service --namespace superset postgrest
+kubectl delete service --namespace superset swagger
+
+kubectl delete service --namespace superset pgadmin
+
+kubectl delete service --namespace superset superset
+kubectl delete service --namespace superset superset-redis-headless
+kubectl delete service --namespace superset superset-redis-master
+
+kubectl get --namespace superset services
+
+kubectl delete deployment --namespace superset superset-postgresql
+kubectl delete deployment --namespace superset postgrest
+
+kubectl delete deployment --namespace superset pgadmin
+
+kubectl delete deployment --namespace superset superset
+kubectl delete deployment --namespace superset superset-worker
+
+kubectl get deployments --namespace superset
+
+kubectl delete pvc --namespace superset pgadmin-pvc
+
+kubectl delete pvc --namespace superset superset-postgresql-data-pvc
+
+kubectl get pvc --namespace superset
+```
+
+### Get info
+
+```shell
+
+minikube --namespace superset service list
+#minikube --namespace superset service --all
+minikube --namespace superset service superset-postgresql --url
+minikube --namespace superset service superset --url
+minikube --namespace superset service postgrest --url
+minikube --namespace superset service swagger --url
+minikube --namespace superset service pgadmin --url
+
+kubectl get --namespace superset services
+kubectl get --namespace superset deployments
+kubectl get --namespace superset deployments.apps
+
+kubectl get pods --all-namespaces
+kubectl get pods --namespace superset
+
+kubectl describe pods --namespace superset
+
+kubectl cluster-info
+
+kubectl get pods -l app=superset-postgresql --namespace superset
+kubectl get jobs -l job-name=superset-postgresql-init-job --namespace superset
+kubectl logs -f <superset-postgresql-init-job-pod-name> --namespace superset
+```
+
+### Connect to Postgresql server
+
+```shell
+kubectl get pods --namespace superset
+kubectl exec -ti superset-postgresql-6c8dd65c-5k4d4 --namespace superset -- bash
+psql -U postgres -d postgres -h localhost
+```
+
+**Note**: use your own username and password for the `psql` command
+
+### Dashboard
+
+```shell
+minikube dashboard --url
+```
+
+```shell
+kubectl proxy --address='0.0.0.0' --disable-filter=true
+```
+
+http://SERVER_IP:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/workloads?namespace=superset
+
+### Delete the cluster
 
 ```shell
 minikube stop
