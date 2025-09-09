@@ -101,7 +101,7 @@ extraEnvRaw: []
 
 # -- Extra environment variables to pass as secrets
 extraSecretEnv: {
-  SUPERSET_SECRET_KEY: 'EVERSE_UPDATE_ME'
+  SUPERSET_SECRET_KEY: '$SUPERSET_SECRET_KEY'
 }
   # MAPBOX_API_KEY: ...
   # # Google API Keys: https://console.cloud.google.com/apis/credentials
@@ -124,12 +124,12 @@ extraConfigs:
         allow_multi_schema_metadata_fetch: true
         cache_timeout: null
         expose_in_sqllab: true
-        database_name: superset-postgresql
+        database_name: superset
         version: 1.0.0
         extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
           metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_file_upload\": []\r\n\
           }"
-        sqlalchemy_uri: 'postgresql://superset:superset@superset-postgresql:5432/superset'
+        sqlalchemy_uri: 'postgresql://$SUPERSET_DB_USER:$POSTGRES_PASSWORD@superset-postgresql:5432/$SUPERSET_DB_NAME'
         tables: []
 
 # -- Extra files to be mounted as Secrets on the path specified in `configMountPath`
@@ -165,7 +165,7 @@ configOverrides:
         }
 
         GUEST_ROLE_NAME = "EVERSE"
-        GUEST_TOKEN_JWT_SECRET = "EVERSE_UPDATE_ME"
+        GUEST_TOKEN_JWT_SECRET = "$GUEST_TOKEN_JWT_SECRET"
         GUEST_TOKEN_JWT_ALGO = "HS256"
         GUEST_TOKEN_HEADER_NAME = "X-GuestToken"
         GUEST_TOKEN_JWT_EXP_SECONDS = 300 # 5 minutes
@@ -180,6 +180,13 @@ configOverrides:
             "resources": "*",
             "origins": ["http://localhost:4200","http://localhost:3000"]
         }
+
+    theming: |
+        APP_NAME = "DashVERSE - EVERSE Dashboard"
+        APP_ICON = "/static/assets/images/your_app_name/logo.png"
+        LOGO_TARGET_PATH = '/' # Setting it to '/' would take the user to '/superset/welcome/'
+        LOGO_TOOLTIP = "EVERSE Dashboard"
+        # LOGO_RIGHT_TEXT = ""
 
   # extend_timeout: |
   #    # Extend timeout to allow long running queries.
@@ -238,14 +245,17 @@ initImage:
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 8088
+  targetPort: 8088
+  nodePort:
+    http: 30088
+  #selector:
+  #  app: superset
   annotations: {}
     # cloud.google.com/load-balancer-type: "Internal"
-  loadBalancerIP: ~
-  nodePort:
-    # -- (int)
-    http: nil
+  loadBalancerIP: null
+
 
 ingress:
   enabled: false
@@ -329,9 +339,9 @@ supersetNode:
     # You need to change below configuration incase bringing own PostgresSQL instance and also set postgresql.enabled:false
     db_host: "{{ .Release.Name }}-postgresql"
     db_port: "5432"
-    db_user: superset
-    db_pass: superset
-    db_name: superset
+    db_user: "$POSTGRES_USER"
+    db_pass: "$POSTGRES_PASSWORD"
+    db_name: "$SUPERSET_DB_NAME"
   env: {}
   # -- If true, forces deployment to reload on each upgrade
   forceReload: true
@@ -347,7 +357,7 @@ supersetNode:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -timeout 120s
 
   # -- Launch additional containers into supersetNode pod
   extraContainers: []
@@ -445,7 +455,7 @@ supersetWorker:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -wait "tcp://$REDIS_HOST:$REDIS_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -wait "tcp://${DOLLAR}REDIS_HOST:${DOLLAR}REDIS_PORT" -timeout 120s
   # -- Launch additional containers into supersetWorker pod
   extraContainers: []
   # -- Annotations to be added to supersetWorker deployment
@@ -482,7 +492,7 @@ supersetWorker:
       command:
         - sh
         - -c
-        - celery -A superset.tasks.celery_app:app inspect ping -d celery@$HOSTNAME
+        - celery -A superset.tasks.celery_app:app inspect ping -d celery@${DOLLAR}HOSTNAME
     initialDelaySeconds: 120
     timeoutSeconds: 60
     failureThreshold: 3
@@ -527,7 +537,7 @@ supersetCeleryBeat:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -wait "tcp://$REDIS_HOST:$REDIS_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -wait "tcp://${DOLLAR}REDIS_HOST:${DOLLAR}REDIS_PORT" -timeout 120s
   # -- Launch additional containers into supersetCeleryBeat pods
   extraContainers: []
   # -- Annotations to be added to supersetCeleryBeat deployment
@@ -620,7 +630,7 @@ supersetCeleryFlower:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -wait "tcp://$REDIS_HOST:$REDIS_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -wait "tcp://${DOLLAR}REDIS_HOST:${DOLLAR}REDIS_PORT" -timeout 120s
   # -- Launch additional containers into supersetCeleryFlower pods
   extraContainers: []
   # -- Annotations to be added to supersetCeleryFlower deployment
@@ -686,7 +696,7 @@ supersetWebsockets:
           "ssl": false,
         },
       "redisStreamPrefix": "async-events-",
-      "jwtSecret": "CHANGE-ME",
+      "jwtSecret": "$WEBSOCKET_JWT_SECRET",
       "jwtCookieName": "async-token",
     }
   service:
@@ -767,11 +777,11 @@ init:
   loadExamples: false
   createAdmin: true
   adminUser:
-    username: admin
-    firstname: Superset
+    firstname: EVERSE
     lastname: Admin
-    email: admin@superset.com
-    password: admin
+    username: $SUPERSET_ADMIN_USER
+    email: $SUPERSET_ADMIN_EMAIL
+    password: $SUPERSET_ADMIN_PASSWORD
   # -- List of initContainers
   # @default -- a container waiting for postgres
   initContainers:
@@ -784,7 +794,7 @@ init:
       command:
         - /bin/sh
         - -c
-        - dockerize -wait "tcp://$DB_HOST:$DB_PORT" -timeout 120s
+        - dockerize -wait "tcp://${DOLLAR}DB_HOST:${DOLLAR}DB_PORT" -timeout 120s
   # -- A Superset init script
   # @default -- a script to create admin user and initialize roles
   initscript: |-
@@ -899,7 +909,7 @@ redis:
     ## Name of the key containing the secret.
     existingSecretKey: ""
     ## Redis password
-    password: superset
+    password: $REDIS_PASSWORD
   ##
   ## Master configuration
   ##
