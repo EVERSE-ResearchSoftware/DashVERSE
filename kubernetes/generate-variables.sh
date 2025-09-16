@@ -24,13 +24,15 @@ WEBSOCKET_JWT_SECRET=$(openssl rand -base64 32)
 # intended domain name
 EVERSE_DOMAIN_NAME='dashverse.cloud'
 
-# Create a temporary YAML file with the generated secrets
-FILE_PREFIX=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo)
-# FILE_DATE=$(date '+%d_%m_%Y__%H_%M')
-# SECRETS_FILE_NAME="${FILE_PREFIX}--${FILE_DATE}-superset-deployment-secrets.yaml"
-SECRETS_FILE_NAME="${FILE_PREFIX}-superset-deployment-secrets.yaml"
-SECRETS_ENV_FILE_NAME="${FILE_PREFIX}-secrets.env"
-JWT_SCRIPT_FILE="${FILE_PREFIX}-generate_jwt.sh"
+# Create a files with the generated secrets
+DEPLOYMENT_ID=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo)
+DEPLOYMENT_DATE=$(date '+%d_%m_%Y__%H_%M')
+DEPLOYMENT_FOLDER="deployments/${DEPLOYMENT_ID}__${DEPLOYMENT_DATE}"
+mkdir -p "$DEPLOYMENT_FOLDER"
+
+SECRETS_FILE_NAME="${DEPLOYMENT_FOLDER}/superset-deployment-secrets.yaml"
+SECRETS_ENV_FILE_NAME="${DEPLOYMENT_FOLDER}/secrets.env"
+JWT_SCRIPT_FILE="${DEPLOYMENT_FOLDER}/generate_jwt.sh"
 
 
 cat <<EOF > "$SECRETS_FILE_NAME"
