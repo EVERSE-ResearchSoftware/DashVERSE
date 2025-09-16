@@ -8,6 +8,8 @@
 *credential*
 *credentials.json
 
+kubernetes/deployments
+
 **/DBModel/db_config.json
 *-generate_jwt.sh
 
