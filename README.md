@@ -76,10 +76,10 @@ minikube start --cpus='4' --memory='4g' --driver=podman
 
 This will create a cluster using 4 cpus and 4GB of memory.
 
-**Note: The rest of the instructions need to be followed in `deployment` folder, so make sure you are in that fodler before following the rest of the instructions:**
+**The rest of the instructions need to be followed in `kubernetes` folder, so make sure you are in that fodler before following the rest of the instructions:**
 
 ```shell
-cd deployment
+cd kubernetes
 ```
 
 1. Generate Secrets for deployment
@@ -91,13 +91,15 @@ cd deployment
    This will generate or update the files below:
 
    - DBModel/db_config.json
-   - XXXXXXXXXXXXX-superset-deployment-secrets.yaml
-   - XXXXXXXXXXXXX-secrets.env
+   - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/superset-deployment-secrets.yaml
+   - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/secrets.env
 
-   **Warning:** Do not share or push any of these generated files with anyone!
+   **Warning:** Do not share any of these generated files with anyone or push to a public repository!
+
+   Now you can source the generated secrets.env file to set the environment variables which will be used for the deployment.
 
    ```shell
-   source ./XXXXXX-secrets.env
+   source ./deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/secrets.env
    ```
 
 1. Build database initialization container
