@@ -62,25 +62,25 @@ If you would like to run the setup on a cloud (your own server)
 
 1. Start a cluster using `minikube` and `podman`
 
-Set the default driver (podman or docker)
+   Set the default driver (podman or docker)
 
-````shell
- minikube config set driver podman
-```shell
+   ````shell
+   minikube config set driver podman
+   ```shell
 
-Start the cluster
+   Start the cluster
 
-```shell
-minikube start --cpus='4' --memory='4g' --driver=podman
-````
+   ```shell
+   minikube start --cpus='4' --memory='4g' --driver=podman
+   ````
 
-This will create a cluster using 4 cpus and 4GB of memory.
+   This will create a cluster using 4 cpus and 4GB of memory.
 
-**The rest of the instructions need to be followed in `kubernetes` folder, so make sure you are in that folder before following the rest of the instructions:**
+   **The rest of the instructions need to be followed in `kubernetes` folder, so make sure you are in that folder before following the rest of the instructions:**
 
-```shell
-cd kubernetes
-```
+   ```shell
+   cd kubernetes
+   ```
 
 1. Generate Secrets for deployment
 
@@ -123,7 +123,7 @@ cd kubernetes
    minikube image ls
    ```
 
-**Warning:** Do not make this Docker image publicly available as it contains database password!
+   **Warning:** Do not make this Docker image publicly available as it contains database password!
 
 1. Create a namespace
 
@@ -131,7 +131,7 @@ cd kubernetes
    kubectl create namespace superset
    ```
 
-1. Add Secrets to the cluster
+1. Add the generated secrets to the cluster
 
    ```shell
    kubectl apply -f $DASHVERSE_SECRETS_FILE_NAME --namespace superset
@@ -143,7 +143,7 @@ cd kubernetes
    envsubst < deploy-db.yaml | kubectl apply --namespace superset -f -
    ```
 
-   Check the logs of initialization job
+   You can check the logs of initialization job using:
 
    ```shell
    DB_JOB_POD_NAME=$(kubectl get pods --namespace superset | grep "postgresql-init-job" | cut -d" " -f1)
@@ -152,31 +152,32 @@ cd kubernetes
 
 1. Deploy API using `deploy-postgrest.yaml`
 
-   ````shell
+   ```shell
    envsubst < deploy-postgrest.yaml | kubectl apply --namespace superset -f -
    ```
 
-    Check the logs
+   You can check the logs using:
 
-    ```shell
+   ```shell
    POSTGREST_POD_NAME=$(kubectl get pods --namespace superset | grep "postgrest-" | cut -d" " -f1)
    kubectl logs --namespace superset $POSTGREST_POD_NAME --all-containers
-   ````
+   ```
 
-Test using:
+   Test using:
 
-```shell
-curl https://db.YOUR_DOMAIN/assessment
-```
-
-NODE_PORT=3000
-curl $(minikube ip):$NODE_PORT
+   ```shell
+   curl https://db.YOUR_DOMAIN/assessment
+   ```
 
 1. Deploy Apache Superset using `dashverse-values.yaml`
 
+   Add superset repository to helm:
+
    ```shell
-   helm repo add superset https://apache.github.io/superset
+   helm repo add Superset https://apache.github.io/superset
    ```
+
+   Set up Apache Superset:
 
    ```shell
    envsubst < dashverse-values.yaml > dashverse-values-with-secrets.yaml
@@ -186,14 +187,14 @@ curl $(minikube ip):$NODE_PORT
    rm -f dashverse-values-with-secrets.yaml
    ```
 
-   Below are the commands you can use for debugging
+   Below are the commands you can use for debugging the superset service.
 
    ```shell
    kubectl describe job --namespace superset superset-init-db
    ```
 
    ```shell
-   kubectl logs --namespace superset  superset-init-db-7nccv
+   kubectl logs --namespace superset  superset-init-db-7nccv # replace this with the actual name
    ```
 
    ```shell
@@ -210,7 +211,7 @@ curl $(minikube ip):$NODE_PORT
    envsubst < deploy-pgadmin.yaml | kubectl apply --namespace superset -f -
    ```
 
-   To add the postgresql database to pgadmin:
+   To add the Postgresql database on pgadmin UI:
 
    ```shell
    Add a New server:
