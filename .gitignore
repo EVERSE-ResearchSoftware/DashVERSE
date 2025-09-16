@@ -9,6 +9,7 @@
 *credentials.json
 
 kubernetes/deployments
+dashverse-values-with-secrets.yaml
 
 **/DBModel/db_config.json
 *-generate_jwt.sh

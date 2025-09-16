@@ -53,8 +53,21 @@ serviceAccount:
 # @default -- see `values.yaml`
 bootstrapScript: |
   #!/bin/bash
-  pip install sqlalchemy-drill psycopg2-binary sqlalchemy-bigquery elasticsearch-dbapi
-  pip install flask-cors
+
+  # Install system-level dependencies
+  apt-get update -y && apt-get install -y \
+    python3-dev \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config
+
+  # Install required Python packages
+  uv pip install \
+    authlib \
+    psycopg2-binary \
+    sqlalchemy-drill sqlalchemy-bigquery \
+    elasticsearch-dbapi \
+    flask-cors
   if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
 
 # -- The name of the secret which we will use to generate a superset_config.py file

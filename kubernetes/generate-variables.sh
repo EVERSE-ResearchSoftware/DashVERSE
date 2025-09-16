@@ -91,12 +91,14 @@ export POSTGREST_SERVER_CORS_ALLOWED_ORIGINS='https://apidocs.$EVERSE_DOMAIN_NAM
 
 export PGADMIN_DEFAULT_EMAIL='admin@example.com'
 export PGADMIN_DEFAULT_PASSWORD='$PGADMIN_DEFAULT_PASSWORD'
+
+export DASHVERSE_SECRETS_FILE_NAME=$SECRETS_FILE_NAME
 EOF
 
 echo "Generated secrets file: $SECRETS_ENV_FILE_NAME"
 
 
-DB_CONFIG_FILE_NAME="../DBModel/db_config.json"
+DB_CONFIG_FILE_NAME="./DBModel/db_config.json"
 cat <<EOF > "$DB_CONFIG_FILE_NAME"
 {
     "dbname": "superset",
