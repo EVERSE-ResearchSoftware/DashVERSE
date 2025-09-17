@@ -35,19 +35,35 @@
           ];
 
           shellHook = ''
-            echo "Entered the project shell."
+
             echo "Minikube version: $(minikube version)"
             echo "Python version: $(python --version)"
             echo "Podman version: $(podman --version)"
             echo "kubectl version: $(kubectl version)"
+
+            if [ $(minikube status -o json | jq -r .Host) = "Running" ]; then
+              echo
+              echo "Minikube is running."
+              echo "===================="
+            else
+              echo
+              echo "Starting minikube."
+              echo "=================="
+              minikube config set rootless true
+              minikube config set driver podman
+              minikube start --cpus='4' --memory='4g' --driver=podman  --container-runtime=containerd
+            fi
+
             . <(minikube completion bash)
             . <(kubectl completion bash)
             . <(helm completion bash)
-            minikube config set rootless true
-            minikube config set driver podman
-            minikube start --cpus='4' --memory='4g' --driver=podman  --container-runtime=containerd
+
+            echo
+            echo "Minikube status:"
+            echo "================"
             minikube status
-            minikube ip
+            #echo "Minikube ip:" $(minikube ip)
+
           '';
         };
       });
