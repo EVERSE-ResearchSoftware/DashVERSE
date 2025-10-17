@@ -1,42 +1,49 @@
 """
 Module: config
-Provides functions to load the database configuration from a JSON file and to build the PostgreSQL connection URL.
+Provides helpers to assemble database connection details from either a JSON file
+or environment variables. This keeps secrets out of container images and git.
 """
 
+from __future__ import annotations
+
 import json
+import os
+from pathlib import Path
+from typing import Dict, Optional
 
 
-def load_config(file_path: str) -> dict:
+def load_config(file_path: Optional[str] = None) -> Dict[str, str]:
     """
-    Load and return the configuration dictionary from a JSON file.
+    Load configuration from JSON when a path is supplied, otherwise fall back to env vars.
+
+    Recognised environment variables:
+        DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
     Args:
-        file_path (str): The path to the JSON configuration file.
-
-    Returns:
-        dict: The configuration parameters loaded from the file.
+        file_path: Optional path to a JSON file containing the same keys.
     """
-    with open(file_path, "r") as f:
-        config = json.load(f)
+    if file_path:
+        config_path = Path(file_path)
+        if not config_path.exists():
+            raise FileNotFoundError(f"Database config file not found: {config_path}")
+        with config_path.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+    else:
+        config = {
+            "dbname": os.environ.get("DB_NAME", "superset"),
+            "user": os.environ.get("DB_USER", "superset"),
+            "password": os.environ.get("DB_PASSWORD", "superset"),
+            "host": os.environ.get("DB_HOST", "0.0.0.0"),
+            "port": int(os.environ.get("DB_PORT", 5432)),
+        }
+
+    config.setdefault("schema_name", os.environ.get("DB_SCHEMA", DEFAULT_SCHEMA_NAME))
     return config
 
 
-def build_database_url(config: dict) -> str:
+def build_database_url(config: Dict[str, str]) -> str:
     """
-    Construct and return a PostgreSQL database URL using configuration parameters.
-
-    Expected keys in config:
-        - "dbname": The name of the database.
-        - "user": The username.
-        - "password": The password.
-        - "host": The host address.
-        - "port": The port number.
-
-    Args:
-        config (dict): The configuration dictionary.
-
-    Returns:
-        str: A PostgreSQL connection URL.
+    Construct a PostgreSQL database URL using configuration parameters.
     """
     dbname = config.get("dbname", "superset")
     user = config.get("user", "superset")

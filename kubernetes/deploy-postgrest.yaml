@@ -37,7 +37,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: superset-deployment-secrets
-                  key: WEBSOCKET_JWT_SECRET
+                  key: POSTGREST_JWT_SECRET
             # - name: PGRST_DB_ROOT_SPEC
             #  value: root
             - name: GHCRTS

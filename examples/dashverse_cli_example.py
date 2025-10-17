@@ -1,10 +1,10 @@
+import os
 import requests
 import json
 import logging
 
 # see https://superset.apache.org/docs/api/
-#base_url = "http://localhost:8088/api/v1"
-base_url = "https://dashverse.cloud/api/v1"
+base_url = os.getenv("DASHVERSE_API_URL", "https://dashverse.cloud/api/v1").rstrip("/")
 
 
 logging.basicConfig(
@@ -23,9 +23,14 @@ class DashverseCli():
     """
 
     def __init__(self):
-        # self.host_url = "http://localhost:8088"
-        self.host_url = "https://dashverse.cloud"
-        self.api_url = f"{self.host_url}/api/v1"
+        base_host = os.getenv("DASHVERSE_HOST_URL")
+        if base_host:
+            self.host_url = base_host.rstrip("/")
+            self.api_url = f"{self.host_url}/api/v1"
+        else:
+            # Fall back to deriving the host from the API URL.
+            self.api_url = base_url
+            self.host_url = self.api_url.split("/api/")[0]
         self.api_docs_url = f"{self.host_url}/swagger/v1"
         self.bearer_token = self._get_bearer_token()
         self.csrf_token = self._get_csrf_token()
@@ -35,11 +40,21 @@ class DashverseCli():
         }
 
     def _get_bearer_token(self):
-        payload = {"password": "admin", "provider": "db", "username": "admin"}
+        username = os.getenv("DASHVERSE_USERNAME")
+        password = os.getenv("DASHVERSE_PASSWORD")
+        provider = os.getenv("DASHVERSE_AUTH_PROVIDER", "db")
+
+        if not username or not password:
+            raise RuntimeError(
+                "Missing credentials: export DASHVERSE_USERNAME and DASHVERSE_PASSWORD before running the CLI."
+            )
+
+        payload = {"password": password, "provider": provider, "username": username}
         headers = {"Content-Type": "application/json"}
         response = requests.request(
             "POST", f"{base_url}/security/login", json=payload, headers=headers
         )
+        response.raise_for_status()
         return response.json()["access_token"]
 
     def _get_csrf_token(self):
@@ -48,6 +63,7 @@ class DashverseCli():
         response = requests.request(
             "GET", f"{base_url}/security/csrf_token/", data=payload, headers=headers
         )
+        response.raise_for_status()
         return response.json()["result"]
 
     def showInfo(self):

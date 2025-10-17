@@ -14,4 +14,10 @@ from .indicator import (
 from .dimension import Dimension, DimensionModel
 from .software import Software, SoftwareModel, HowToUseEnum
 from .content_relation import ContentRelation, ContentRelationModel
-from .assessment import Assessment, AssessmentModel
+from .assessment import (
+    Assessment,
+    AssessmentCheck,
+    AssessmentCreator,
+    AssessmentModel,
+    AssessmentSoftware,
+)

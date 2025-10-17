@@ -1,104 +1,221 @@
 """
-Module: models/assessment
-Contains the Assessment domain model which records various checks performed by external tools.
-The check result can be of various data types and is stored in a JSONB column.
-Each assessment record is related to a Software entry.
+Assessment data model and supporting Pydantic schemas.
+
+The structures mirror the EVERSE JSON-LD specification so that incoming
+assessment payloads can be validated and normalised before persisting them in
+PostgreSQL. The relational layout favours analytical queries over nested JSON.
 """
 
+from __future__ import annotations
+
 from datetime import datetime
-from typing import Any, Optional, List, Union
-from pydantic import BaseModel as PydanticBaseModel
-from pydantic import AnyUrl, Field
+from typing import List, Optional
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from pydantic import AnyUrl, BaseModel as PydanticBaseModel, Field, validator
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    func,
+)
+from sqlalchemy.orm import relationship
+
 from .base import Base
-
 
 SCHEMA_NAME = "everse"
 
 
-# class AssessmentModel_OLD(PydanticBaseModel):
-#     """
-#     Pydantic model for validating Assessment data.
-
-#     Attributes:
-#         id (Optional[int]): Unique identifier for the assessment record.
-#         software_id (int): Foreign key referencing the related Software record.
-#         check_name (str): The name or type of the check performed.
-#         tool (str): The external tool that performed the check.
-#         result (Any): The result of the check, which can be of various data types.
-#         timestamp (Optional[datetime]): The time when the check was performed.
-#     """
-
-#     id: Optional[int] = None
-#     software_id: int
-#     check_name: str
-#     tool: str
-#     result: Any
-#     timestamp: Optional[datetime] = None
+# ---------------------------------------------------------------------------
+# Pydantic representations of the JSON-LD payloads used by the CLI ingestors.
+# ---------------------------------------------------------------------------
 
 
-# class Assessment_OLD(Base):
-#     """
-#     SQLAlchemy model for Assessment.
+class ReferenceModel(PydanticBaseModel):
+    """Generic wrapper for JSON-LD references that only expose an @id."""
 
-#     Records various checks done by external tools. The check result is stored in a JSONB column,
-#     allowing for multiple data types (e.g., boolean, numerical, string). Each record is related to a Software entry.
-#     """
-
-#     __tablename__ = "assessment"
-#     __table_args__ = {"schema": SCHEMA_NAME}
-
-#     id = Column(Integer, primary_key=True, autoincrement=True)
-#     software_id = Column(
-#         Integer, ForeignKey(f"{SCHEMA_NAME}.software.id"), nullable=False
-#     )
-#     check_name = Column(String, nullable=False)
-#     tool = Column(String, nullable=False)
-#     result = Column(JSONB)
-#     timestamp = Column(DateTime, nullable=True, default=datetime.utcnow)
+    id: AnyUrl = Field(alias="@id")
 
 
+class CreatorModel(PydanticBaseModel):
+    """Creator metadata for an assessment record."""
 
-class AssessedSoftwareItem(PydanticBaseModel):
-    name: List[str]
-    identifier: List[AnyUrl]
+    type: Optional[str] = Field(default=None, alias="@type")
+    name: str
+    email: Optional[str] = None
 
-class CheckResultItem(PydanticBaseModel):
-    assessesIndicator: List[AnyUrl] = Field(alias='rsqa_assessesIndicator')
-    checkingSoftware: List[AnyUrl] = Field(alias='rsqa_checkingSoftware')
-    checkEvidence: List[str] = Field(alias='rsqa_checkEvidence')
-    checkOutput: List[str] = Field(alias='rsqa_checkOutput')
-    actionProcess: List[AnyUrl]
-    actionStatus: List[AnyUrl]
 
-class CreatorItem(PydanticBaseModel):
-    name: List[str]
+class IdentifierModel(PydanticBaseModel):
+    """Representation of schema:identifier blocks."""
+
+    id: AnyUrl = Field(alias="@id")
+
+
+class AssessedSoftwareModel(PydanticBaseModel):
+    """Details of the assessed software artefact."""
+
+    type: Optional[str] = Field(default=None, alias="@type")
+    name: str
+    softwareVersion: Optional[str] = None
+    url: Optional[AnyUrl] = None
+    identifier: Optional[IdentifierModel] = Field(
+        default=None, alias="schema:identifier"
+    )
+
+
+class CheckingSoftwareModel(PydanticBaseModel):
+    """Details describing the tool that produced a check result."""
+
+    type: Optional[str] = Field(default=None, alias="@type")
+    name: str
+    id: Optional[AnyUrl] = Field(default=None, alias="@id")
+    softwareVersion: Optional[str] = None
+
+
+class CheckResultModel(PydanticBaseModel):
+    """Result of an automated check run as part of the assessment."""
+
+    type: Optional[str] = Field(default=None, alias="@type")
+    assessesIndicator: ReferenceModel
+    checkingSoftware: CheckingSoftwareModel
+    process: Optional[str] = None
+    status: ReferenceModel
+    output: Optional[str] = None
+    evidence: Optional[str] = None
+
+    class Config:
+        allow_population_by_field_name = True
+
 
 class AssessmentModel(PydanticBaseModel):
+    """Top level JSON-LD document describing an EVERSE assessment."""
 
-    field_context: AnyUrl = Field(alias='@context', description='The JSON-LD context for the document.')
-    field_type: Union[AnyUrl, List[AnyUrl]] = Field(alias='@type', description='The type(s) of the resource (IRI or array of IRIs).')
-    assessedSoftware: List[AssessedSoftwareItem] = Field(alias='rsqa_assessedSoftware')
-    CheckResult: List[CheckResultItem] = Field(alias='rsqa_CheckResult')
-    creator: List[CreatorItem]
-    dateCreated: List[str]
-    description: List[str]
-    license: List[AnyUrl]
-    name: List[str]
+    context: AnyUrl = Field(alias="@context")
+    type: str = Field(alias="@type")
+    name: str
+    description: str
+    creator: CreatorModel
+    dateCreated: datetime
+    license: ReferenceModel
+    assessedSoftware: AssessedSoftwareModel
+    checks: List[CheckResultModel] = Field(default_factory=list)
+
+    @validator("checks", pre=True, always=True)
+    def ensure_checks(cls, value):  # type: ignore[override]
+        return value or []
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+# ---------------------------------------------------------------------------
+# SQLAlchemy models
+# ---------------------------------------------------------------------------
+
 
 class Assessment(Base):
-    __tablename__ = "assessment"
+    """
+    Core assessment record.
+
+    Relationships:
+        - creators (AssessmentCreator)
+        - assessed_software (AssessmentSoftware)
+        - checks (AssessmentCheck)
+    """
+
+    __tablename__ = "assessments"
     __table_args__ = {"schema": SCHEMA_NAME}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    context = Column(String, nullable=False)
+    type = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    description = Column(String, nullable=False)
-    creator = Column(ARRAY(JSONB), nullable=False)
-    dateCreated = Column(DateTime, nullable=False)
-    license = Column(JSONB, nullable=False)
+    description = Column(Text, nullable=False)
+    date_created = Column(DateTime(timezone=True), nullable=False)
+    license_uri = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
-    assessedSoftware = Column(JSONB, nullable=False)
+    creators = relationship(
+        "AssessmentCreator",
+        back_populates="assessment",
+        cascade="all, delete-orphan",
+    )
+    assessed_software = relationship(
+        "AssessmentSoftware",
+        back_populates="assessment",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+    checks = relationship(
+        "AssessmentCheck",
+        back_populates="assessment",
+        cascade="all, delete-orphan",
+    )
 
-    checks = Column(ARRAY(JSONB), nullable=False)
+
+class AssessmentCreator(Base):
+    """Person or organisation responsible for the assessment."""
+
+    __tablename__ = "assessment_creators"
+    __table_args__ = {"schema": SCHEMA_NAME}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    assessment_id = Column(
+        Integer, ForeignKey(f"{SCHEMA_NAME}.assessments.id"), nullable=False
+    )
+    type = Column(String, nullable=True)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+
+    assessment = relationship("Assessment", back_populates="creators")
+
+
+class AssessmentSoftware(Base):
+    """Software artefact that underwent assessment."""
+
+    __tablename__ = "assessment_software"
+    __table_args__ = {"schema": SCHEMA_NAME}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    assessment_id = Column(
+        Integer,
+        ForeignKey(f"{SCHEMA_NAME}.assessments.id"),
+        nullable=False,
+        unique=True,
+    )
+    type = Column(String, nullable=True)
+    name = Column(String, nullable=False)
+    version = Column(String, nullable=True)
+    url = Column(String, nullable=True)
+    identifier_uri = Column(String, nullable=True)
+
+    assessment = relationship("Assessment", back_populates="assessed_software")
+
+
+class AssessmentCheck(Base):
+    """Individual outcome for an indicator check."""
+
+    __tablename__ = "assessment_checks"
+    __table_args__ = {"schema": SCHEMA_NAME}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    assessment_id = Column(
+        Integer, ForeignKey(f"{SCHEMA_NAME}.assessments.id"), nullable=False
+    )
+    type = Column(String, nullable=True)
+    indicator_uri = Column(String, nullable=False)
+    checking_software_type = Column(String, nullable=True)
+    checking_software_name = Column(String, nullable=False)
+    checking_software_uri = Column(String, nullable=True)
+    checking_software_version = Column(String, nullable=True)
+    process = Column(Text, nullable=True)
+    status_uri = Column(String, nullable=False)
+    output = Column(Text, nullable=True)
+    evidence = Column(Text, nullable=True)
+
+    assessment = relationship("Assessment", back_populates="checks")

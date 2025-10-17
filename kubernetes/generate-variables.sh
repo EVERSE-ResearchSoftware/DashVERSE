@@ -3,26 +3,34 @@ set -euo pipefail
 
 echo "Generating random passwords and secret keys for Superset..."
 
+# Allow overriding the public domain without editing the script.
+EVERSE_DOMAIN_NAME=${EVERSE_DOMAIN_NAME:-dashverse.cloud}
+
+random_b64 () { openssl rand -base64 "${1}"; }
+random_alnum () { head /dev/urandom | tr -dc A-Za-z0-9_ | head -c "${1}"; }
+
 # Generate random strings for secrets
 # SECRET_KEY and GUEST_TOKEN_JWT_SECRET are recommended to be base64-encoded and long (e.g., 42 chars)
-SUPERSET_SECRET_KEY=$(openssl rand -base64 42)
-GUEST_TOKEN_JWT_SECRET=$(openssl rand -base64 42)
+SUPERSET_SECRET_KEY=$(random_b64 42)
+GUEST_TOKEN_JWT_SECRET=$(random_b64 42)
 
-# Database and Redis passwords (alphanumeric with underscore, 20 chars long)
-DB_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 20)
-REDIS_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 20)
+# Database passwords (alphanumeric with underscore for compatibility)
+POSTGRES_SUPERUSER_PASSWORD=$(random_alnum 24)
+SUPERSET_DB_PASSWORD=$(random_alnum 24)
+POSTGREST_AUTH_PASSWORD=$(random_alnum 24)
+
+# Redis password (alphanumeric with underscore, 20 chars long)
+REDIS_PASSWORD=$(random_alnum 20)
 
 # Pgadmin password (alphanumeric with underscore, 16 chars long)
-PGADMIN_DEFAULT_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 16)
+PGADMIN_DEFAULT_PASSWORD=$(random_alnum 16)
 
 # Superset Admin password (alphanumeric with underscore, 16 chars long)
-ADMIN_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 16)
+ADMIN_PASSWORD=$(random_alnum 16)
 
 # Websocket JWT Secret (if websockets are enabled)
-WEBSOCKET_JWT_SECRET=$(openssl rand -base64 32)
-
-# intended domain name
-EVERSE_DOMAIN_NAME='dashverse.cloud'
+WEBSOCKET_JWT_SECRET=$(random_b64 32)
+POSTGREST_JWT_SECRET=$(random_b64 42)
 
 # Create a files with the generated secrets
 DEPLOYMENT_ID=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo)
@@ -47,17 +55,19 @@ stringData:
   DOMAIN_NAME: '$EVERSE_DOMAIN_NAME'
   SUPERSET_DB_USER: 'superset'
   SUPERSET_DB_NAME: 'superset'
-  SUPERSET_DB_PASSWORD: '$DB_PASSWORD'
+  SUPERSET_DB_PASSWORD: '$SUPERSET_DB_PASSWORD'
+  POSTGREST_AUTH_PASSWORD: '$POSTGREST_AUTH_PASSWORD'
   SUPERSET_SECRET_KEY: '$SUPERSET_SECRET_KEY'
   SUPERSET_ADMIN_USER: 'admin'
   SUPERSET_ADMIN_PASSWORD: '$ADMIN_PASSWORD'
   SUPERSET_ADMIN_EMAIL: 'admin@dashverse.cloud'
   REDIS_PASSWORD: '$REDIS_PASSWORD'
   POSTGRES_USER: 'postgres'
-  POSTGRES_PASSWORD: '$DB_PASSWORD'
+  POSTGRES_PASSWORD: '$POSTGRES_SUPERUSER_PASSWORD'
   WEBSOCKET_JWT_SECRET: '$WEBSOCKET_JWT_SECRET'
   GUEST_TOKEN_JWT_SECRET: '$GUEST_TOKEN_JWT_SECRET'
-  POSTGREST_DB_URI: 'postgres://authenticator:$DB_PASSWORD@superset-postgresql:5432/superset'
+  POSTGREST_DB_URI: 'postgres://authenticator:$POSTGREST_AUTH_PASSWORD@superset-postgresql:5432/superset'
+  POSTGREST_JWT_SECRET: '$POSTGREST_JWT_SECRET'
   POSTGREST_API_URL: 'https://db.$EVERSE_DOMAIN_NAME'
   POSTGREST_SERVER_CORS_ALLOWED_ORIGINS: 'https://apidocs.$EVERSE_DOMAIN_NAME,https://api.$EVERSE_DOMAIN_NAME,https://db.$EVERSE_DOMAIN_NAME'
   PGADMIN_DEFAULT_EMAIL: 'admin@example.com'
@@ -73,7 +83,8 @@ export DOLLAR='$' # see: https://stackoverflow.com/a/24964089
 export DOMAIN_NAME='$EVERSE_DOMAIN_NAME'
 export SUPERSET_DB_USER='superset'
 export SUPERSET_DB_NAME='superset'
-export SUPERSET_DB_PASSWORD='$DB_PASSWORD'
+export SUPERSET_DB_PASSWORD='$SUPERSET_DB_PASSWORD'
+export POSTGREST_AUTH_PASSWORD='$POSTGREST_AUTH_PASSWORD'
 export SUPERSET_SECRET_KEY='$SUPERSET_SECRET_KEY'
 export SUPERSET_ADMIN_USER='admin'
 export SUPERSET_ADMIN_PASSWORD='$ADMIN_PASSWORD'
@@ -82,10 +93,11 @@ export SUPERSET_ADMIN_EMAIL='admin@dashverse.cloud'
 export REDIS_PASSWORD='$REDIS_PASSWORD'
 
 export POSTGRES_USER='postgres'
-export POSTGRES_PASSWORD='$DB_PASSWORD'
+export POSTGRES_PASSWORD='$POSTGRES_SUPERUSER_PASSWORD'
 export WEBSOCKET_JWT_SECRET='$WEBSOCKET_JWT_SECRET'
 export GUEST_TOKEN_JWT_SECRET='$GUEST_TOKEN_JWT_SECRET'
-export POSTGREST_DB_URI='postgres://authenticator:$DB_PASSWORD@superset-postgresql:5432/superset'
+export POSTGREST_DB_URI='postgres://authenticator:$POSTGREST_AUTH_PASSWORD@superset-postgresql:5432/superset'
+export POSTGREST_JWT_SECRET='$POSTGREST_JWT_SECRET'
 export POSTGREST_API_URL='https://db.$EVERSE_DOMAIN_NAME'
 export POSTGREST_SERVER_CORS_ALLOWED_ORIGINS='https://apidocs.$EVERSE_DOMAIN_NAME,https://api.$EVERSE_DOMAIN_NAME,https://db.$EVERSE_DOMAIN_NAME'
 
@@ -97,23 +109,8 @@ EOF
 
 echo "Generated secrets file: $SECRETS_ENV_FILE_NAME"
 
-
-DB_CONFIG_FILE_NAME="./DBModel/db_config.json"
-cat <<EOF > "$DB_CONFIG_FILE_NAME"
-{
-    "dbname": "superset",
-    "user": "postgres",
-    "password": "$DB_PASSWORD",
-    "host": "superset-postgresql",
-    "port": 5432
-}
-EOF
-
-echo "Generated db config file: $DB_CONFIG_FILE_NAME"
-
-
 export DOLLAR='$'
-export JWT_SECRET=$WEBSOCKET_JWT_SECRET
+export JWT_SECRET=$POSTGREST_JWT_SECRET
 cat <<'EOF' | envsubst > "$JWT_SCRIPT_FILE"
 #!/bin/bash
 set -e
@@ -136,3 +133,11 @@ EOF
 
 chmod +x "$JWT_SCRIPT_FILE"
 echo "Created a script for JWT generation: $JWT_SCRIPT_FILE"
+
+cat <<EOF
+
+Next steps:
+1. Source the generated secrets file with 'source $SECRETS_ENV_FILE_NAME'.
+2. Pass the exported variables to the Kubernetes manifests (envsubst, helm, etc.).
+
+EOF

@@ -77,7 +77,7 @@ class Software(Base):
     __table_args__ = {"schema": SCHEMA_NAME}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    identifier = Column(String, nullable=False, index=True)
+    identifier = Column(String, nullable=False, unique=True, index=True)
     name = Column(String)
     description = Column(String)
     url = Column(String)

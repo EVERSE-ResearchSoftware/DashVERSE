@@ -64,15 +64,15 @@ If you would like to run the setup on a cloud (your own server)
 
    Set the default driver (podman or docker)
 
-   ````shell
-   minikube config set driver podman
    ```shell
+   minikube config set driver podman
+   ```
 
    Start the cluster
 
    ```shell
    minikube start --cpus='4' --memory='4g' --driver=podman
-   ````
+   ```
 
    This will create a cluster using 4 cpus and 4GB of memory.
 
@@ -88,9 +88,10 @@ If you would like to run the setup on a cloud (your own server)
    bash generate-variables.sh
    ```
 
-   This will generate or update the files below:
+   The script can be customised via environment variables, e.g. `EVERSE_DOMAIN_NAME=my.domain bash generate-variables.sh`.
 
-   - DBModel/db_config.json
+   It produces the following artefacts (all paths reside under `kubernetes/`):
+
    - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/superset-deployment-secrets.yaml
    - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/secrets.env
    - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/generate_jwt.sh
@@ -102,6 +103,10 @@ If you would like to run the setup on a cloud (your own server)
    ```shell
    source ./deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/secrets.env
    ```
+
+   The generated environment variables are consumed by the Kubernetes manifests through `envsubst`. No plaintext database configuration files are created anymore.
+
+   For a breakdown of the database schema and helper scripts, see `docs/Database.md`.
 
 1. Build database initialization container
 
@@ -244,6 +249,12 @@ If you would like to run the setup on a cloud (your own server)
 1. Set up the domain name for your server
 
 1. Set DNS to point to your server ( you will need to setup a reverse proxy to be able to access the service)
+
+## Documentation
+
+- `docs/Kubernetes.md` – operational commands for managing the Minikube deployment.
+- `docs/Database.md` – details of the PostgreSQL schema, assessment mapping, and populate script usage.
+- `docs/API_examples.md` – practical PostgREST calls, including the multi-step workflow for creating assessments.
 
 ## Clean up
 

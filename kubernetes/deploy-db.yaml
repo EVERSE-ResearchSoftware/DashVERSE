@@ -31,11 +31,10 @@ data:
     GRANT USAGE on all sequences in schema public to superset;
 
     GRANT USAGE ON SCHEMA everse TO superset;
-    GRANT USAGE on all sequences in schema everse to superset;
-    GRANT ALL ON everse.dimensions TO superset;
-    GRANT ALL ON everse.indicators TO superset;
-    GRANT ALL ON everse.software TO superset;
-    GRANT ALL ON everse.assessment TO superset;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA everse TO superset;
+    GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA everse TO superset;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA everse GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO superset;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA everse GRANT USAGE, SELECT ON SEQUENCES TO superset;
 
     -- Postgrest specific
     -- COMMENT ON SCHEMA everse IS
@@ -46,27 +45,21 @@ data:
     -- Postgrest anon role
     CREATE ROLE web_anon NOLOGIN;
     GRANT USAGE ON SCHEMA everse TO web_anon;
-    -- -- GRANT SELECT, INSERT, UPDATE, DELETE ON everse.assessment TO web_anon;
-    -- -- GRANT USAGE, SELECT ON SEQUENCE everse.assessment_id_seq TO web_anon;
-    GRANT SELECT ON everse.dimensions TO web_anon;
-    GRANT SELECT ON everse.indicators TO web_anon;
-    GRANT SELECT ON everse.software TO web_anon;
-    GRANT SELECT ON everse.assessment TO web_anon;
+    -- -- GRANT SELECT, INSERT, UPDATE, DELETE ON everse.assessments TO web_anon;
+    -- -- GRANT USAGE, SELECT ON SEQUENCE everse.assessments_id_seq TO web_anon;
+    GRANT SELECT ON ALL TABLES IN SCHEMA everse TO web_anon;
+    GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA everse TO web_anon;
 
     -- Postgrest authenticator role
-    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD '$SUPERSET_DB_PASSWORD';
+    CREATE ROLE authenticator NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER LOGIN PASSWORD '$POSTGREST_AUTH_PASSWORD';
     GRANT web_anon to authenticator;
 
     -- Postgrest cli user role
     CREATE ROLE cli_user NOLOGIN;
     GRANT cli_user TO authenticator;
     GRANT USAGE ON SCHEMA everse TO cli_user;
-    GRANT ALL ON everse.dimensions TO cli_user;
-    GRANT ALL ON everse.indicators TO cli_user;
-    GRANT ALL ON everse.software TO cli_user;
-    GRANT ALL ON everse.assessment TO cli_user;
-
-    GRANT ALL ON SEQUENCE everse.assessment_id_seq to cli_user;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA everse TO cli_user;
+    GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA everse TO cli_user;
 
     INSERT INTO everse.dimensions (identifier, name)
     VALUES ('DIM-ACC', 'Accessibility'),
@@ -85,7 +78,8 @@ data:
         ('DIM-TST', 'Testing'),
         ('DIM-USB', 'Usability'),
         ('DIM-VER', 'Versioning'),
-        ('DIM-UNC', 'Uncategorised');
+        ('DIM-UNC', 'Uncategorised')
+    ON CONFLICT (identifier) DO NOTHING;
 
     -- -- OpenAPI settings
     -- create or replace function everse.root() returns json as $_$
@@ -218,7 +212,7 @@ spec:
           args:
             - |
               echo "Waiting for Superset PostgreSQL to be ready for Python script execution..."
-              until pg_isready -h superset-postgresql -p 5432 -U $SUPERSET_DB_USER; do
+              until pg_isready -h superset-postgresql -p 5432 -U $POSTGRES_USER; do
                 echo "Superset PostgreSQL not ready yet, sleeping..."
                 sleep 5
               done
@@ -229,9 +223,7 @@ spec:
               python3 -m venv venv
               . ./venv/bin/activate
               pip3 install --no-cache-dir -r requirements.txt
-              # ls
-              # cat db_config.json
-              python3 main.py --config db_config.json
+              python3 main.py
 
               echo "Python setup script executed."
 
@@ -254,12 +246,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: superset-deployment-secrets
-                  key: SUPERSET_DB_USER
+                  key: POSTGRES_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: superset-deployment-secrets
-                  key: SUPERSET_DB_PASSWORD
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: superset-deployment-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

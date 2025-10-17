@@ -17,7 +17,11 @@ def main():
     parser = argparse.ArgumentParser(
         description="Initialize the database using a JSON config file."
     )
-    parser.add_argument("--config", help="Path to JSON config file", required=True)
+    parser.add_argument(
+        "--config",
+        help="Path to JSON config file. If omitted, environment variables are used.",
+        required=False,
+    )
     args = parser.parse_args()
 
     # Load configuration from the JSON file.

@@ -6,6 +6,14 @@
 export EVERSE_TOKEN="<YOUR_JWT>"
 ```
 
+If you are using the helper CLI in `examples/dashverse_cli_example.py`, configure the Superset API credentials first:
+
+```shell
+export DASHVERSE_API_URL="https://dashverse.cloud/api/v1"
+export DASHVERSE_USERNAME="<superset-username>"
+export DASHVERSE_PASSWORD="<superset-password>"
+```
+
 ## Software
 
 ### List software
@@ -59,72 +67,84 @@ List available software after adding:
 curl https://db.YOUR_DOMAIN/software
 ```
 
-## Assessment
+## Assessments
 
-### List assessment
+### Retrieve full assessments
 
 ```shell
-curl https://db.YOUR_DOMAIN/assessment
+curl https://db.YOUR_DOMAIN/assessments?select=*,assessment_creators(*),assessment_software(*),assessment_checks(*)
 ```
 
-### Add assessment
+### Create an assessment (multi-step)
 
 ```shell
-curl -X 'POST' \
-  'https://db.YOUR_DOMAIN/assessment' \
+ASSESSMENT_ID=$(curl -s -X 'POST' \
+  'https://db.YOUR_DOMAIN/assessments' \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $EVERSE_TOKEN" \
   -H 'Prefer: return=representation' \
   -H 'Content-Type: application/json' \
   -d '{
+    "@context": "https://w3id.org/everse/rsqa/0.0.1/",
+    "@type": "SoftwareQualityAssessment",
     "name": "Quality Assessment for CFFinit v2.3.1",
-    "description": "An automated assessment of the CFFinit tool based on the EVERSE software quality indicators, run on 2025-06-19.",
-    "creator": [{
-        "@type": "schema:Person",
-        "name": "Faruk Diblen",
-        "email": "f.diblen@example.com"
-    }],
+    "description": "An automated assessment run on 2025-06-19.",
     "dateCreated": "2025-06-19T17:52:00Z",
-    "license": { "@id": "https://creativecommons.org/publicdomain/zero/1.0/" },
-    "assessedSoftware": {
-        "@type": "schema:SoftwareApplication",
-        "name": "CFFinit",
-        "softwareVersion": "2.3.1",
-        "url": "https://github.com/citation-file-format/cff-initializer-javascript",
-        "schema:identifier": {
-            "@id": "https://doi.org/10.5281/zenodo.8224012"
-        }
-    },
-    "checks": [
-        {
-            "@type": "CheckResult",
-            "assessesIndicator": { "@id": "https://w3id.org/everse/i/indicators/license" },
-            "checkingSoftware": {
-                "@type": "schema:SoftwareApplication",
-                "name": "howfairis",
-                "@id": "https://w3id.org/everse/tools/howfairis",
-                "softwareVersion": "0.14.2"
-            },
-            "process": "Searches for a file named 'LICENSE' or 'LICENSE.md' in the repository root.",
-            "status": { "@id": "schema:CompletedActionStatus" },
-            "output": "true",
-            "evidence": "Found license file: 'LICENSE'."
-        },
-        {
-            "@type": "CheckResult",
-            "assessesIndicator": { "@id": "https://w3id.org/everse/i/indicators/citation" },
-            "checkingSoftware": {
-                "@type": "schema:SoftwareApplication",
-                "name": "howfairis",
-                "@id": "https://w3id.org/everse/tools/howfairis",
-                "softwareVersion": "0.14.2"
-            },
+    "license": { "@id": "https://creativecommons.org/publicdomain/zero/1.0/" }
+  }' | jq '.[0].id')
 
-            "process": "Searches for a 'CITATION.cff' file in the repository root and validates its syntax.",
-            "status": { "@id": "schema:CompletedActionStatus" },
-            "output": "valid",
-            "evidence": "Found valid CITATION.cff file in repository root."
-        }
-    ]
-}'
+curl -X 'POST' \
+  "https://db.YOUR_DOMAIN/assessment_creators" \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $EVERSE_TOKEN" \
+  -H 'Prefer: return=representation' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "assessment_id": '"$ASSESSMENT_ID"',
+    "@type": "schema:Person",
+    "name": "Faruk Diblen",
+    "email": "f.diblen@example.com"
+  }'
+
+curl -X 'POST' \
+  "https://db.YOUR_DOMAIN/assessment_software" \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $EVERSE_TOKEN" \
+  -H 'Prefer: return=representation' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "assessment_id": '"$ASSESSMENT_ID"',
+    "@type": "schema:SoftwareApplication",
+    "name": "CFFinit",
+    "version": "2.3.1",
+    "url": "https://github.com/citation-file-format/cff-initializer-javascript",
+    "identifier_uri": "https://doi.org/10.5281/zenodo.8224012"
+  }'
+
+curl -X 'POST' \
+  "https://db.YOUR_DOMAIN/assessment_checks" \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $EVERSE_TOKEN" \
+  -H 'Prefer: return=representation' \
+  -H 'Content-Type: application/json' \
+  -d '[
+    {
+      "assessment_id": '"$ASSESSMENT_ID"',
+      "@type": "CheckResult",
+      "indicator_uri": "https://w3id.org/everse/i/indicators/license",
+      "checking_software_name": "howfairis",
+      "checking_software_uri": "https://w3id.org/everse/tools/howfairis",
+      "checking_software_version": "0.14.2",
+      "process": "Searches for a LICENSE file.",
+      "status_uri": "schema:CompletedActionStatus",
+      "output": "true",
+      "evidence": "Found license file: 'LICENSE'."
+    }
+  ]'
 ```
+
+> **Note:** PostgREST returns created rows when the `Prefer: return=representation` header is provided. Capture the `id` from the first insert to link child resources. You can batch multiple check rows in one request as shown above.
+>
+> The snippet uses `jq` to extract the new `assessment_id`. If `jq` is not available, inspect the JSON response manually or leverage PostgREST's `Location` header.
+
+For additional payload structures or filters, consult the PostgREST documentation and the schema overview in `docs/Database.md`.

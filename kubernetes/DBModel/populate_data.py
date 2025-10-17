@@ -2,8 +2,8 @@
 populate_data.py
 
 This script populates the database with mock (fake) data for each model.
-It reads the database configuration from a JSON file (db_config.json) and uses command-line
-arguments to specify the number of entries to create for each model.
+Connection information is sourced from environment variables or an optional JSON
+configuration file, mirroring the runtime behaviour of the init job.
 
 Models populated:
   - Indicator
@@ -20,7 +20,7 @@ After insertion (or clearing), the script queries and prints the entries in a fo
 
 import argparse
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from faker import Faker
 from tabulate import tabulate
 from sqlalchemy import text
@@ -33,7 +33,12 @@ from everse_db.db_helper import EverseDB
 from everse_db.models.indicator import Indicator, KeywordEnum, StatusEnum, QualityDimensionEnum
 from everse_db.models.dimension import Dimension
 from everse_db.models.software import Software, HowToUseEnum, QualityDimensionEnum as SWQualityDimensionEnum
-from everse_db.models.assessment import Assessment
+from everse_db.models.assessment import (
+    Assessment,
+    AssessmentCheck,
+    AssessmentCreator,
+    AssessmentSoftware,
+)
 from everse_db.models.content_relation import ContentRelation
 
 # Initialize Faker instance
@@ -102,33 +107,57 @@ def create_fake_software(idx: int) -> Software:
     )
     return software
 
-def create_fake_assessment(software_ids: list, idx: int) -> Assessment:
+def create_fake_assessment(idx: int) -> Assessment:
     """
-    Create a fake Assessment SQLAlchemy model instance.
+    Create a fake Assessment SQLAlchemy model instance aligned with the EVERSE schema.
 
     Args:
-        software_ids (list): List of available Software IDs.
         idx (int): Index used for reference.
 
     Returns:
-        Assessment: A new Assessment instance with fake data.
+        Assessment: A new Assessment instance with fake nested records.
     """
-    # Randomly choose a result type: boolean, numeric, or string.
-    r = random.random()
-    if r < 0.33:
-        result = random.choice([True, False])
-    elif r < 0.66:
-        result = round(random.uniform(0, 100), 2)
-    else:
-        result = fake.sentence(nb_words=4)
-
     assessment = Assessment(
-        software_id=random.choice(software_ids),
-        check_name=fake.word(),
-        tool=fake.word(),
-        result=result,
-        timestamp=fake.date_time_this_year()
+        context="https://w3id.org/everse/rsqa/0.0.1/",
+        type="SoftwareQualityAssessment",
+        name=f"Quality Assessment #{idx}",
+        description=fake.paragraph(nb_sentences=3),
+        date_created=fake.date_time_this_year(tzinfo=timezone.utc),
+        license_uri=f"https://example.org/license/{idx}",
     )
+
+    creator = AssessmentCreator(
+        type="schema:Person",
+        name=fake.name(),
+        email=fake.email(),
+    )
+    assessment.creators.append(creator)
+
+    software = AssessmentSoftware(
+        type="schema:SoftwareApplication",
+        name=fake.company(),
+        version=f"{random.randint(0, 3)}.{random.randint(0, 9)}.{random.randint(0, 9)}",
+        url=fake.url(),
+        identifier_uri=f"https://doi.org/10.1234/{fake.lexify(text='?????')}",
+    )
+    assessment.assessed_software = software
+
+    for _ in range(random.randint(1, 4)):
+        indicator_uri = f"https://w3id.org/everse/i/indicators/{fake.slug()}"
+        check = AssessmentCheck(
+            type="CheckResult",
+            indicator_uri=indicator_uri,
+            checking_software_type="schema:SoftwareApplication",
+            checking_software_name=fake.word(),
+            checking_software_uri=f"https://w3id.org/everse/tools/{fake.slug()}",
+            checking_software_version=fake.numerify(text="0.##"),
+            process=fake.sentence(nb_words=8),
+            status_uri="schema:CompletedActionStatus",
+            output=random.choice(["true", "valid", "false"]),
+            evidence=fake.text(max_nb_chars=120),
+        )
+        assessment.checks.append(check)
+
     return assessment
 
 def create_fake_content_relation(indicator_ids: list, dimension_ids: list, software_ids: list) -> ContentRelation:
@@ -164,11 +193,21 @@ def print_entries(session, model, title: str) -> None:
         print(f"\n=== {title} (No entries found) ===")
         return
 
-    # Create a list of dictionaries for each entry, filtering out internal attributes.
     data = []
-    for entry in entries:
-        row = {k: v for k, v in entry.__dict__.items() if not k.startswith('_')}
-        data.append(row)
+    if model is Assessment:
+        for entry in entries:
+            row = {
+                "id": entry.id,
+                "name": entry.name,
+                "checks": len(entry.checks),
+                "creator": ", ".join(c.name for c in entry.creators),
+                "software": entry.assessed_software.name if entry.assessed_software else None,
+            }
+            data.append(row)
+    else:
+        for entry in entries:
+            row = {k: v for k, v in entry.__dict__.items() if not k.startswith("_")}
+            data.append(row)
 
     print(f"\n=== {title} ({len(entries)} entries) ===")
     print(tabulate(data, headers="keys", tablefmt="pretty"))
@@ -183,7 +222,10 @@ def clear_existing_entries(session, schema: str) -> None:
     """
     truncate_query = text(f"""
         TRUNCATE TABLE {schema}.content_relation,
-                       {schema}.assessment,
+                       {schema}.assessment_checks,
+                       {schema}.assessment_software,
+                       {schema}.assessment_creators,
+                       {schema}.assessments,
                        {schema}.indicators,
                        {schema}.dimensions,
                        {schema}.software
@@ -201,9 +243,13 @@ def main():
     If the --clear flag is used, the script will only clear the data and not add any new entries.
     """
     parser = argparse.ArgumentParser(
-        description="Populate the database with mock data using the provided db_config.json."
+        description="Populate the database with mock data using environment variables or an optional JSON config file."
     )
-    parser.add_argument("--config", help="Path to JSON config file", required=True)
+    parser.add_argument(
+        "--config",
+        help="Path to JSON config file (optional). Overrides environment variables when supplied.",
+        required=False,
+    )
     parser.add_argument("--num_indicator", type=int, default=5, help="Number of Indicator entries to create")
     parser.add_argument("--num_dimension", type=int, default=5, help="Number of Dimension entries to create")
     parser.add_argument("--num_software", type=int, default=5, help="Number of Software entries to create")
@@ -252,7 +298,7 @@ def main():
 
             # Create Assessment entries.
             for i in range(1, args.num_assessment + 1):
-                assessment = create_fake_assessment(software_ids, i)
+                assessment = create_fake_assessment(i)
                 session.add(assessment)
             session.commit()
 
