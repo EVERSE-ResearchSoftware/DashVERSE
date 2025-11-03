@@ -23,13 +23,6 @@ class EverseDB:
     """
 
     def __init__(self, database_url: str, schema: str = DEFAULT_SCHEMA_NAME):
-        """
-        Initialize the EverseDB helper with the provided database URL and schema.
-
-        Args:
-            database_url (str): The PostgreSQL connection URL.
-            schema (str, optional): The database schema name. Defaults to DEFAULT_SCHEMA_NAME.
-        """
         self.database_url = database_url
         self.schema = schema
         self.engine = create_engine(self.database_url)
@@ -41,7 +34,6 @@ class EverseDB:
         """
         Initialize the database by creating the schema (if it doesn't exist)
         and all tables defined in the metadata.
-        Also prints connection details (excluding sensitive information).
         """
         # Create schema if it doesn't exist.
         with self.engine.connect() as connection:
@@ -50,7 +42,7 @@ class EverseDB:
         # Create all tables.
         Base.metadata.create_all(self.engine)
 
-        # Parse database URL to extract non‑sensitive details.
+        # Parse database URL to extract non-sensitive details.
         url_obj = make_url(self.database_url)
         host = url_obj.host
         port = url_obj.port
@@ -65,9 +57,6 @@ class EverseDB:
     def query_tables_and_columns(self) -> dict:
         """
         Query the database to retrieve table names and their columns.
-
-        Returns:
-            dict: A dictionary where keys are table names and values are lists of column info dictionaries.
         """
         inspector = inspect(self.engine)
         table_names = inspector.get_table_names(schema=self.schema)
@@ -79,7 +68,7 @@ class EverseDB:
 
     def print_tables_and_columns(self) -> None:
         """
-        Print the tables and their column details (including column types) for the schema.
+        Print the tables and their column details for the schema.
         """
         tables_info = self.query_tables_and_columns()
         print(f"Tables in schema '{self.schema}':")

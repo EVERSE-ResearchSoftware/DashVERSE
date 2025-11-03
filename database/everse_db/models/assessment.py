@@ -25,7 +25,7 @@ from sqlalchemy.orm import relationship
 
 from .base import Base
 
-SCHEMA_NAME = "everse"
+SCHEMA_NAME = "api"
 
 
 # ---------------------------------------------------------------------------

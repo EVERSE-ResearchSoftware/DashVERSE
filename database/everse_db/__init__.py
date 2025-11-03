@@ -1,5 +1,4 @@
 """
-Module: __init__
 Exports the public API of the everse_db package.
 """
 
@@ -8,14 +7,10 @@ from .db_helper import EverseDB
 from .models import (
     Indicator,
     IndicatorModel,
-    KeywordEnum,
-    StatusEnum,
-    QualityDimensionEnum,
     Dimension,
     DimensionModel,
     Software,
     SoftwareModel,
-    HowToUseEnum,
     ContentRelation,
     ContentRelationModel,
     Assessment,

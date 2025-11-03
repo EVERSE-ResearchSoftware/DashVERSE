@@ -30,9 +30,9 @@ from everse_db.config import load_config, build_database_url, DEFAULT_SCHEMA_NAM
 from everse_db.db_helper import EverseDB
 
 # Import models
-from everse_db.models.indicator import Indicator, KeywordEnum, StatusEnum, QualityDimensionEnum
+from everse_db.models.indicator import Indicator
 from everse_db.models.dimension import Dimension
-from everse_db.models.software import Software, HowToUseEnum, QualityDimensionEnum as SWQualityDimensionEnum
+from everse_db.models.software import Software
 from everse_db.models.assessment import (
     Assessment,
     AssessmentCheck,
@@ -45,65 +45,41 @@ from everse_db.models.content_relation import ContentRelation
 fake = Faker()
 
 def create_fake_indicator(idx: int) -> Indicator:
-    """
-    Create a fake Indicator SQLAlchemy model instance.
-
-    Args:
-        idx (int): Index used to generate a unique identifier.
-
-    Returns:
-        Indicator: A new Indicator instance with fake data.
-    """
+    """Create a fake Indicator instance."""
     indicator = Indicator(
         identifier=f"IND-{idx:03d}",
-        name=fake.sentence(nb_words=3),
+        name=fake.sentence(nb_words=3).rstrip('.'),
         description=fake.text(max_nb_chars=100),
-        keywords=[random.choice(list(KeywordEnum)).value for _ in range(random.randint(1, 3))],
-        status=random.choice(list(StatusEnum)),
-        qualityDimensions=[random.choice(list(QualityDimensionEnum)).value for _ in range(random.randint(1, 2))],
-        releaseDate=fake.date_time_this_decade(),
-        version="1.0",
-        doi=f"10.1234/{fake.lexify(text='?????')}"
+        status=random.choice(["Active", "Deprecated"]),
+        quality_dimension=f"DIM-{random.randint(1, 5):03d}",
+        contact={"name": fake.name(), "email": fake.email()},
+        source={"url": fake.url(), "name": fake.company()}
     )
     return indicator
 
 def create_fake_dimension(idx: int) -> Dimension:
-    """
-    Create a fake Dimension SQLAlchemy model instance.
-
-    Args:
-        idx (int): Index used to generate a unique identifier.
-
-    Returns:
-        Dimension: A new Dimension instance with fake data.
-    """
+    """Create a fake Dimension instance."""
     dimension = Dimension(
         identifier=f"DIM-{idx:03d}",
-        name=fake.sentence(nb_words=2),
+        name=fake.sentence(nb_words=2).rstrip('.'),
         description=fake.text(max_nb_chars=80),
-        source=[fake.word() for _ in range(random.randint(1, 3))]
+        status=random.choice(["Active", "Deprecated"]),
+        source={"url": fake.url(), "reference": fake.word()}
     )
     return dimension
 
 def create_fake_software(idx: int) -> Software:
-    """
-    Create a fake Software SQLAlchemy model instance.
-
-    Args:
-        idx (int): Index used to generate a unique identifier.
-
-    Returns:
-        Software: A new Software instance with fake data.
-    """
+    """Create a fake Software instance."""
+    langs = ["Python", "JavaScript", "Go", "Rust", "Java", "C++"]
     software = Software(
         identifier=f"SW-{idx:03d}",
         name=fake.company(),
         description=fake.text(max_nb_chars=100),
-        url=fake.url(),
-        isAccessibleForFree=random.choice([True, False]),
-        qualityDimensions=[random.choice(list(SWQualityDimensionEnum)).value for _ in range(random.randint(1, 3))],
-        howToUse=[random.choice(list(HowToUseEnum)).value for _ in range(random.randint(1, 2))],
-        license=random.choice(["MIT", "GPL", "Apache-2.0"])
+        version=f"{random.randint(0, 3)}.{random.randint(0, 9)}.{random.randint(0, 9)}",
+        license=random.choice(["MIT", "GPL-3.0", "Apache-2.0", "BSD-3-Clause"]),
+        repository_url=f"https://github.com/{fake.user_name()}/{fake.slug()}",
+        homepage_url=fake.url(),
+        programming_language=random.sample(langs, random.randint(1, 3))
     )
     return software
 
@@ -162,15 +138,7 @@ def create_fake_assessment(idx: int) -> Assessment:
 
 def create_fake_content_relation(indicator_ids: list, dimension_ids: list, software_ids: list) -> ContentRelation:
     """
-    Create a fake ContentRelation SQLAlchemy model instance by randomly linking existing records.
-
-    Args:
-        indicator_ids (list): List of available Indicator IDs.
-        dimension_ids (list): List of available Dimension IDs.
-        software_ids (list): List of available Software IDs.
-
-    Returns:
-        ContentRelation: A new ContentRelation instance linking the provided IDs.
+    Create a fake ContentRelation by randomly linking existing records.
     """
     relation = ContentRelation(
         indicator_id=random.choice(indicator_ids),
@@ -181,12 +149,7 @@ def create_fake_content_relation(indicator_ids: list, dimension_ids: list, softw
 
 def print_entries(session, model, title: str) -> None:
     """
-    Query and print all entries for a given model in a nicely formatted table.
-
-    Args:
-        session: SQLAlchemy session.
-        model: The SQLAlchemy model class to query.
-        title (str): Title to display for the entries.
+    Query and print all entries for a given model in a formatted table.
     """
     entries = session.query(model).all()
     if not entries:
@@ -214,11 +177,7 @@ def print_entries(session, model, title: str) -> None:
 
 def clear_existing_entries(session, schema: str) -> None:
     """
-    Remove all existing entries from all tables in the database using TRUNCATE ... CASCADE.
-
-    Args:
-        session: SQLAlchemy session.
-        schema (str): The schema name to clear.
+    Remove all existing entries from all tables using TRUNCATE ... CASCADE.
     """
     truncate_query = text(f"""
         TRUNCATE TABLE {schema}.content_relation,
@@ -237,10 +196,8 @@ def clear_existing_entries(session, schema: str) -> None:
 
 def main():
     """
-    Main function to parse command-line arguments, optionally clear existing data,
-    generate fake data, insert it into the database, and print out the added entries in a formatted table.
-
-    If the --clear flag is used, the script will only clear the data and not add any new entries.
+    Main function to parse arguments, optionally clear existing data,
+    generate fake data, insert it, and print the results.
     """
     parser = argparse.ArgumentParser(
         description="Populate the database with mock data using environment variables or an optional JSON config file."

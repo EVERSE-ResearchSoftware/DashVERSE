@@ -18,9 +18,6 @@ def load_config(file_path: Optional[str] = None) -> Dict[str, str]:
 
     Recognised environment variables:
         DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
-
-    Args:
-        file_path: Optional path to a JSON file containing the same keys.
     """
     if file_path:
         config_path = Path(file_path)
@@ -53,5 +50,4 @@ def build_database_url(config: Dict[str, str]) -> str:
     return f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
 
-#: The default schema name used in the database.
-DEFAULT_SCHEMA_NAME = "everse"
+DEFAULT_SCHEMA_NAME = "api"
