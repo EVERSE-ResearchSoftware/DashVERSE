@@ -9,9 +9,11 @@ RUN set -ex; \
 
 COPY requirements.txt .
 
-# Copy your Python scripts and submodules
+# python scripts for ORM-based init
 COPY *.py .
 COPY everse_db ./everse_db
 
-# Command to execute your Python script (this will be overridden by Kubernetes Job)
+# sql schema files (applied in order by db-init job)
+COPY sql/ ./sql/
+
 CMD ["python3", "main.py"]
