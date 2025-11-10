@@ -16,7 +16,6 @@ SELECT
 FROM assessment_raw a;
 
 -- checks detailed view (unnested)
--- debug: check join output against raw payload
 CREATE OR REPLACE VIEW checks_detailed AS
 SELECT
   a.id AS assessment_id,
