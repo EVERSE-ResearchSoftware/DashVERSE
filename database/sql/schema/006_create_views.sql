@@ -34,7 +34,11 @@ SELECT
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
-LEFT JOIN dimensions d ON i.quality_dimension = d.identifier;
+LEFT JOIN dimensions d ON d.identifier = split_part(
+  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
+       THEN i.quality_dimension::jsonb->0->>'@id'
+       ELSE i.quality_dimension::jsonb->>'@id'
+  END, '/', -1);
 
 -- assessment summary per software
 CREATE OR REPLACE VIEW assessment_summary AS
@@ -66,7 +70,11 @@ SELECT
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
-LEFT JOIN dimensions d ON i.quality_dimension = d.identifier
+LEFT JOIN dimensions d ON d.identifier = split_part(
+  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
+       THEN i.quality_dimension::jsonb->0->>'@id'
+       ELSE i.quality_dimension::jsonb->>'@id'
+  END, '/', -1)
 WHERE d.name IS NOT NULL
 GROUP BY d.name, d.identifier;
 
@@ -83,7 +91,11 @@ SELECT
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
-LEFT JOIN dimensions d ON i.quality_dimension = d.identifier
+LEFT JOIN dimensions d ON d.identifier = split_part(
+  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
+       THEN i.quality_dimension::jsonb->0->>'@id'
+       ELSE i.quality_dimension::jsonb->>'@id'
+  END, '/', -1)
 WHERE i.identifier IS NOT NULL
 GROUP BY i.identifier, i.name, i.quality_dimension, d.name, check_item->'status'->>'@id';
 
@@ -99,7 +111,11 @@ SELECT
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
-LEFT JOIN dimensions d ON i.quality_dimension = d.identifier
+LEFT JOIN dimensions d ON d.identifier = split_part(
+  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
+       THEN i.quality_dimension::jsonb->0->>'@id'
+       ELSE i.quality_dimension::jsonb->>'@id'
+  END, '/', -1)
 WHERE d.name IS NOT NULL
 GROUP BY a.payload->'assessedSoftware'->>'name', d.name;
 
@@ -134,7 +150,11 @@ SELECT
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
-LEFT JOIN dimensions d ON i.quality_dimension = d.identifier
+LEFT JOIN dimensions d ON d.identifier = split_part(
+  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
+       THEN i.quality_dimension::jsonb->0->>'@id'
+       ELSE i.quality_dimension::jsonb->>'@id'
+  END, '/', -1)
 WHERE check_item->'status'->>'@id' LIKE '%Fail%'
   AND i.identifier IS NOT NULL
 GROUP BY i.identifier, i.name, d.name
