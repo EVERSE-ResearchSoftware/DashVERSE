@@ -44,8 +44,9 @@ redis:
 
 configOverrides:
   secret: |
-    SECRET_KEY = "${superset_secret_key}"
-    SQLALCHEMY_DATABASE_URI = "postgresql://${db_user}:${db_pass}@${db_host}:${db_port}/${db_name}"
+    import os
+    SECRET_KEY = os.environ.get('SECRET_KEY', '')
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{os.environ.get('DB_USER')}:{os.environ.get('DB_PASS')}@{os.environ.get('DB_HOST')}:{os.environ.get('DB_PORT')}/{os.environ.get('DB_NAME')}"
   embedding: |
     # allow dashboard embedding in iframes
     ENABLE_CORS = True
@@ -76,13 +77,13 @@ extraEnvRaw:
   - name: DB_PASS
     valueFrom:
       secretKeyRef:
-        name: ${secret_name}
-        key: ${password_key}
+        name: "${secret_name}"
+        key: "${password_key}"
   - name: SECRET_KEY
     valueFrom:
       secretKeyRef:
-        name: ${secret_name}
-        key: ${superset_secret_key}
+        name: "${secret_name}"
+        key: "${superset_secret_key}"
 
 init:
   enabled: true
@@ -92,7 +93,7 @@ init:
     firstname: Admin
     lastname: User
     email: admin@dashverse.local
-    password: ${admin_password}
+    password: "${admin_password}"
 
 bootstrapScript: |
   #!/bin/bash
