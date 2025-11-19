@@ -73,3 +73,14 @@ module "superset" {
   db_pass        = module.secrets.postgres_password
   admin_password = module.secrets.superset_admin_password
 }
+
+# sync cronjob for everse data
+module "sync" {
+  source = "./modules/sync"
+
+  namespace    = module.namespace.name
+  db_host      = module.postgresql.host
+  db_name      = var.postgres_db
+  db_user      = var.postgres_user
+  secrets_name = module.secrets.secret_name
+}
