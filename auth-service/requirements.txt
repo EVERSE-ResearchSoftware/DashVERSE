@@ -1,0 +1,37 @@
+# Core Framework & Server
+fastapi==0.120.0
+uvicorn[standard]==0.32.1
+gunicorn==23.0.0
+
+# Authentication & Security
+pyjwt==2.10.1
+passlib[argon2]==1.7.4
+
+# Database
+sqlalchemy==2.0.44
+psycopg2-binary==2.9.10
+alembic==1.14.0
+
+# Web UI
+jinja2==3.1.5
+python-multipart==0.0.20
+
+# Rate Limiting
+slowapi==0.1.9
+
+# Validation
+pydantic==2.12.0
+pydantic-settings==2.7.0
+email-validator==2.2.0
+
+# Environment & Configuration
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1
+
+# Development
+black==24.10.0
+ruff==0.8.4
