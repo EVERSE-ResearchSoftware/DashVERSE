@@ -6,6 +6,7 @@ gunicorn==23.0.0
 # Authentication & Security
 pyjwt==2.10.1
 passlib[argon2]==1.7.4
+argon2-cffi==23.1.0
 
 # Database
 sqlalchemy==2.0.44
