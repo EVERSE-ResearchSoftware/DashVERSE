@@ -4,12 +4,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
+from app.core.database import engine, Base
+from app.api import auth
+
 logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting up auth-service...")
+
+    # Create database tables
+    logger.info("Creating database tables...")
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
+
     yield
     logger.info("Shutting down auth-service...")
 
@@ -30,6 +39,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register API routers
+app.include_router(auth.router)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health"])
