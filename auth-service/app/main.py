@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.core.database import engine, Base
-from app.api import auth
+from app.api import auth, tokens
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,7 @@ app.add_middleware(
 
 # Register API routers
 app.include_router(auth.router)
+app.include_router(tokens.router)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health"])

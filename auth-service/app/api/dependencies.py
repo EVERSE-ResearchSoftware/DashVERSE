@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.models.user import User
+from app.models.token import Token
 
 # HTTP Bearer token scheme
 security = HTTPBearer()
@@ -38,6 +39,31 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token payload",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Check if token exists in database and is not revoked
+    # API tokens MUST be stored in database (session tokens not valid for API)
+    jti = payload.get("jti")
+    if not jti:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token: missing JTI",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    token_record = db.query(Token).filter(Token.jti == jti).first()
+    if not token_record:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token: not found in database",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if token_record.is_revoked:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

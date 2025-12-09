@@ -4,6 +4,12 @@ from sqlalchemy.exc import IntegrityError
 
 from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token, validate_password_strength
+from app.core.lockout import (
+    check_and_handle_login_attempt,
+    record_failed_login,
+    clear_failed_attempts
+)
+from app.api.dependencies import get_client_ip
 from app.models.user import User
 from app.models.token import Token
 from app.schemas.user import UserCreate, UserLogin, UserResponse
@@ -63,9 +69,18 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)) -> UserR
 
 @router.post("/login", response_model=TokenWithJWT)
 def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)) -> TokenWithJWT:
+    client_ip = get_client_ip(request)
+
+    is_allowed, error_msg, locked_until = check_and_handle_login_attempt(
+        db, login_data.username, client_ip
+    )
+    if not is_allowed:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=error_msg)
+
     user = db.query(User).filter(User.username == login_data.username).first()
 
     if not user or not verify_password(login_data.password, user.hashed_password):
+        record_failed_login(db, login_data.username, client_ip)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -74,6 +89,8 @@ def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)
 
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User account is inactive")
+
+    clear_failed_attempts(db, login_data.username)
 
     jwt_token, jti, expires_at = create_access_token(
         user_id=user.id,
