@@ -15,8 +15,6 @@ pwd_context = CryptContext(
     argon2__parallelism=4,  # 4 parallel threads
 )
 
-# hardcoded for quick testing, will move to config later
-SECRET_KEY = "dev-secret-key-change-me-in-production-1234567890"
 
 
 def hash_password(password):
@@ -62,7 +60,7 @@ def create_access_token(
 
     encoded_jwt = jwt.encode(
         to_encode,
-        SECRET_KEY,
+        settings.JWT_SECRET,
         algorithm=settings.JWT_ALGORITHM
     )
 
@@ -73,7 +71,7 @@ def decode_access_token(token: str) -> Optional[dict]:
     try:
         payload = jwt.decode(
             token,
-            SECRET_KEY,
+            settings.JWT_SECRET,
             algorithms=[settings.JWT_ALGORITHM]
         )
         return payload
@@ -87,7 +85,7 @@ def verify_token(token: str) -> tuple[bool, Optional[dict], Optional[str]]:
     try:
         payload = jwt.decode(
             token,
-            SECRET_KEY,
+            settings.JWT_SECRET,
             algorithms=[settings.JWT_ALGORITHM]
         )
         return True, payload, None

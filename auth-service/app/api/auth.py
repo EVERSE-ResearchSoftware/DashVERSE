@@ -5,7 +5,9 @@ from sqlalchemy.exc import IntegrityError
 from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token, validate_password_strength
 from app.models.user import User
+from app.models.token import Token
 from app.schemas.user import UserCreate, UserLogin, UserResponse
+from app.schemas.token import TokenWithJWT
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -59,8 +61,8 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)) -> UserR
     return UserResponse.model_validate(new_user)
 
 
-@router.post("/login")
-def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)):
+@router.post("/login", response_model=TokenWithJWT)
+def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)) -> TokenWithJWT:
     user = db.query(User).filter(User.username == login_data.username).first()
 
     if not user or not verify_password(login_data.password, user.hashed_password):
@@ -79,9 +81,19 @@ def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)
         is_superuser=user.is_superuser
     )
 
-    return {
-        "access_token": jwt_token,
-        "token_type": "bearer",
-        "jti": jti,
-        "expires_at": expires_at.isoformat()
-    }
+    token_record = Token(user_id=user.id, jti=jti, expires_at=expires_at, is_revoked=False)
+    db.add(token_record)
+    db.commit()
+    db.refresh(token_record)
+
+    return TokenWithJWT(
+        id=token_record.id,
+        user_id=token_record.user_id,
+        token_name=token_record.token_name,
+        jti=token_record.jti,
+        is_revoked=token_record.is_revoked,
+        created_at=token_record.created_at,
+        expires_at=token_record.expires_at,
+        access_token=jwt_token,
+        token_type="bearer"
+    )
