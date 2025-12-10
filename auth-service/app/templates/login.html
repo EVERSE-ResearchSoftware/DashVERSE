@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Login - DashVERSE Auth Service{% endblock %}
+
+{% block content %}
+    <h2>Login to Your Account</h2>
+
+    {% if error %}
+        <div class="alert alert-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if message %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <form method="POST" action="/login">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                autofocus
+                value="{{ username or '' }}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+            >
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p class="text-center" style="margin-top: 1.5rem;">
+        Don't have an account? <a href="/register" class="link">Register here</a>
+    </p>
+{% endblock %}
