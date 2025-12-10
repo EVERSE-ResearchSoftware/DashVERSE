@@ -4,8 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
+from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import auth, tokens
+from app.core.logging_config import configure_logging
+from app.api import auth, tokens, web
+
+# Configure logging with automatic secret masking
+configure_logging(level=settings.LOG_LEVEL)
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +48,7 @@ app.add_middleware(
 # Register API routers
 app.include_router(auth.router)
 app.include_router(tokens.router)
+app.include_router(web.router)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health"])
@@ -70,6 +76,18 @@ async def root():
             "health": "/health",
             "api_docs": "/docs",
             "openapi": "/openapi.json"
+        },
+        "api": {
+            "authentication": {
+                "register": "POST /api/auth/register",
+                "login": "POST /api/auth/login"
+            },
+            "tokens": {
+                "generate": "POST /api/tokens/",
+                "list": "GET /api/tokens/",
+                "revoke": "POST /api/tokens/revoke",
+                "delete": "DELETE /api/tokens/{token_id}"
+            }
         }
     }
 
