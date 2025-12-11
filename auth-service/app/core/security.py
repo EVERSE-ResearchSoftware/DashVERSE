@@ -53,6 +53,7 @@ def create_access_token(
         "username": username,
         "is_superuser": is_superuser,
         "role": "web_user",  # role for postgrest
+        "aud": "postgrest",
         "exp": expire,
         "iat": datetime.utcnow(),
         "jti": jti,
@@ -72,7 +73,8 @@ def decode_access_token(token: str) -> Optional[dict]:
         payload = jwt.decode(
             token,
             settings.JWT_SECRET,
-            algorithms=[settings.JWT_ALGORITHM]
+            algorithms=[settings.JWT_ALGORITHM],
+            audience="postgrest"
         )
         return payload
     except jwt.ExpiredSignatureError:
