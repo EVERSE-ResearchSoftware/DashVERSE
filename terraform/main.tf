@@ -84,3 +84,18 @@ module "sync" {
   db_user      = var.postgres_user
   secrets_name = module.secrets.secret_name
 }
+
+# auth service for jwt token generation
+module "auth_service" {
+  source = "./modules/auth-service"
+
+  namespace_name = module.namespace.name
+  common_labels  = var.common_labels
+  secret_name    = module.secrets.secret_name
+  postgres_host  = module.postgresql.host
+  database_name  = var.postgres_db
+  database_user  = var.postgres_user
+  jwt_secret_key = "jwt-secret"
+
+  module_depends_on = [module.postgresql]
+}
