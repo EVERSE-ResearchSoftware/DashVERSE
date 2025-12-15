@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import os
@@ -51,5 +51,26 @@ async def home(request: Request):
             "request": request,
             "dashboards": DASHBOARDS,
             "current_dashboard": None
+        }
+    )
+
+
+@router.get("/dashboard/{slug}", response_class=HTMLResponse)
+async def dashboard(request: Request, slug: str):
+    if slug not in DASHBOARDS:
+        raise HTTPException(status_code=404, detail="Dashboard not found")
+
+    dashboard_info = DASHBOARDS[slug]
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "slug": slug,
+            "dashboard": dashboard_info,
+            "embed_url": "",
+            "superset_external_url": "",
+            "dashboards": DASHBOARDS,
+            "current_dashboard": slug
         }
     )
