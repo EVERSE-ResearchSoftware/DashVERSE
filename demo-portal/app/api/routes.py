@@ -124,6 +124,18 @@ async def concepts(request: Request):
     )
 
 
+@router.get("/data", response_class=HTMLResponse)
+async def data(request: Request):
+    return templates.TemplateResponse(
+        "data.html",
+        {
+            "request": request,
+            "dashboards": DASHBOARDS,
+            "current_dashboard": None,
+        },
+    )
+
+
 @router.get("/dashboard/{slug}", response_class=HTMLResponse)
 async def dashboard(request: Request, slug: str):
     if slug not in DASHBOARDS:
