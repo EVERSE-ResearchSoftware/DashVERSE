@@ -4,6 +4,8 @@ from fastapi.templating import Jinja2Templates
 import os
 import json
 
+from app.core.config import settings
+
 router = APIRouter()
 
 templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
@@ -51,6 +53,7 @@ async def home(request: Request):
         {
             "request": request,
             "dashboards": DASHBOARDS,
+            "superset_url": settings.superset_url,
             "current_dashboard": None
         }
     )
@@ -143,14 +146,18 @@ async def dashboard(request: Request, slug: str):
 
     dashboard_info = DASHBOARDS[slug]
 
+    # use external URL if configured, otherwise leave empty for JS fallback
+    superset_base = settings.superset_external_url or ""
+    embed_url = f"{superset_base}/superset/dashboard/{slug}/?standalone=2" if superset_base else ""
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
             "slug": slug,
             "dashboard": dashboard_info,
-            "embed_url": "",
-            "superset_external_url": "",
+            "embed_url": embed_url,
+            "superset_external_url": superset_base,
             "dashboards": DASHBOARDS,
             "current_dashboard": slug
         }
