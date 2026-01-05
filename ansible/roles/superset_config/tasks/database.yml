@@ -1,0 +1,78 @@
+---
+- name: Check if database connection exists
+  uri:
+    url: "{{ superset_api }}/database/?q=(page_size:100)"
+    method: GET
+    headers:
+      Cookie: "{{ session_cookie }}"
+    status_code: 200
+  register: existing_databases
+
+- name: Debug existing databases
+  debug:
+    msg: "Looking for '{{ database_name }}' in: {{ existing_databases.json.result | map(attribute='database_name') | list }}"
+
+- name: Find existing database by name
+  set_fact:
+    existing_db_list: "{{ existing_databases.json.result | selectattr('database_name', 'equalto', database_name) | list }}"
+
+- name: Set existing database
+  set_fact:
+    existing_db: "{{ existing_db_list | first }}"
+  when: existing_db_list | length > 0
+
+- name: Set existing database to empty
+  set_fact:
+    existing_db: null
+  when: existing_db_list | length == 0
+
+- name: Create database connection
+  uri:
+    url: "{{ superset_api }}/database/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      database_name: "{{ database_name }}"
+      sqlalchemy_uri: "postgresql://{{ database_user }}:{{ database_password }}@{{ database_host }}:{{ database_port }}/{{ database_db }}"
+      expose_in_sqllab: true
+      allow_ctas: false
+      allow_cvas: false
+      allow_dml: false
+      allow_run_async: true
+      extra: "{{ {'schemas_allowed_for_file_upload': [database_schema]} | to_json }}"
+    status_code: [200, 201, 422]
+  when: existing_db_list | length == 0
+  register: new_database
+
+- name: Set database ID from existing
+  set_fact:
+    database_id: "{{ existing_db.id }}"
+  when: existing_db_list | length > 0
+
+- name: Set database ID from new
+  set_fact:
+    database_id: "{{ new_database.json.id }}"
+  when: existing_db_list | length == 0 and new_database is defined and new_database.status is defined and new_database.status in [200, 201]
+
+- name: Get all databases after creation (for 422 case)
+  uri:
+    url: "{{ superset_api }}/database/?q=(page_size:100)"
+    method: GET
+    headers:
+      Cookie: "{{ session_cookie }}"
+    status_code: 200
+  register: all_databases
+  when: database_id is not defined and existing_db_list | length == 0
+
+- name: Find database ID from all databases
+  set_fact:
+    database_id: "{{ (all_databases.json.result | selectattr('database_name', 'equalto', database_name) | list | first).id }}"
+  when: database_id is not defined and all_databases is defined and all_databases.json is defined and (all_databases.json.result | selectattr('database_name', 'equalto', database_name) | list | length > 0)
+
+- name: Debug database ID
+  debug:
+    msg: "Database ID for '{{ database_name }}': {{ database_id }}"

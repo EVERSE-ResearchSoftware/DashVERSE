@@ -1,0 +1,56 @@
+---
+- name: Configure Superset dashboards
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    superset_api: "{{ superset_url }}/api/v1"
+
+  pre_tasks:
+    - name: Get access token
+      uri:
+        url: "{{ superset_api }}/security/login"
+        method: POST
+        body_format: json
+        body:
+          username: "{{ superset_username }}"
+          password: "{{ superset_password }}"
+          provider: db
+        status_code: 200
+      register: login_response
+
+    - name: Set access token
+      set_fact:
+        access_token: "{{ login_response.json.access_token }}"
+
+    - name: Login via form for session cookie
+      uri:
+        url: "{{ superset_url }}/login/"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          username: "{{ superset_username }}"
+          password: "{{ superset_password }}"
+        follow_redirects: all
+        status_code: [200, 302]
+      register: form_login_response
+
+    - name: Set session cookie from form login
+      set_fact:
+        session_cookie: "{{ form_login_response.cookies_string }}"
+
+    - name: Get CSRF token with session
+      uri:
+        url: "{{ superset_api }}/security/csrf_token/"
+        method: GET
+        headers:
+          Cookie: "{{ session_cookie }}"
+        status_code: 200
+      register: csrf_response
+
+    - name: Set CSRF token
+      set_fact:
+        csrf_token: "{{ csrf_response.json.result }}"
+
+  roles:
+    - superset_config

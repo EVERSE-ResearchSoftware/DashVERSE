@@ -1,0 +1,15 @@
+---
+- name: Configure database connection
+  include_tasks: database.yml
+
+- name: Configure datasets
+  include_tasks: datasets.yml
+
+- name: Configure charts
+  include_tasks: charts.yml
+
+- name: Configure dashboards
+  include_tasks: dashboards.yml
+
+- name: Configure permissions
+  include_tasks: permissions.yml
