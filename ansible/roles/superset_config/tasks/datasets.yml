@@ -1,0 +1,83 @@
+---
+- name: Get existing datasets
+  uri:
+    url: "{{ superset_api }}/dataset/?q=(page_size:1000)"
+    method: GET
+    headers:
+      Cookie: "{{ session_cookie }}"
+    status_code: 200
+  register: existing_datasets
+
+- name: Create datasets
+  uri:
+    url: "{{ superset_api }}/dataset/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      database: "{{ database_id }}"
+      table_name: "{{ item.table }}"
+      schema: "{{ item.schema }}"
+    status_code: [200, 201, 422]
+  loop: "{{ datasets }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: existing_datasets.json.result | selectattr('table_name', 'equalto', item.table) | list | length == 0
+  register: created_datasets
+
+- name: Get updated dataset list
+  uri:
+    url: "{{ superset_api }}/dataset/?q=(page_size:1000)"
+    method: GET
+    headers:
+      Cookie: "{{ session_cookie }}"
+    status_code: 200
+  register: all_datasets
+
+- name: Debug all datasets response
+  debug:
+    msg: "Found {{ all_datasets.json.result | length }} datasets: {{ all_datasets.json.result | map(attribute='table_name') | list }}"
+
+- name: Initialize dataset ID mapping
+  set_fact:
+    dataset_ids: {}
+
+- name: Build dataset ID mapping
+  set_fact:
+    dataset_ids: "{{ dataset_ids | combine({item.table_name: item.id}) }}"
+  loop: "{{ all_datasets.json.result | default([]) }}"
+  loop_control:
+    label: "{{ item.table_name }}"
+  when: all_datasets.json.result | default([]) | length > 0
+
+- name: Query dataset IDs via SQLLab (workaround for API bug)
+  uri:
+    url: "{{ superset_api }}/sqllab/execute/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      database_id: 1
+      schema: "public"
+      sql: "SELECT id, table_name FROM tables WHERE database_id = {{ database_id }}"
+    status_code: 200
+  register: sqllab_datasets
+  when: dataset_ids | length == 0
+
+- name: Build dataset ID mapping from SQLLab
+  set_fact:
+    dataset_ids: "{{ dataset_ids | combine({item.table_name: item.id}) }}"
+  loop: "{{ sqllab_datasets.json.data | default([]) }}"
+  loop_control:
+    label: "{{ item.table_name }}"
+  when: sqllab_datasets is defined and sqllab_datasets.json.data | default([]) | length > 0
+
+- name: Debug dataset IDs
+  debug:
+    var: dataset_ids
