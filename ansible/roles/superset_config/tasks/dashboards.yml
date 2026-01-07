@@ -1,0 +1,365 @@
+---
+- name: Get existing dashboards
+  uri:
+    url: "{{ superset_api }}/dashboard/"
+    method: GET
+    headers:
+      Cookie: "{{ session_cookie }}"
+    status_code: 200
+  register: existing_dashboards
+
+# ==========================================================
+# Policy Maker Dashboard (10 charts)
+# ==========================================================
+
+- name: Create Policy Maker dashboard
+  uri:
+    url: "{{ superset_api }}/dashboard/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      dashboard_title: "Policy Maker"
+      slug: "policy-maker"
+      published: true
+      json_metadata: |
+        {
+          "expanded_slices": {},
+          "refresh_frequency": 0,
+          "color_scheme": "supersetColors",
+          "label_colors": {},
+          "shared_label_colors": {},
+          "cross_filters_enabled": true,
+          "default_filters": "{}"
+        }
+    status_code: [200, 201]
+  when: existing_dashboards.json.result | selectattr('slug', 'equalto', 'policy-maker') | list | length == 0
+  register: policy_maker_created
+
+# ==========================================================
+# Principal Investigator Dashboard (10 charts)
+# ==========================================================
+
+- name: Create Principal Investigator dashboard
+  uri:
+    url: "{{ superset_api }}/dashboard/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      dashboard_title: "Principal Investigator"
+      slug: "principal-investigator"
+      published: true
+      json_metadata: |
+        {
+          "expanded_slices": {},
+          "refresh_frequency": 0,
+          "color_scheme": "supersetColors",
+          "label_colors": {},
+          "shared_label_colors": {},
+          "cross_filters_enabled": true,
+          "default_filters": "{}"
+        }
+    status_code: [200, 201]
+  when: existing_dashboards.json.result | selectattr('slug', 'equalto', 'principal-investigator') | list | length == 0
+  register: pi_created
+
+# ==========================================================
+# Research Software Engineer Dashboard (12 charts)
+# ==========================================================
+
+- name: Create Research Software Engineer dashboard
+  uri:
+    url: "{{ superset_api }}/dashboard/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      dashboard_title: "Research Software Engineer"
+      slug: "research-software-engineer"
+      published: true
+      json_metadata: |
+        {
+          "expanded_slices": {},
+          "refresh_frequency": 0,
+          "color_scheme": "supersetColors",
+          "label_colors": {},
+          "shared_label_colors": {},
+          "cross_filters_enabled": true,
+          "default_filters": "{}"
+        }
+    status_code: [200, 201]
+  when: existing_dashboards.json.result | selectattr('slug', 'equalto', 'research-software-engineer') | list | length == 0
+  register: rse_created
+
+# ==========================================================
+# Researcher Who Codes Dashboard (10 charts)
+# ==========================================================
+
+- name: Create Researcher Who Codes dashboard
+  uri:
+    url: "{{ superset_api }}/dashboard/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      dashboard_title: "Researcher Who Codes"
+      slug: "researcher-who-codes"
+      published: true
+      json_metadata: |
+        {
+          "expanded_slices": {},
+          "refresh_frequency": 0,
+          "color_scheme": "supersetColors",
+          "label_colors": {},
+          "shared_label_colors": {},
+          "cross_filters_enabled": true,
+          "default_filters": "{}"
+        }
+    status_code: [200, 201]
+  when: existing_dashboards.json.result | selectattr('slug', 'equalto', 'researcher-who-codes') | list | length == 0
+  register: rwc_created
+
+# ==========================================================
+# Trainer Dashboard (12 charts)
+# ==========================================================
+
+- name: Create Trainer dashboard
+  uri:
+    url: "{{ superset_api }}/dashboard/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      dashboard_title: "Trainer"
+      slug: "trainer"
+      published: true
+      json_metadata: |
+        {
+          "expanded_slices": {},
+          "refresh_frequency": 0,
+          "color_scheme": "supersetColors",
+          "label_colors": {},
+          "shared_label_colors": {},
+          "cross_filters_enabled": true,
+          "default_filters": "{}"
+        }
+    status_code: [200, 201]
+  when: existing_dashboards.json.result | selectattr('slug', 'equalto', 'trainer') | list | length == 0
+  register: trainer_created
+
+# ==========================================================
+# Link charts to dashboards using sequential IDs
+# Charts are created in order: PM(1-10), PI(11-20), RSE(21-32), RWC(33-42), TR(43-54)
+# ==========================================================
+
+- name: Get dashboard IDs from database
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -t -c "
+    SELECT id FROM dashboards WHERE slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer') ORDER BY slug;"
+  register: dashboard_ids_result
+
+- name: Populate dashboard_slices table
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    DELETE FROM dashboard_slices WHERE dashboard_id IN (SELECT id FROM dashboards WHERE slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer'));
+    INSERT INTO dashboard_slices (dashboard_id, slice_id)
+    SELECT d.id, s.id
+    FROM dashboards d, slices s
+    WHERE d.slug = 'policy-maker'
+    AND s.slice_name IN ('Total Software Projects', 'Total Assessments', 'Assessment Activity Over Time', 'Quality by Software', 'Compliance Heatmap', 'Dimension Coverage', 'Quality Dimension Profile', 'Top Performing Software', 'Pass Rate by Dimension', 'Assessment Summary')
+    ON CONFLICT DO NOTHING;
+    INSERT INTO dashboard_slices (dashboard_id, slice_id)
+    SELECT d.id, s.id
+    FROM dashboards d, slices s
+    WHERE d.slug = 'principal-investigator'
+    AND s.slice_name IN ('Projects Overview', 'Quality Across Projects', 'Assessment Timeline', 'Dimensions by Project', 'Failed Checks Requiring Action', 'Project Health Gauge', 'Check Status Distribution', 'Recent Assessments', 'Quality Improvement Tracking', 'Check Distribution Treemap')
+    ON CONFLICT DO NOTHING;
+    INSERT INTO dashboard_slices (dashboard_id, slice_id)
+    SELECT d.id, s.id
+    FROM dashboards d, slices s
+    WHERE d.slug = 'research-software-engineer'
+    AND s.slice_name IN ('Total Checks', 'Pass Rate KPI', 'Technical Debt Heatmap', 'Check Results Pie', 'Coverage by Dimension', 'Checking Tools Usage', 'Failed Checks Detail', 'Pass Rate Trend', 'Software by Language', 'Common Issues Bar', 'Quality Dimensions Table', 'Quality Indicators Table')
+    ON CONFLICT DO NOTHING;
+    INSERT INTO dashboard_slices (dashboard_id, slice_id)
+    SELECT d.id, s.id
+    FROM dashboards d, slices s
+    WHERE d.slug = 'researcher-who-codes'
+    AND s.slice_name IN ('My Quality Score', 'Check Pass Rate Gauge', 'Quality Over Time', 'My Quality Profile', 'Action Items', 'Indicator Results', 'Focus Areas', 'Top Performing Projects', 'Easy Improvements', 'Checks by Status')
+    ON CONFLICT DO NOTHING;
+    INSERT INTO dashboard_slices (dashboard_id, slice_id)
+    SELECT d.id, s.id
+    FROM dashboards d, slices s
+    WHERE d.slug = 'trainer'
+    AND s.slice_name IN ('Active Assessments', 'Average Quality Score', 'Quality Improvement Timeline', 'Common Failed Checks', 'Competency Heatmap', 'Activity by Topic Treemap', 'Software Categories Pie', 'Training Effectiveness', 'Progress Tracking Table', 'Knowledge Gaps Sunburst', 'Topics Covered Bar', 'High Achievers Table')
+    ON CONFLICT DO NOTHING;
+    "
+  register: dashboard_slices_result
+
+- name: Show dashboard-chart linkage result
+  debug:
+    var: dashboard_slices_result.stdout_lines
+
+- name: Update dashboard position_json with proper chart layout
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    DO \$\$
+    DECLARE
+        dash_record RECORD;
+        chart_record RECORD;
+        new_position_json jsonb;
+        row_num INTEGER;
+        col_num INTEGER;
+        chart_key TEXT;
+        row_key TEXT;
+        chart_count INTEGER;
+        grid_children jsonb;
+    BEGIN
+        FOR dash_record IN
+            SELECT id, slug FROM dashboards
+            WHERE slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer')
+        LOOP
+            new_position_json := '{\"GRID_ID\": {\"id\": \"GRID_ID\", \"type\": \"GRID\", \"children\": [], \"parents\": [\"ROOT_ID\"]}, \"ROOT_ID\": {\"id\": \"ROOT_ID\", \"type\": \"ROOT\", \"children\": [\"GRID_ID\"]}, \"HEADER_ID\": {\"id\": \"HEADER_ID\", \"type\": \"HEADER\", \"meta\": {\"text\": \"Dashboard\"}}}'::jsonb;
+
+            row_num := 1;
+            col_num := 0;
+            chart_count := 0;
+            grid_children := '[]'::jsonb;
+
+            FOR chart_record IN
+                SELECT s.id, s.slice_name, s.viz_type
+                FROM slices s
+                JOIN dashboard_slices ds ON s.id = ds.slice_id
+                WHERE ds.dashboard_id = dash_record.id
+                ORDER BY s.id
+            LOOP
+                chart_count := chart_count + 1;
+                chart_key := 'CHART-' || chart_count;
+                row_key := 'ROW-' || row_num;
+
+                IF col_num = 0 THEN
+                    new_position_json := jsonb_set(new_position_json, ARRAY[row_key], jsonb_build_object(
+                        'id', row_key,
+                        'type', 'ROW',
+                        'meta', jsonb_build_object('background', 'BACKGROUND_TRANSPARENT'),
+                        'parents', jsonb_build_array('ROOT_ID', 'GRID_ID'),
+                        'children', '[]'::jsonb
+                    ));
+                    grid_children := grid_children || to_jsonb(row_key);
+                END IF;
+
+                new_position_json := jsonb_set(new_position_json, ARRAY[chart_key], jsonb_build_object(
+                    'id', chart_key,
+                    'type', 'CHART',
+                    'meta', jsonb_build_object(
+                        'chartId', chart_record.id,
+                        'sliceName', chart_record.slice_name,
+                        'width', 6,
+                        'height', CASE WHEN chart_record.viz_type = 'big_number_total' THEN 35 ELSE 50 END
+                    ),
+                    'parents', jsonb_build_array('ROOT_ID', 'GRID_ID', row_key),
+                    'children', '[]'::jsonb
+                ));
+
+                new_position_json := jsonb_set(
+                    new_position_json,
+                    ARRAY[row_key, 'children'],
+                    (new_position_json->row_key->'children') || to_jsonb(chart_key)
+                );
+
+                col_num := col_num + 1;
+                IF col_num >= 2 THEN
+                    col_num := 0;
+                    row_num := row_num + 1;
+                END IF;
+            END LOOP;
+
+            new_position_json := jsonb_set(new_position_json, ARRAY['GRID_ID', 'children'], grid_children);
+            UPDATE dashboards SET position_json = new_position_json::text WHERE id = dash_record.id;
+        END LOOP;
+    END;
+    \$\$;
+    "
+  register: position_json_result
+
+- name: Update expanded_slices to show descriptions by default
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    UPDATE dashboards
+    SET json_metadata = jsonb_set(
+        COALESCE(json_metadata::jsonb, '{}'::jsonb),
+        '{expanded_slices}',
+        (SELECT COALESCE(jsonb_object_agg(s.id::text, true), '{}'::jsonb)
+         FROM slices s
+         JOIN dashboard_slices ds ON s.id = ds.slice_id
+         WHERE ds.dashboard_id = dashboards.id)
+    )::text
+    WHERE slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer');
+    "
+  register: expanded_slices_result
+
+- name: Update chart IDs in position_json
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    DO \$\$
+    DECLARE
+        dash_record RECORD;
+        chart_key TEXT;
+        chart_id INTEGER;
+        new_position_json jsonb;
+    BEGIN
+        FOR dash_record IN
+            SELECT id, slug, position_json::jsonb as pos FROM dashboards
+            WHERE slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer')
+        LOOP
+            new_position_json := dash_record.pos;
+            FOR chart_key IN
+                SELECT key FROM jsonb_object_keys(dash_record.pos) AS key WHERE key LIKE 'CHART-%'
+            LOOP
+                SELECT s.id INTO chart_id
+                FROM slices s
+                WHERE s.slice_name = (dash_record.pos->chart_key->'meta'->>'sliceName');
+
+                IF chart_id IS NOT NULL THEN
+                    new_position_json := jsonb_set(new_position_json, ARRAY[chart_key, 'meta', 'chartId'], to_jsonb(chart_id));
+                END IF;
+            END LOOP;
+            UPDATE dashboards SET position_json = new_position_json::text WHERE id = dash_record.id;
+        END LOOP;
+    END;
+    \$\$;
+    "
+
+- name: Assign Public role to dashboards for anonymous access
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    INSERT INTO dashboard_roles (id, role_id, dashboard_id)
+    SELECT
+        nextval('dashboard_roles_id_seq'),
+        r.id,
+        d.id
+    FROM ab_role r, dashboards d
+    WHERE r.name = 'Public'
+    AND d.slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer')
+    ON CONFLICT DO NOTHING;
+    "
+  register: public_role_result
+
+- name: Show public role assignment result
+  debug:
+    var: public_role_result.stdout_lines
