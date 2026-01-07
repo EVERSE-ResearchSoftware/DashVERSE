@@ -504,3 +504,859 @@
         }
     status_code: [200, 201]
   when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Check Distribution Treemap') | list | length == 0
+
+# ============================================================
+# Research Software Engineer Dashboard Charts (12 charts)
+# ============================================================
+
+- name: "RSE01: Total Checks"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Total Checks"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "big_number_total"
+      params: |
+        {
+          "metric": {"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"},
+          "header_font_size": 0.4,
+          "subheader_font_size": 0.15,
+          "subheader": "Total Checks Performed"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Total Checks') | list | length == 0
+
+- name: "RSE02: Pass Rate KPI"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Pass Rate KPI"
+      datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
+      datasource_type: "table"
+      viz_type: "big_number_total"
+      params: |
+        {
+          "metric": {"label": "pass_rate", "expressionType": "SIMPLE", "column": {"column_name": "pass_rate"}, "aggregate": "AVG"},
+          "header_font_size": 0.4,
+          "subheader_font_size": 0.15,
+          "subheader": "Average Pass Rate %"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Pass Rate KPI') | list | length == 0
+
+- name: "RSE03: Technical Debt Heatmap"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Technical Debt Heatmap"
+      datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
+      datasource_type: "table"
+      viz_type: "heatmap"
+      params: |
+        {
+          "all_columns_x": "software_name",
+          "all_columns_y": "dimension_name",
+          "metric": {"label": "score", "expressionType": "SIMPLE", "column": {"column_name": "score"}, "aggregate": "AVG"},
+          "linear_color_scheme": "greenOrange",
+          "show_values": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Technical Debt Heatmap') | list | length == 0
+
+- name: "RSE04: Check Results Pie"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Check Results Pie"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "pie"
+      params: |
+        {
+          "groupby": ["status"],
+          "metric": {"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"},
+          "color_scheme": "supersetColors",
+          "show_labels": true,
+          "show_legend": true,
+          "donut": true,
+          "innerRadius": 40
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Check Results Pie') | list | length == 0
+
+- name: "RSE05: Coverage by Dimension"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Coverage by Dimension"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "dist_bar"
+      params: |
+        {
+          "groupby": ["dimension_name"],
+          "metrics": [{"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"}],
+          "color_scheme": "supersetColors",
+          "row_limit": 20,
+          "show_bar_value": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Coverage by Dimension') | list | length == 0
+
+- name: "RSE06: Checking Tools Usage"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Checking Tools Usage"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "dist_bar"
+      params: |
+        {
+          "groupby": ["checking_software"],
+          "metrics": [{"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"}],
+          "color_scheme": "supersetColors",
+          "row_limit": 15,
+          "show_bar_value": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Checking Tools Usage') | list | length == 0
+
+- name: "RSE07: Failed Checks Detail"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Failed Checks Detail"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["software_name", "dimension_name", "indicator_name", "status", "output", "evidence"],
+          "row_limit": 100,
+          "table_filter": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Failed Checks Detail') | list | length == 0
+
+- name: "RSE08: Pass Rate Trend"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Pass Rate Trend"
+      datasource_id: "{{ dataset_ids['assessment_trends'] }}"
+      datasource_type: "table"
+      viz_type: "echarts_timeseries_line"
+      params: |
+        {
+          "x_axis": "month",
+          "metrics": [{"label": "assessments", "expressionType": "SIMPLE", "column": {"column_name": "assessments"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "show_legend": true,
+          "y_axis_format": ".0f"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Pass Rate Trend') | list | length == 0
+
+- name: "RSE09: Software by Language"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Software by Language"
+      datasource_id: "{{ dataset_ids['software_languages'] }}"
+      datasource_type: "table"
+      viz_type: "pie"
+      params: |
+        {
+          "groupby": ["language"],
+          "metric": {"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"},
+          "color_scheme": "supersetColors",
+          "show_labels": true,
+          "show_legend": true,
+          "donut": true,
+          "innerRadius": 40
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Software by Language') | list | length == 0
+
+- name: "RSE10: Common Issues Bar"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Common Issues Bar"
+      datasource_id: "{{ dataset_ids['common_issues'] }}"
+      datasource_type: "table"
+      viz_type: "dist_bar"
+      params: |
+        {
+          "groupby": ["indicator_name"],
+          "metrics": [{"label": "failure_count", "expressionType": "SIMPLE", "column": {"column_name": "failure_count"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "row_limit": 15,
+          "show_bar_value": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Common Issues Bar') | list | length == 0
+
+- name: "RSE11: Quality Dimensions Table"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Quality Dimensions Table"
+      datasource_id: "{{ dataset_ids['dimensions'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["name", "description", "status"],
+          "row_limit": 20
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Quality Dimensions Table') | list | length == 0
+
+- name: "RSE12: Quality Indicators Table"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Quality Indicators Table"
+      datasource_id: "{{ dataset_ids['indicators'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["name", "identifier", "description", "status"],
+          "row_limit": 50
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Quality Indicators Table') | list | length == 0
+
+# ============================================================
+# Researcher Who Codes Dashboard Charts (10 charts)
+# ============================================================
+
+- name: "RWC01: My Quality Score"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "My Quality Score"
+      datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
+      datasource_type: "table"
+      viz_type: "big_number_total"
+      params: |
+        {
+          "metric": {"label": "pass_rate", "expressionType": "SIMPLE", "column": {"column_name": "pass_rate"}, "aggregate": "AVG"},
+          "header_font_size": 0.4,
+          "subheader_font_size": 0.15,
+          "subheader": "Average Quality Score"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'My Quality Score') | list | length == 0
+
+- name: "RWC02: Check Pass Rate Gauge"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Check Pass Rate Gauge"
+      datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
+      datasource_type: "table"
+      viz_type: "gauge_chart"
+      params: |
+        {
+          "metric": {"label": "pass_rate", "expressionType": "SIMPLE", "column": {"column_name": "pass_rate"}, "aggregate": "AVG"},
+          "min_val": 0,
+          "max_val": 100,
+          "color_scheme": "supersetColors"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Check Pass Rate Gauge') | list | length == 0
+
+- name: "RWC03: Quality Over Time"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Quality Over Time"
+      datasource_id: "{{ dataset_ids['assessment_trends'] }}"
+      datasource_type: "table"
+      viz_type: "echarts_timeseries_line"
+      params: |
+        {
+          "x_axis": "month",
+          "metrics": [{"label": "assessments", "expressionType": "SIMPLE", "column": {"column_name": "assessments"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "show_legend": false
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Quality Over Time') | list | length == 0
+
+- name: "RWC04: My Quality Profile"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "My Quality Profile"
+      datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
+      datasource_type: "table"
+      viz_type: "pie"
+      params: |
+        {
+          "groupby": ["dimension_name"],
+          "metric": {"label": "passed", "expressionType": "SIMPLE", "column": {"column_name": "passed"}, "aggregate": "SUM"},
+          "color_scheme": "supersetColors",
+          "show_labels": true,
+          "show_legend": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'My Quality Profile') | list | length == 0
+
+- name: "RWC05: Action Items"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Action Items"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["dimension_name", "indicator_name", "status", "output", "evidence"],
+          "row_limit": 20,
+          "table_filter": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Action Items') | list | length == 0
+
+- name: "RWC06: Indicator Results"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Indicator Results"
+      datasource_id: "{{ dataset_ids['indicator_results'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["indicator_name", "status", "occurrences"],
+          "order_by_cols": [["occurrences", false]],
+          "row_limit": 50
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Indicator Results') | list | length == 0
+
+- name: "RWC07: Focus Areas"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Focus Areas"
+      datasource_id: "{{ dataset_ids['common_issues'] }}"
+      datasource_type: "table"
+      viz_type: "dist_bar"
+      params: |
+        {
+          "groupby": ["indicator_name"],
+          "metrics": [{"label": "failure_count", "expressionType": "SIMPLE", "column": {"column_name": "failure_count"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "row_limit": 10,
+          "show_bar_value": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Focus Areas') | list | length == 0
+
+- name: "RWC08: Top Performing Projects"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Top Performing Projects"
+      datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["software_name", "dimension_name", "score"],
+          "order_by_cols": [["score", false]],
+          "row_limit": 10
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Top Performing Projects') | list | length == 0
+
+- name: "RWC09: Easy Improvements"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Easy Improvements"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["indicator_name", "dimension_name", "evidence"],
+          "row_limit": 15,
+          "table_filter": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Easy Improvements') | list | length == 0
+
+- name: "RWC10: Checks by Status"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Checks by Status"
+      datasource_id: "{{ dataset_ids['indicator_results'] }}"
+      datasource_type: "table"
+      viz_type: "pie"
+      params: |
+        {
+          "groupby": ["status"],
+          "metric": {"label": "occurrences", "expressionType": "SIMPLE", "column": {"column_name": "occurrences"}, "aggregate": "SUM"},
+          "color_scheme": "supersetColors",
+          "show_labels": true,
+          "show_legend": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Checks by Status') | list | length == 0
+
+# ============================================================
+# Trainer Dashboard Charts (12 charts)
+# ============================================================
+
+- name: "TR01: Active Assessments"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Active Assessments"
+      datasource_id: "{{ dataset_ids['assessments_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "big_number_total"
+      params: |
+        {
+          "metric": {"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"},
+          "header_font_size": 0.4,
+          "subheader_font_size": 0.15,
+          "subheader": "Total Assessments"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Active Assessments') | list | length == 0
+
+- name: "TR02: Average Quality Score"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Average Quality Score"
+      datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
+      datasource_type: "table"
+      viz_type: "big_number_total"
+      params: |
+        {
+          "metric": {"label": "pass_rate", "expressionType": "SIMPLE", "column": {"column_name": "pass_rate"}, "aggregate": "AVG"},
+          "header_font_size": 0.4,
+          "subheader_font_size": 0.15,
+          "subheader": "Average Pass Rate"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Average Quality Score') | list | length == 0
+
+- name: "TR03: Quality Improvement Timeline"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Quality Improvement Timeline"
+      datasource_id: "{{ dataset_ids['assessment_trends'] }}"
+      datasource_type: "table"
+      viz_type: "echarts_timeseries_line"
+      params: |
+        {
+          "x_axis": "month",
+          "metrics": [{"label": "assessments", "expressionType": "SIMPLE", "column": {"column_name": "assessments"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "show_legend": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Quality Improvement Timeline') | list | length == 0
+
+- name: "TR04: Common Failed Checks"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Common Failed Checks"
+      datasource_id: "{{ dataset_ids['common_issues'] }}"
+      datasource_type: "table"
+      viz_type: "dist_bar"
+      params: |
+        {
+          "groupby": ["indicator_name"],
+          "metrics": [{"label": "failure_count", "expressionType": "SIMPLE", "column": {"column_name": "failure_count"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "row_limit": 15,
+          "show_bar_value": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Common Failed Checks') | list | length == 0
+
+- name: "TR05: Competency Heatmap"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Competency Heatmap"
+      datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
+      datasource_type: "table"
+      viz_type: "heatmap"
+      params: |
+        {
+          "all_columns_x": "software_name",
+          "all_columns_y": "dimension_name",
+          "metric": {"label": "score", "expressionType": "SIMPLE", "column": {"column_name": "score"}, "aggregate": "AVG"},
+          "linear_color_scheme": "greenOrange",
+          "show_values": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Competency Heatmap') | list | length == 0
+
+- name: "TR06: Activity by Topic Treemap"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Activity by Topic Treemap"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "treemap_v2"
+      params: |
+        {
+          "groupby": ["dimension_name", "indicator_name"],
+          "metrics": [{"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"}],
+          "color_scheme": "supersetColors"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Activity by Topic Treemap') | list | length == 0
+
+- name: "TR07: Software Categories Pie"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Software Categories Pie"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "pie"
+      params: |
+        {
+          "groupby": ["dimension_name"],
+          "metric": {"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"},
+          "color_scheme": "supersetColors",
+          "show_labels": true,
+          "show_legend": true,
+          "donut": true,
+          "innerRadius": 40
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Software Categories Pie') | list | length == 0
+
+- name: "TR08: Training Effectiveness"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Training Effectiveness"
+      datasource_id: "{{ dataset_ids['assessment_trends'] }}"
+      datasource_type: "table"
+      viz_type: "echarts_timeseries_line"
+      params: |
+        {
+          "x_axis": "month",
+          "metrics": [{"label": "assessments", "expressionType": "SIMPLE", "column": {"column_name": "assessments"}, "aggregate": "SUM"}],
+          "color_scheme": "supersetColors",
+          "show_legend": true,
+          "y_axis_format": ".0f"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Training Effectiveness') | list | length == 0
+
+- name: "TR09: Progress Tracking Table"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Progress Tracking Table"
+      datasource_id: "{{ dataset_ids['assessments_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["software_name", "date_created", "total_checks"],
+          "order_by_cols": [["date_created", false]],
+          "row_limit": 50
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Progress Tracking Table') | list | length == 0
+
+- name: "TR10: Knowledge Gaps Sunburst"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Knowledge Gaps Sunburst"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "sunburst_v2"
+      params: |
+        {
+          "columns": ["dimension_name", "indicator_name", "status"],
+          "metric": {"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"},
+          "color_scheme": "supersetColors"
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Knowledge Gaps Sunburst') | list | length == 0
+
+- name: "TR11: Topics Covered Bar"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "Topics Covered Bar"
+      datasource_id: "{{ dataset_ids['checks_detailed'] }}"
+      datasource_type: "table"
+      viz_type: "dist_bar"
+      params: |
+        {
+          "groupby": ["dimension_name"],
+          "metrics": [{"label": "count", "expressionType": "SQL", "sqlExpression": "COUNT(*)"}],
+          "color_scheme": "supersetColors",
+          "row_limit": 15,
+          "show_bar_value": true
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'Topics Covered Bar') | list | length == 0
+
+- name: "TR12: High Achievers Table"
+  uri:
+    url: "{{ superset_api }}/chart/"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      slice_name: "High Achievers Table"
+      datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
+      datasource_type: "table"
+      viz_type: "table"
+      params: |
+        {
+          "all_columns": ["software_name", "dimension_name", "score"],
+          "order_by_cols": [["score", false]],
+          "row_limit": 20
+        }
+    status_code: [200, 201]
+  when: existing_charts.json.result | selectattr('slice_name', 'equalto', 'High Achievers Table') | list | length == 0
+
+# ============================================================
+# Get all charts for dashboard creation
+# ============================================================
+
+- name: Get all charts for dashboard creation
+  uri:
+    url: "{{ superset_api }}/chart/?q=(page_size:100)"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ access_token }}"
+    status_code: 200
+  register: all_charts
+
+- name: Build chart ID mapping
+  set_fact:
+    chart_ids: "{{ chart_ids | default({}) | combine({item.slice_name: item.id}) }}"
+  loop: "{{ all_charts.json.result }}"
+  loop_control:
+    label: "{{ item.slice_name }}"
