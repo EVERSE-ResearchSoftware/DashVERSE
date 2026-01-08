@@ -1,0 +1,15 @@
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+  vars:
+    superset_url: "{{ lookup('env', 'SUPERSET_URL') | default('http://localhost:8088', true) }}"
+    superset_username: "{{ lookup('env', 'SUPERSET_USERNAME') | default('admin', true) }}"
+    superset_password: "{{ lookup('env', 'SUPERSET_PASSWORD') | default('admin', true) }}"
+    database_name: "DashVERSE"
+    database_host: "{{ lookup('env', 'DATABASE_HOST') | default('postgresql.dashverse.svc.cluster.local', true) }}"
+    database_port: "{{ lookup('env', 'DATABASE_PORT') | default(5432, true) }}"
+    database_user: "{{ lookup('env', 'DATABASE_USER') | default('dashverse', true) }}"
+    database_password: "{{ lookup('env', 'DATABASE_PASSWORD') | default('dashverse', true) }}"
+    database_db: "{{ lookup('env', 'DATABASE_NAME') | default('dashverse', true) }}"
+    database_schema: "api"
