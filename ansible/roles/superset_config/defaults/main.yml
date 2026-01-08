@@ -1,0 +1,80 @@
+---
+# Database connection settings
+database_name: "DashVERSE PostgreSQL"
+database_driver: "postgresql"
+database_schema: "api"
+
+# Dataset definitions
+datasets:
+  - name: dimensions
+    table: dimensions
+    schema: "{{ database_schema }}"
+  - name: indicators
+    table: indicators
+    schema: "{{ database_schema }}"
+  - name: software
+    table: software
+    schema: "{{ database_schema }}"
+  - name: assessments
+    table: assessment_raw
+    schema: "{{ database_schema }}"
+  - name: assessment_summary
+    table: assessment_summary
+    schema: "{{ database_schema }}"
+  - name: dimension_coverage
+    table: dimension_coverage
+    schema: "{{ database_schema }}"
+  - name: indicator_results
+    table: indicator_results
+    schema: "{{ database_schema }}"
+  - name: software_quality_scores
+    table: software_quality_scores
+    schema: "{{ database_schema }}"
+  - name: assessment_trends
+    table: assessment_trends
+    schema: "{{ database_schema }}"
+  - name: common_issues
+    table: common_issues
+    schema: "{{ database_schema }}"
+  - name: assessments_detailed
+    table: assessments_detailed
+    schema: "{{ database_schema }}"
+  - name: checks_detailed
+    table: checks_detailed
+    schema: "{{ database_schema }}"
+  - name: software_languages
+    table: software_languages
+    schema: "{{ database_schema }}"
+
+# Dashboard definitions with RSQKit role descriptions
+dashboards:
+  - name: "Policy Maker"
+    slug: "policy-maker"
+    description: |
+      Dashboard for policy makers at funding agencies, research institutions, or governmental bodies.
+      Provides high-level metrics on software quality adoption and FAIR compliance across organizations.
+      See: https://everse.software/RSQKit/policy_maker
+  - name: "Principal Investigator"
+    slug: "principal-investigator"
+    description: |
+      Dashboard for Principal Investigators managing projects with software development components.
+      Shows project-level metrics, software management insights, and areas requiring attention.
+      See: https://everse.software/RSQKit/principal_investigator
+  - name: "Research Software Engineer"
+    slug: "research-software-engineer"
+    description: |
+      Dashboard for Research Software Engineers bridging research and software development.
+      Provides technical metrics, code quality indicators, and detailed assessment results.
+      See: https://everse.software/RSQKit/research_software_engineer
+  - name: "Researcher Who Codes"
+    slug: "researcher-who-codes"
+    description: |
+      Dashboard for researchers who develop software as part of their research workflow.
+      Offers practical guidance on quality improvements without requiring deep engineering expertise.
+      See: https://everse.software/RSQKit/researcher_who_codes
+  - name: "Trainer"
+    slug: "trainer"
+    description: |
+      Dashboard for trainers designing courses in research software development and quality.
+      Highlights common issues, skill gaps, and areas where training can have the most impact.
+      See: https://everse.software/RSQKit/trainer
