@@ -48,7 +48,7 @@
     body_format: json
     body:
       slice_name: "Total Assessments"
-      datasource_id: "{{ dataset_ids['assessment_detailed'] }}"
+      datasource_id: "{{ dataset_ids['assessments_detailed'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
       params: |
