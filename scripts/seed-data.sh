@@ -18,7 +18,7 @@ TOTAL=$(wc -l < "$OUTPUT_DIR/software-list.txt")
 echo "Found $TOTAL software tools"
 
 # fetch first 20 software tools for seed data
-head -20 "$OUTPUT_DIR/software-list.txt" > "$OUPUT_DIR/selected.txt"
+head -20 "$OUTPUT_DIR/software-list.txt" > "$OUTPUT_DIR/selected.txt"
 
 echo "Downloading software metadata..."
 mkdir -p "$OUTPUT_DIR/software"
