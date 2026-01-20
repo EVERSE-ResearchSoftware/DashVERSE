@@ -1,150 +1,160 @@
-# Example API Calls
+# PostgREST API
 
-**Note:** To run the API calls, you will need JSON Web Token (JWT). The examples here use `EVERSE_TOKEN` environment variable to use the JWT. Make sure you set it correctly before running the API calls.
+The DashVERSE API is powered by PostgREST, which automatically generates a REST API from the PostgreSQL database schema.
+
+## Authentication
+
+Generate a JWT token for write operations:
 
 ```shell
-export EVERSE_TOKEN="<YOUR_JWT>"
+./scripts/generate-jwt.sh
+export EVERSE_TOKEN="<generated-token>"
 ```
 
-If you are using the helper CLI in `examples/dashverse_cli_example.py`, configure the Superset API credentials first:
+Read operations (GET) work without authentication. Write operations (POST, PATCH, DELETE) require a valid JWT.
+
+## Base URL
+
+- Local: `http://localhost:3000`
+- Production: `https://api.dashverse.example.com`
+
+## Endpoints
+
+### Core Tables
+
+| Endpoint | Methods | Description |
+|----------|---------|-------------|
+| /software | GET, POST | Software catalog |
+| /dimensions | GET, POST | Quality dimensions |
+| /indicators | GET, POST | Quality indicators |
+| /assessment | GET, POST | Assessments (resqui compatible) |
+
+### Dashboard Views (read-only)
+
+| Endpoint | Description |
+|----------|-------------|
+| /assessments_detailed | Full assessment info with check counts |
+| /checks_detailed | Unnested checks with indicator/dimension info |
+| /assessment_summary | Aggregated metrics per software |
+| /dimension_coverage | Pass/fail counts per dimension |
+| /indicator_results | Check results grouped by indicator and status |
+| /software_quality_scores | Quality scores per software and dimension |
+| /assessment_trends | Monthly assessment statistics |
+| /common_issues | Frequently failing indicators |
+
+## Examples
+
+### List Software
 
 ```shell
-export DASHVERSE_API_URL="https://dashverse.cloud/api/v1"
-export DASHVERSE_USERNAME="<superset-username>"
-export DASHVERSE_PASSWORD="<superset-password>"
+curl http://localhost:3000/software
 ```
 
-## Software
-
-### List software
+### List Dimensions
 
 ```shell
-curl https://db.YOUR_DOMAIN/software
+curl http://localhost:3000/dimensions
 ```
 
-### Add software
-
-The example below **does not** use the JWT so it should fail.
+### List Indicators
 
 ```shell
-curl -X 'POST' \
-  'https://db.dashverse.cloud/software' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "id": 0,
-    "identifier": "some identifier",
-    "name": "HowFairIS",
-    "description": "Checks compliance",
-    "url": "https://www.howfairis.com/",
-    "isAccessibleForFree": true,
-    "license": "Apache 2.0"
-  }'
+curl http://localhost:3000/indicators
 ```
 
-The example below uses the JWT to add software.
+### Get Dimension Coverage
 
 ```shell
-curl -X 'POST' \
-  'https://db.dashverse.cloud/software' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
+curl http://localhost:3000/dimension_coverage
+```
+
+### Get Software Quality Scores
+
+```shell
+curl http://localhost:3000/software_quality_scores
+```
+
+### Submit Assessment (resqui format)
+
+This endpoint accepts the JSON-LD format used by resqui:
+
+```shell
+curl -X POST http://localhost:3000/assessment \
+  -H "Content-Type: application/json" \
   -H "Authorization: Bearer $EVERSE_TOKEN" \
-  -d '{
-    "id": 0,
-    "identifier": "some identifier",
-    "name": "HowFairIS",
-    "description": "Checks compliance",
-    "url": "https://www.howfairis.com/",
-    "isAccessibleForFree": true,
-    "license": "Apache 2.0"
-  }'
-```
-
-List available software after adding:
-
-```shell
-curl https://db.YOUR_DOMAIN/software
-```
-
-## Assessments
-
-### Retrieve full assessments
-
-```shell
-curl https://db.YOUR_DOMAIN/assessments?select=*,assessment_creators(*),assessment_software(*),assessment_checks(*)
-```
-
-### Create an assessment (multi-step)
-
-```shell
-ASSESSMENT_ID=$(curl -s -X 'POST' \
-  'https://db.YOUR_DOMAIN/assessments' \
-  -H 'accept: application/json' \
-  -H "Authorization: Bearer $EVERSE_TOKEN" \
-  -H 'Prefer: return=representation' \
-  -H 'Content-Type: application/json' \
+  -H "Prefer: return=representation" \
   -d '{
     "@context": "https://w3id.org/everse/rsqa/0.0.1/",
     "@type": "SoftwareQualityAssessment",
-    "name": "Quality Assessment for CFFinit v2.3.1",
-    "description": "An automated assessment run on 2025-06-19.",
-    "dateCreated": "2025-06-19T17:52:00Z",
-    "license": { "@id": "https://creativecommons.org/publicdomain/zero/1.0/" }
-  }' | jq '.[0].id')
-
-curl -X 'POST' \
-  "https://db.YOUR_DOMAIN/assessment_creators" \
-  -H 'accept: application/json' \
-  -H "Authorization: Bearer $EVERSE_TOKEN" \
-  -H 'Prefer: return=representation' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "assessment_id": '"$ASSESSMENT_ID"',
-    "@type": "schema:Person",
-    "name": "Faruk Diblen",
-    "email": "f.diblen@example.com"
+    "dateCreated": "2025-11-17T10:00:00Z",
+    "license": "CC0-1.0",
+    "author": {
+      "@type": "Person",
+      "name": "Quality Pipeline"
+    },
+    "assessedSoftware": {
+      "@type": "SoftwareApplication",
+      "name": "example-tool",
+      "softwareVersion": "1.0.0",
+      "url": "https://github.com/example/tool"
+    },
+    "checks": [
+      {
+        "@type": "CheckResult",
+        "assessesIndicator": {"@id": "IND-LIC-001"},
+        "checkingSoftware": {"name": "howfairis", "version": "0.14.2"},
+        "process": "Check for LICENSE file",
+        "status": {"@id": "Pass"},
+        "output": "true",
+        "evidence": "Found LICENSE file"
+      }
+    ]
   }'
-
-curl -X 'POST' \
-  "https://db.YOUR_DOMAIN/assessment_software" \
-  -H 'accept: application/json' \
-  -H "Authorization: Bearer $EVERSE_TOKEN" \
-  -H 'Prefer: return=representation' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "assessment_id": '"$ASSESSMENT_ID"',
-    "@type": "schema:SoftwareApplication",
-    "name": "CFFinit",
-    "version": "2.3.1",
-    "url": "https://github.com/citation-file-format/cff-initializer-javascript",
-    "identifier_uri": "https://doi.org/10.5281/zenodo.8224012"
-  }'
-
-curl -X 'POST' \
-  "https://db.YOUR_DOMAIN/assessment_checks" \
-  -H 'accept: application/json' \
-  -H "Authorization: Bearer $EVERSE_TOKEN" \
-  -H 'Prefer: return=representation' \
-  -H 'Content-Type: application/json' \
-  -d '[
-    {
-      "assessment_id": '"$ASSESSMENT_ID"',
-      "@type": "CheckResult",
-      "indicator_uri": "https://w3id.org/everse/i/indicators/license",
-      "checking_software_name": "howfairis",
-      "checking_software_uri": "https://w3id.org/everse/tools/howfairis",
-      "checking_software_version": "0.14.2",
-      "process": "Searches for a LICENSE file.",
-      "status_uri": "schema:CompletedActionStatus",
-      "output": "true",
-      "evidence": "Found license file: 'LICENSE'."
-    }
-  ]'
 ```
 
-> **Note:** PostgREST returns created rows when the `Prefer: return=representation` header is provided. Capture the `id` from the first insert to link child resources. You can batch multiple check rows in one request as shown above.
->
-> The snippet uses `jq` to extract the new `assessment_id`. If `jq` is not available, inspect the JSON response manually or leverage PostgREST's `Location` header.
+### Filtering
 
-For additional payload structures or filters, consult the PostgREST documentation and the schema overview in `docs/Database.md`.
+PostgREST supports query parameters for filtering:
+
+```shell
+# Get indicators for a specific dimension
+curl "http://localhost:3000/indicators?quality_dimension=eq.DIM-TST"
+
+# Get assessments for specific software
+curl "http://localhost:3000/assessment_summary?software_name=eq.example-tool"
+
+# Get failed checks only
+curl "http://localhost:3000/checks_detailed?status=like.*Fail*"
+```
+
+### Pagination
+
+```shell
+# Get first 10 results
+curl "http://localhost:3000/software?limit=10"
+
+# Get results 11-20
+curl "http://localhost:3000/software?limit=10&offset=10"
+```
+
+### Selecting Fields
+
+```shell
+# Get only name and identifier
+curl "http://localhost:3000/software?select=name,identifier"
+```
+
+## Error Responses
+
+| Status | Meaning |
+|--------|---------|
+| 200 | Success |
+| 201 | Created |
+| 401 | Unauthorized (missing/invalid JWT) |
+| 403 | Forbidden (insufficient permissions) |
+| 404 | Not found |
+| 409 | Conflict (duplicate key) |
+
+## References
+
+- PostgREST documentation: https://postgrest.org/en/stable/
