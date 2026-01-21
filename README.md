@@ -3,7 +3,7 @@
 The dashboard prototype for the [EVERSE project](https://everse.software/).
 
 > [!WARNING]
-> 🚧 Work in Progress
+> Work in Progress
 >
 > This project is currently under active development and may not yet be fully stable. Features, functionality, and documentation are subject to change as progress continues.
 >
@@ -11,11 +11,14 @@ The dashboard prototype for the [EVERSE project](https://everse.software/).
 
 ## Requirements
 
-- Python (3.12)
-- Poetry (1.8.5)
-- Podman (5.4.1)
-- minikube (v1.34.0)
-- helm (v3.16.4)
+- OpenTofu (1.6+) or Terraform (1.6+)
+- kubectl (1.28+)
+- helm (3.0+)
+- minikube (1.30+)
+- Docker or Podman
+- Ansible (2.9+)
+
+If you have Nix installed, all dependencies are provided via `nix develop`.
 
 <details>
 <summary>
@@ -58,322 +61,194 @@ Poetry is used for dependency management of the Python packages.
 
 ## Deployment
 
-If you would like to run the setup on a cloud (your own server)
+### Quick Start
 
-1. Start a cluster using `minikube` and `podman`
-
-   Set the default driver (podman or docker)
+1. Start minikube
 
    ```shell
-   minikube config set driver podman
+   minikube start --cpus='4' --memory='4g'
    ```
 
-   Start the cluster
+2. Deploy
 
    ```shell
-   minikube start --cpus='4' --memory='4g' --driver=podman
+   make deploy
    ```
 
-   This will create a cluster using 4 cpus and 4GB of memory.
-
-   **The rest of the instructions need to be followed in `kubernetes` folder, so make sure you are in that folder before following the rest of the instructions:**
+3. Access services
 
    ```shell
-   cd kubernetes
+   make port-forward
    ```
 
-1. Generate Secrets for deployment
+   Then open:
 
-   ```shell
-   bash generate-variables.sh
-   ```
+   - Superset: http://localhost:8088
+   - PostgREST API: http://localhost:3000
+   - PostgREST API Docs: http://localhost:3001
+   - Auth Service: http://localhost:8000
+   - Auth Service API Docs: http://localhost:8001
+   - Demo Portal: http://localhost:8080
 
-   The script can be customised via environment variables, e.g. `EVERSE_DOMAIN_NAME=my.domain bash generate-variables.sh`.
+### Credentials
 
-   It produces the following artefacts (all paths reside under `kubernetes/`):
+Service credentials are auto-generated during deployment and stored securely in Kubernetes secrets. To retrieve them:
 
-   - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/superset-deployment-secrets.yaml
-   - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/secrets.env
-   - deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/generate_jwt.sh
+```shell
+./scripts/show-access.sh
+```
 
-   **Warning:** Do not share any of these generated files with anyone or push to a public repository!
+This displays:
 
-   Now you can source the generated `secrets.env` file to set the environment variables which will be used for the deployment.
+- PostgreSQL connection details
+- Superset admin login
+- JWT secret for token signing
 
-   ```shell
-   source ./deployments/XXXXXXXXXXXXX**DD_MM_YYYY**HH_MM/secrets.env
-   ```
+You can also retrieve individual credentials with kubectl:
 
-   The generated environment variables are consumed by the Kubernetes manifests through `envsubst`. No plaintext database configuration files are created anymore.
+```shell
+# PostgreSQL password
+kubectl get secret dashverse-secrets -n dashverse -o jsonpath='{.data.postgres-password}' | base64 -d
 
-   For a breakdown of the database schema and helper scripts, see `docs/Database.md`.
+# Superset admin password
+kubectl get secret dashverse-secrets -n dashverse -o jsonpath='{.data.superset-admin-password}' | base64 -d
+```
 
-1. Build database initialization container
+### Makefile Targets
 
-   Build the docker image
+| Target                  | Description                               |
+| ----------------------- | ----------------------------------------- |
+| `make deploy`           | Build images and deploy all services      |
+| `make destroy`          | Remove all services                       |
+| `make status`           | Show deployment status                    |
+| `make port-forward`     | Forward ports to localhost                |
+| `make logs`             | Tail all service logs                     |
+| `make logs-auth`        | Tail auth service logs                    |
+| `make sync`             | Download EVERSE indicators/dimensions     |
+| `make sync-apply`       | Download and import to database           |
+| `make sync-trigger`     | Trigger sync cronjob manually             |
+| `make jwt`              | Generate JWT token (CLI)                  |
+| `make build-auth`       | Build auth-service image                  |
+| `make setup-dashboards` | Configure Superset dashboards via Ansible |
+| `make seed-data`        | Import sample software and assessments    |
 
-   ```shell
-   docker build --no-cache -t ghcr.io/everse-researchsoftware/postgresql-setup-script:latest -t everse-db-scripts:latest ./DBModel
-   ```
+### Manual Deployment
 
-   Load the docker image to the cluster
+```shell
+cd terraform
+tofu init
+tofu apply -var-file="environments/local.tfvars"
+```
 
-   ```shell
-   minikube image load everse-db-scripts:latest
-   ```
+### Production Deployment
 
-   Check if the image is loaded
+```shell
+# Deploy all services (builds images and applies Terraform)
+make deploy ENV=production
 
-   ```shell
-   minikube image ls
-   ```
+# Populate data
+make sync-apply
+make seed-data
 
-   **Warning:** Do not make this Docker image publicly available as it contains database password!
+# Configure Superset dashboards
+make setup-dashboards ENV=production
+```
 
-1. Create a namespace
+The production configuration (`terraform/environments/production.tfvars`) includes settings for external URLs used in iframe embedding.
 
-   ```shell
-   kubectl create namespace superset
-   ```
+### Sync EVERSE Data
 
-1. Add the generated secrets to the cluster
+Indicators and dimensions are synced from the EVERSE repository:
+https://github.com/EVERSE-ResearchSoftware/indicators
 
-   ```shell
-   kubectl apply -f $DASHVERSE_SECRETS_FILE_NAME --namespace superset
-   ```
+The sync runs automatically daily at 2am via a CronJob. To trigger manually:
 
-1. Deploy db using `deploy-db.yaml`
+```shell
+make sync-trigger
+```
 
-   ```shell
-   envsubst < deploy-db.yaml | kubectl apply --namespace superset -f -
-   ```
+Or to sync outside the cluster:
 
-   You can check the logs of initialization job using:
+```shell
+make sync-apply
+```
 
-   ```shell
-   DB_JOB_POD_NAME=$(kubectl get pods --namespace superset | grep "postgresql-init-job" | cut -d" " -f1)
-   kubectl logs --namespace superset $DB_JOB_POD_NAME -c init-python-container
-   ```
+### Authentication
 
-1. Deploy API using `deploy-postgrest.yaml`
+The Auth Service provides a web interface for user registration and JWT token generation.
 
-   ```shell
-   envsubst < deploy-postgrest.yaml | kubectl apply --namespace superset -f -
-   ```
+1. Open http://localhost:8000 (after port-forward)
+2. Register a new account
+3. Login and generate an API token
+4. Use the token for PostgREST write access
 
-   You can check the logs using:
+Alternatively, generate a token via CLI:
 
-   ```shell
-   POSTGREST_POD_NAME=$(kubectl get pods --namespace superset | grep "postgrest-" | cut -d" " -f1)
-   kubectl logs --namespace superset $POSTGREST_POD_NAME --all-containers
-   ```
+```shell
+make jwt
+```
 
-   Test using:
+### API Documentation
 
-   ```shell
-   curl https://db.YOUR_DOMAIN/assessment
-   ```
+Interactive API documentation is provided using [Scalar](https://scalar.com/):
 
-1. Deploy Apache Superset using `dashverse-values.yaml`
+- **PostgREST API Docs**: http://localhost:3001 - Database REST interface with all available endpoints
+- **Auth Service API Docs**: http://localhost:8001 - Authentication endpoints for user management and JWT tokens
 
-   Add superset repository to helm:
+The documentation is automatically generated from OpenAPI specifications and includes an interactive request builder.
 
-   ```shell
-   helm repo add Superset https://apache.github.io/superset
-   ```
+### Dashboard Configuration
 
-   Set up Apache Superset:
+After deployment, configure Superset with pre-built dashboards using Ansible:
 
-   ```shell
-   envsubst < dashverse-values.yaml > dashverse-values-with-secrets.yaml
+```shell
+make setup-dashboards
+```
 
-   helm upgrade --install superset superset/superset --values dashverse-values-with-secrets.yaml --namespace superset --create-namespace --debug --cleanup-on-fail
+This creates five role-based dashboards based on [RSQKit roles](https://everse.software/RSQKit/your_role):
 
-   rm -f dashverse-values-with-secrets.yaml
-   ```
+- **[Policy Maker](https://everse.software/RSQKit/policy_maker)** - High-level adoption and compliance overview
+- **[Principal Investigator](https://everse.software/RSQKit/principal_investigator)** - Project-level metrics and action items
+- **[Research Software Engineer](https://everse.software/RSQKit/research_software_engineer)** - Technical metrics and detailed check results
+- **[Researcher Who Codes](https://everse.software/RSQKit/researcher_who_codes)** - Practical guidance and quick improvements
+- **[Trainer](https://everse.software/RSQKit/trainer)** - Training insights and best practices
 
-   Below are the commands you can use for debugging the superset service.
+Prerequisites:
 
-   ```shell
-   kubectl describe job --namespace superset superset-init-db
-   ```
+- Ansible (2.9+)
+- Port forwarding running (`make port-forward`)
+- Superset accessible at localhost:8088
 
-   ```shell
-   kubectl logs --namespace superset  superset-init-db-7nccv # replace this with the actual name
-   ```
+The Superset admin password is automatically retrieved from Kubernetes secrets during setup.
 
-   ```shell
-   kubectl get pods --namespace superset  -l job-name=superset-init-db
-   ```
+### Sample Data
 
-   ```shell
-   kubectl describe pod --namespace superset superset-init-db-hczfw
-   ```
+To populate the system with sample software and assessments for testing:
 
-1. **OPTIONAL** - Deploy pgadmin
+```shell
+make seed-data
+```
 
-   ```shell
-   envsubst < deploy-pgadmin.yaml | kubectl apply --namespace superset -f -
-   ```
-
-   To add the Postgresql database on pgadmin UI:
-
-   ```shell
-   Add a New server:
-     General:
-       Name --> postgres
-     Connection:
-       Host name --> superset-postgresql
-       Port --> 5432
-       Username --> $POSTGRES_USER in `XXXXXXXXXXXXX-superset-deployment-secrets` file
-       Password --> see $POSTGRES_PASSWORD in `XXXXXXXXXXXXX-superset-deployment-secrets` file
-   ```
-
-1. Get the application URL by running these commands:
-
-   ```shell
-   kubectl get --namespace superset services
-   ```
-
-   ```shell
-     export SUPERSET_NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services superset)
-     export POSTGREST_NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services postgrest)
-     export SWAGGER_NODE_PORT=$(kubectl get --namespace superset -o jsonpath="{.spec.ports[0].nodePort}" services swagger)
-
-     export NODE_IP=$(kubectl get nodes --namespace superset -o jsonpath="{.items[0].status.addresses[0].address}")
-     echo "superset: " http://$NODE_IP:$SUPERSET_NODE_PORT
-     echo "postgrest: " http://$NODE_IP:$POSTGREST_NODE_PORT
-     echo "swagger: " http://$NODE_IP:$SWAGGER_NODE_PORT
-   ```
-
-1. Set up the domain name for your server
-
-1. Set DNS to point to your server ( you will need to setup a reverse proxy to be able to access the service)
+This fetches software metadata from the EVERSE TechRadar repository and generates sample assessments. The data will appear in the Superset dashboards.
 
 ## Documentation
 
-- `docs/Kubernetes.md` – operational commands for managing the Minikube deployment.
+- `docs/architecture/README.md` – **System Architecture**: Detailed diagrams of the system, data flow, and security model.
+- `docs/Kubernets.md` – operational commands for managing the Minikube deployment.
 - `docs/Database.md` – details of the PostgreSQL schema, assessment mapping, and populate script usage.
 - `docs/API_examples.md` – practical PostgREST calls, including the multi-step workflow for creating assessments.
 
 ## Clean up
 
-### Delete services, deployments, volumes
-
-List services
+Remove all deployed resources:
 
 ```shell
-kubectl get --namespace superset services
+make destroy
 ```
 
-Delete services
-
-```shell
-# database
-kubectl delete service --namespace superset superset-postgresql
-
-# postgrest API
-kubectl delete service --namespace superset postgrest
-kubectl delete service --namespace superset swagger
-
-# pgadmin
-kubectl delete service --namespace superset pgadmin
-
-# superset
-kubectl delete service --namespace superset superset
-kubectl delete service --namespace superset superset-redis-headless
-kubectl delete service --namespace superset superset-redis-master
-```
-
-List deployments
-
-```shell
-kubectl get deployments --namespace superset
-```
-
-Delete deployments
-
-```shell
-# database
-kubectl delete deployment --namespace superset superset-postgresql
-kubectl delete deployment --namespace superset postgrest
-
-# pgadmin
-kubectl delete deployment --namespace superset pgadmin
-
-# superset
-kubectl delete deployment --namespace superset superset
-kubectl delete deployment --namespace superset superset-worker
-```
-
-List pvcs
-
-```shell
-kubectl get pvc --namespace superset
-
-```
-
-Delete pvcs
-
-```shell
-kubectl delete pvc --namespace superset superset-postgresql-data-pvc
-kubectl delete pvc --namespace superset pgadmin-pvc
-```
-
-### Get info
-
-```shell
-
-minikube --namespace superset service list
-#minikube --namespace superset service --all
-minikube --namespace superset service superset-postgresql --url
-minikube --namespace superset service superset --url
-minikube --namespace superset service postgrest --url
-minikube --namespace superset service swagger --url
-minikube --namespace superset service pgadmin --url
-
-kubectl get --namespace superset services
-kubectl get --namespace superset deployments
-kubectl get --namespace superset deployments.apps
-
-kubectl get pods --all-namespaces
-kubectl get pods --namespace superset
-kubectl describe pod --namespace superset superset-postgresql-774c87bbfc-vn5mk # show the details of a specific pod
-
-kubectl describe pods --namespace superset
-
-kubectl cluster-info
-
-kubectl get pods -l app=superset-postgresql --namespace superset
-kubectl get jobs -l job-name=superset-postgresql-init-job --namespace superset
-kubectl logs -f <superset-postgresql-init-job-pod-name> --namespace superset
-```
-
-### Connect to Postgresql server
-
-```shell
-kubectl get pods --namespace superset
-kubectl exec -ti superset-postgresql-6c8dd65c-5k4d4 --namespace superset -- bash
-psql -U postgres -d postgres -h localhost
-```
-
-**Note**: use your own username and password for the `psql` command
-
-### Dashboard
-
-```shell
-minikube dashboard --url
-```
-
-```shell
-kubectl proxy --address='0.0.0.0' --disable-filter=true
-```
-
-http://SERVER_IP:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/workloads?namespace=superset
-
-### Delete the cluster and clean up
+Delete the minikube cluster:
 
 ```shell
 minikube stop
-minikube delete --purge --all
+minikube delete
 ```
