@@ -108,3 +108,27 @@ module "demo_portal" {
   common_labels  = var.common_labels
   superset_url   = "http://${module.superset.service_name}:${module.superset.port}"
 }
+
+# api documentation for postgrest
+module "postgrest_docs" {
+  source = "./modules/api-docs"
+
+  namespace    = module.namespace.name
+  name         = "postgrest-docs"
+  labels       = var.common_labels
+  openapi_url  = "http://postgrest:3000/"
+  theme        = "purple"
+  service_port = 3001
+}
+
+# api documentation for auth service
+module "auth_docs" {
+  source = "./modules/api-docs"
+
+  namespace    = module.namespace.name
+  name         = "auth-docs"
+  labels       = var.common_labels
+  openapi_url  = "http://auth-service:8000/openapi.json"
+  theme        = "blue"
+  service_port = 8001
+}
