@@ -4,6 +4,8 @@
 
 *.secret
 *secret*
+!terraform/modules/secrets/
+!terraform/modules/secrets/**
 *cred.json
 *credential*
 *credentials.json
@@ -25,3 +27,14 @@ venv3
 .direnv
 
 *.env
+
+# Deployment artifacts
+deployments/
+backups/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+.tofu/
