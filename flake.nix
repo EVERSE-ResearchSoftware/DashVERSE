@@ -30,6 +30,8 @@
             # kubernetes
             kubernetes-helm
             kubectl
+            opentofu
+            ansible
 
             nftables
           ];
@@ -40,6 +42,7 @@
             echo "Python version: $(python --version)"
             echo "Podman version: $(podman --version)"
             echo "kubectl version: $(kubectl version)"
+            echo "OpenTofu version: $(tofu version | head -1)"
 
             if [ $(minikube status -o json | jq -r .Host) = "Running" ]; then
               echo
