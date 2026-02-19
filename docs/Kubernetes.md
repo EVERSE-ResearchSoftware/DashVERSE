@@ -1,23 +1,77 @@
-# Kubernetes notes
+# Kubernetes Operations
 
-- Verify the running pods
+Common commands for managing the DashVERSE deployment.
 
-    ```shell
-    kubectl get pods
-    ```
+## Check Status
 
-- To list deployment events run
+```shell
+# all resources in namespace
+kubectl get all -n dashverse
 
-    ```shell
-    kubectl get events
-    ```
+# or use Makefile
+make status
+```
 
-- Regenerate deployment secrets without hardcoding domains by exporting `EVERSE_DOMAIN_NAME` before running `generate-variables.sh`.
+## View Logs
 
-- To check the logs of a pod run
+```shell
+# all services
+make logs
 
-    ```shell
-    kubectl logs superset-postgresql-0
-    ```
+# specific service
+make logs-postgres
+make logs-postgrest
+make logs-superset
+```
 
-- The generated secrets directory now contains dedicated credentials for Superset, PostgREST, Redis, and the PostgreSQL superuser (`POSTGREST_AUTH_PASSWORD`, `POSTGREST_JWT_SECRET`, etc.). Keep the folder under `kubernetes/deployments/` out of version control and `source` the `secrets.env` file before applying manifests with `envsubst`.
+## Port Forwarding
+
+```shell
+make port-forward
+```
+
+Services become available at:
+- Superset: http://localhost:8088
+- PostgREST: http://localhost:3000
+- PostgreSQL: localhost:5432
+
+## Debugging
+
+```shell
+# check pod status
+kubectl get pods -n dashverse
+
+# describe a pod
+kubectl describe pod <pod-name> -n dashverse
+
+# check events
+kubectl get events -n dashverse --sort-by='.lastTimestamp'
+
+# exec into a pod
+kubectl exec -it <pod-name> -n dashverse -- /bin/sh
+```
+
+## Secrets
+
+Secrets are managed by OpenTofu and stored in Kubernetes. To view:
+
+```shell
+kubectl get secrets -n dashverse
+```
+
+Generate a JWT token for API access:
+
+```shell
+./scripts/generate-jwt.sh
+```
+
+## Restart Services
+
+```shell
+# restart a deployment
+kubectl rollout restart deployment/<name> -n dashverse
+
+# or redeploy everything
+make destroy
+make deploy
+```
