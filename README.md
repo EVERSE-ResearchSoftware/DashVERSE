@@ -234,6 +234,7 @@ This fetches software metadata from the EVERSE TechRadar repository and generate
 ## Documentation
 
 - `docs/architecture/README.md` – **System Architecture**: Detailed diagrams of the system, data flow, and security model.
+- `docs/Deployment.md` – deployment checklist and prerequisites.
 - `docs/Kubernetes.md` – operational commands for managing the Minikube deployment.
 - `docs/Database.md` – details of the PostgreSQL schema, assessment mapping, and populate script usage.
 - `docs/API_examples.md` – practical PostgREST calls, including the multi-step workflow for creating assessments.
