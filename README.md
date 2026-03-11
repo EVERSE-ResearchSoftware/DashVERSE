@@ -82,7 +82,6 @@ Poetry is used for dependency management of the Python packages.
    ```
 
    Then open:
-
    - Superset: http://localhost:8088
    - PostgREST API: http://localhost:3000
    - PostgREST API Docs: http://localhost:3001
@@ -253,3 +252,11 @@ Delete the minikube cluster:
 minikube stop
 minikube delete
 ```
+
+## Development Process
+
+The core functionality of this project was designed and implemented by the development team without the use of AI code generation tools. In the later stages of the project, AI-assisted development tools were selectively used as a helper for specific tasks such as documentation drafting, boilerplate generation, and code formatting.
+
+AI tools were **not** used to generate the project's core logic, architecture, algorithms, or primary feature implementations. The development team wrote, designed, and tested all substantive code. Where AI tools were used, their output was reviewed, edited, and validated by the developers before inclusion.
+
+The development team is fully responsible for all code and documentation in this repository.
