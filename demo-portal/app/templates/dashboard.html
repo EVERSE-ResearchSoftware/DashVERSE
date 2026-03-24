@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ dashboard.title }} - DashVERSE{% endblock %}
+
+{% block content %}
+<section class="dashboard-embed">
+    <iframe
+        id="dashboard-frame"
+        data-slug="{{ slug }}"
+        data-superset-port="8088"
+        data-superset-url="{{ superset_external_url }}"
+        frameborder="0"
+        allowfullscreen
+        title="{{ dashboard.title }} Dashboard"
+    ></iframe>
+</section>
+
+<script>
+(function() {
+    var iframe = document.getElementById('dashboard-frame');
+    var slug = iframe.getAttribute('data-slug');
+    var supersetUrl = iframe.getAttribute('data-superset-url');
+
+    if (!supersetUrl) {
+        // fallback for local development
+        var supersetPort = iframe.getAttribute('data-superset-port');
+        var host = window.location.hostname;
+        var protocol = window.location.protocol;
+        supersetUrl = protocol + '//' + host + ':' + supersetPort;
+    }
+
+    iframe.src = supersetUrl + '/superset/dashboard/' + slug + '/?standalone=2';
+})();
+</script>
+{% endblock %}

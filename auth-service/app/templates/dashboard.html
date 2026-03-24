@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - DashVERSE Auth Service{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ user.username }}!</h2>
+
+    {% if message %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="alert alert-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <div style="margin-bottom: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+        <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Account Information</h3>
+        <p style="margin: 0.25rem 0; color: #666;">
+            <strong>Email:</strong> {{ user.email }}
+        </p>
+        <p style="margin: 0.25rem 0; color: #666;">
+            <strong>Account Created:</strong> {{ user.created_at.strftime('%Y-%m-%d %H:%M UTC') }}
+        </p>
+        <p style="margin: 0.25rem 0; color: #666;">
+            <strong>Status:</strong>
+            {% if user.is_active %}
+                <span style="color: #3c3;">Active</span>
+            {% else %}
+                <span style="color: #c33;">Inactive</span>
+            {% endif %}
+            {% if user.is_superuser %}
+                | <span style="color: #667eea;">Superuser</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Access Tokens ({{ tokens|length }})</h3>
+        <form method="POST" action="/tokens/generate" style="margin: 0;">
+            <button type="submit" class="btn-small" style="width: auto;">
+                + Generate New Token
+            </button>
+        </form>
+    </div>
+
+    {% if new_token %}
+        <div class="alert alert-info">
+            <p style="margin-bottom: 0.5rem;"><strong>New Token Generated!</strong></p>
+            <p style="margin-bottom: 0.5rem; font-size: 0.875rem;">
+                Copy this token now - you won't be able to see it again:
+            </p>
+            <div style="background: white; padding: 0.75rem; border-radius: 4px; font-family: monospace; word-break: break-all; margin-bottom: 0.5rem;">
+                {{ new_token }}
+            </div>
+            <button onclick="copyToken('{{ new_token }}')" class="btn-small btn-secondary" style="width: auto;">
+                Copy Token
+            </button>
+        </div>
+    {% endif %}
+
+    {% if tokens %}
+        <ul class="token-list">
+            {% for token in tokens %}
+                <li class="token-item">
+                    <div class="token-header">
+                        <span class="token-name">
+                            {% if token.token_name %}
+                                {{ token.token_name }}
+                            {% else %}
+                                Token #{{ token.id }}
+                            {% endif %}
+                        </span>
+                        <span class="token-status {% if token.is_revoked %}status-revoked{% else %}status-active{% endif %}">
+                            {% if token.is_revoked %}Revoked{% else %}Active{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="token-details">
+                        <div><strong>Created:</strong> {{ token.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</div>
+                        <div><strong>Expires:</strong> {{ token.expires_at.strftime('%Y-%m-%d %H:%M UTC') }}</div>
+                        <div><strong>JTI:</strong> <code style="font-size: 0.75rem;">{{ token.jti }}</code></div>
+                    </div>
+
+                    <div class="token-actions">
+                        {% if not token.is_revoked %}
+                            <form method="POST" action="/tokens/revoke" style="margin: 0;">
+                                <input type="hidden" name="token_id" value="{{ token.id }}">
+                                <button type="submit" class="btn-small btn-danger" onclick="return confirm('Are you sure you want to revoke this token? This action cannot be undone.');">
+                                    Revoke Token
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="/tokens/delete" style="margin: 0;">
+                                <input type="hidden" name="token_id" value="{{ token.id }}">
+                                <button type="submit" class="btn-small btn-danger" onclick="return confirm('Are you sure you want to delete this token? This will permanently remove it from the database.');">
+                                    Delete Token
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">No tokens yet</p>
+            <p>Generate your first token to get started with API access</p>
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #eee;">
+        <h3 style="margin-bottom: 1rem;">API Access</h3>
+        <p style="margin-bottom: 0.75rem; color: #666; font-size: 0.875rem;">
+            Use your tokens to authenticate API requests:
+        </p>
+        <pre style="background: #f8f9fa; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.875rem;">
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+     {{ request.base_url }}api/tokens/
+        </pre>
+        <p style="margin-top: 0.75rem; color: #666; font-size: 0.875rem;">
+            <a href="/docs" class="link" target="_blank">View API Documentation</a>
+        </p>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyToken(token) {
+        navigator.clipboard.writeText(token).then(function() {
+            alert('Token copied to clipboard!');
+        }, function() {
+            alert('Failed to copy token. Please copy it manually.');
+        });
+    }
+</script>
+{% endblock %}

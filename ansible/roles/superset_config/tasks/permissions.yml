@@ -1,0 +1,24 @@
+---
+# Configure Public role permissions for embedded dashboards
+# Removes edit/query/table view options from chart menu
+
+- name: Remove chart edit and query permissions from Public role
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    DELETE FROM ab_permission_view_role
+    WHERE role_id = (SELECT id FROM ab_role WHERE name = 'Public')
+    AND permission_view_id IN (
+        SELECT pv.id FROM ab_permission_view pv
+        JOIN ab_permission p ON pv.permission_id = p.id
+        JOIN ab_view_menu vm ON pv.view_menu_id = vm.id
+        WHERE (p.name = 'can_edit' AND vm.name = 'Chart')
+           OR (p.name = 'can_explore' AND vm.name = 'Superset')
+           OR (p.name = 'can_view_query' AND vm.name = 'Dashboard')
+           OR (p.name = 'can_view_chart_as_table' AND vm.name = 'Dashboard')
+    );
+    "
+  register: permission_removal_result
+
+- name: Show permission removal result
+  debug:
+    var: permission_removal_result.stdout_lines

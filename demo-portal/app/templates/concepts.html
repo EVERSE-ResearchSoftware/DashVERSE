@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Concepts - DashVERSE{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Key Concepts</h1>
+    <p>
+        Understanding the terminology used in DashVERSE dashboards helps you interpret
+        the quality metrics and assessment results effectively.
+    </p>
+</section>
+
+<section class="concepts-grid">
+    <div class="concept-card dimension">
+        <div class="concept-header">
+            <span class="concept-icon">D</span>
+            <h2>Dimension</h2>
+        </div>
+        <p class="definition">
+            A high-level quality aspect of research software. Dimensions are the broadest
+            category in the EVERSE quality framework and group related quality concerns together.
+        </p>
+        <div class="examples">
+            <span class="example-label">Examples</span>
+            <span class="example-tag">Testing</span>
+            <span class="example-tag">Documentation</span>
+            <span class="example-tag">Licensing</span>
+            <span class="example-tag">Version Control</span>
+            <span class="example-tag">FAIRness</span>
+        </div>
+    </div>
+
+    <div class="concept-card indicator">
+        <div class="concept-header">
+            <span class="concept-icon">I</span>
+            <h2>Indicator</h2>
+        </div>
+        <p class="definition">
+            A specific, measurable quality criterion within a dimension. Each indicator
+            defines what aspect of quality is being measured and how it can be evaluated.
+        </p>
+        <div class="examples">
+            <span class="example-label">Examples</span>
+            <span class="example-tag">Unit test coverage</span>
+            <span class="example-tag">README exists</span>
+            <span class="example-tag">License file present</span>
+        </div>
+    </div>
+
+    <div class="concept-card assessment">
+        <div class="concept-header">
+            <span class="concept-icon">A</span>
+            <h2>Assessment</h2>
+        </div>
+        <p class="definition">
+            A complete quality evaluation of a software project performed at a specific point
+            in time. It captures which software was assessed, when, and by what tools.
+        </p>
+        <div class="examples">
+            <span class="example-label">Contains</span>
+            <span class="example-tag">Software info</span>
+            <span class="example-tag">Date</span>
+            <span class="example-tag">Multiple checks</span>
+        </div>
+    </div>
+
+    <div class="concept-card check">
+        <div class="concept-header">
+            <span class="concept-icon">C</span>
+            <h2>Check</h2>
+        </div>
+        <p class="definition">
+            A single test result within an assessment. It represents the outcome of
+            evaluating one indicator for a specific software project.
+        </p>
+        <div class="check-fields">
+            <div class="field"><span class="field-name">Status</span> Pass, Fail, or NotApplicable</div>
+            <div class="field"><span class="field-name">Tool</span> Software that ran the check</div>
+            <div class="field"><span class="field-name">Output</span> Details and evidence</div>
+        </div>
+    </div>
+
+    <div class="concept-card schema">
+        <div class="concept-header">
+            <span class="concept-icon">S</span>
+            <h2>Schema</h2>
+        </div>
+        <p class="definition">
+            A formal data structure for quality assessment results. Schemas define the
+            shape of the data, ensuring consistency and interoperability. Assessment data
+            is generated using the
+            <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank">assessment schema</a>.
+        </p>
+        <div class="examples">
+            <span class="example-label">Examples</span>
+            <span class="example-tag">Assessment</span>
+            <span class="example-tag">Check</span>
+            <span class="example-tag">Indicator</span>
+        </div>
+    </div>
+</section>
+
+<section class="relationships">
+    <h2>How They Relate</h2>
+    <div class="relationship-flow">
+        <div class="flow-column">
+            <div class="flow-header">Quality Framework</div>
+            <div class="flow-box dimension-box">
+                <strong>Dimension</strong>
+                <small>e.g., Documentation</small>
+            </div>
+            <div class="flow-connector">
+                <span class="connector-line"></span>
+                <span class="connector-label">contains many</span>
+            </div>
+            <div class="flow-box indicator-box">
+                <strong>Indicator</strong>
+                <small>e.g., README exists</small>
+            </div>
+        </div>
+
+        <div class="flow-separator"></div>
+
+        <div class="flow-column">
+            <div class="flow-header">Evaluation Results</div>
+            <div class="flow-box assessment-box">
+                <strong>Assessment</strong>
+                <small>e.g., Project X on Jan 15</small>
+            </div>
+            <div class="flow-connector">
+                <span class="connector-line"></span>
+                <span class="connector-label">contains many</span>
+            </div>
+            <div class="flow-box check-box">
+                <strong>Check</strong>
+                <small>e.g., README: Pass</small>
+            </div>
+        </div>
+
+        <div class="flow-separator"></div>
+
+        <div class="flow-column flow-link">
+            <div class="flow-header">Connection</div>
+            <div class="link-diagram">
+                <div class="link-box check-box">Check</div>
+                <div class="link-arrow">tests</div>
+                <div class="link-box indicator-box">Indicator</div>
+            </div>
+            <p class="link-explanation">
+                Each check evaluates exactly one indicator and produces a status result.
+            </p>
+        </div>
+    </div>
+
+    </div>
+</section>
+
+<section class="example-assessment">
+    <h2>Example Assessment</h2>
+    <p>
+        This JSON object represents a complete software quality assessment for a project,
+        detailing various checks against quality indicators. Each assessment includes metadata
+        about the software, its creator, and the results of automated checks.
+    </p>
+    <p>
+        Below is a simplified example of an assessment for "CFFinit v2.3.1",
+        showing checks for its `license` and `citation` indicators.
+        Source: <a href="https://github.com/EVERSE-ResearchSoftware/schemas/blob/dce9d526d038f9559843a70cdad5f061ff593454/assessment/dev/example.json" target="_blank">example.json</a>
+    </p>
+    <div class="explanation">
+        <h4>How to Read This Assessment</h4>
+        <ul>
+            <li><strong><code>@context</code> and <code>@type</code></strong>: These fields are for JSON-LD (Linked Data), which makes the data machine-readable. They define the vocabulary and the type of object, respectively.</li>
+            <li><strong><code>creator</code></strong>: Information about who performed the assessment.</li>
+            <li><strong><code>assessedSoftware</code></strong>: Details about the software being assessed, including its name, version, and URL.</li>
+            <li><strong><code>checks</code></strong>: This is an array of individual check results. Each check assesses a specific quality <strong>indicator</strong> (e.g., `license` or `citation`).
+                <ul>
+                    <li><strong><code>assessesIndicator</code></strong>: The unique identifier for the indicator being checked.</li>
+                    <li><strong><code>checkingSoftware</code></strong>: The tool that performed the check (e.g., `howfairis`).</li>
+                    <li><strong><code>status</code></strong>: The result of the check (e.g., `CompletedActionStatus` for Pass, `FailedActionStatus` for Fail).</li>
+                    <li><strong><code>output</code></strong>: A short, machine-readable output of the check (e.g., "true", "valid").</li>
+                    <li><strong><code>evidence</code></strong>: A human-readable description of the evidence found during the check.</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <pre><code class="language-json">{{ assessment_example }}</code></pre>
+</section>
+
+<section class="learn-more">
+    <h2>Learn More</h2>
+    <div class="links-grid">
+        <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="learn-link">
+            <strong>EVERSE Indicators</strong>
+            <span>Browse all quality indicators and dimensions</span>
+        </a>
+        <a href="https://everse.software/RSQKit/" target="_blank" class="learn-link">
+            <strong>RSQKit</strong>
+            <span>Research Software Quality toolkit and guidelines</span>
+        </a>
+        <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank" class="learn-link">
+            <strong>EVERSE Schemas</strong>
+            <span>View the formal data schemas for quality results</span>
+        </a>
+        <a href="https://github.com/EVERSE-ResearchSoftware/QualityPipelines" target="_blank"
+            class="learn-link">
+            <strong>QualityPipelines</strong>
+            <span>Tools for automated quality assessment</span>
+        </a>
+        <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="learn-link">
+            <strong>EVERSE Indicators Website</strong>
+            <span>Explore all quality indicators</span>
+        </a>
+        <a href="https://everse.software/indicators/website/dimensions.html" target="_blank" class="learn-link">
+            <strong>EVERSE Dimensions Website</strong>
+            <span>Explore all quality dimensions</span>
+        </a>
+        <a href="https://github.com/EVERSE-ResearchSoftware/indicators" target="_blank" class="learn-link">
+            <strong>EVERSE Indicators GitHub</strong>
+            <span>View indicator and dimension definitions</span>
+        </a>
+    </div>
+</section>
+{% endblock %}

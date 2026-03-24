@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Data Sources - DashVERSE{% endblock %}
+
+{% block content %}
+<section class="data-sources">
+    <h2>Database Tables and Views</h2>
+    <p class="data-origin-note">
+        All datasets, data views, and their columns are generated from the information coming from the assessments.
+    </p>
+    <p>
+        These tables and views provide pre-joined, analysis-ready data for Superset dashboards.
+    </p>
+
+    <div class="data-source-card">
+        <h3>dimensions</h3>
+        <p>EVERSE quality dimensions.</p>
+        <dl>
+            <dt>id</dt><dd>Primary key</dd>
+            <dt>identifier</dt><dd>Unique identifier (e.g., "testing")</dd>
+            <dt>name</dt><dd>Display name (e.g., "Testing")</dd>
+            <dt>description</dt><dd>Detailed description</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>indicators</h3>
+        <p>Quality indicators linked to dimensions.</p>
+        <dl>
+            <dt>id</dt><dd>Primary key</dd>
+            <dt>identifier</dt><dd>Unique identifier (e.g., "IND-testing-001")</dd>
+            <dt>name</dt><dd>Display name</dd>
+            <dt>description</dt><dd>What this indicator measures</dd>
+            <dt>quality_dimension</dt><dd>Reference to parent dimension</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>software</h3>
+        <p>Registered research software projects.</p>
+        <dl>
+            <dt>id</dt><dd>Primary key</dd>
+            <dt>name</dt><dd>Display name</dd>
+            <dt>repository_url</dt><dd>Source code repository URL</dd>
+            <dt>programming_language</dt><dd>Array of programming languages</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>assessments_detailed</h3>
+        <p>Provides a detailed view of each assessment, including metadata and the full JSON payload of all checks.</p>
+        <dl>
+            <dt>id</dt><dd>Unique identifier for the assessment.</dd>
+            <dt>date_created</dt><dd>The date the assessment was performed.</dd>
+            <dt>software_name</dt><dd>Name of the assessed software.</dd>
+            <dt>total_checks</dt><dd>Total number of checks in the assessment.</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>checks_detailed</h3>
+        <p>An unnested view of individual checks, linking each check to its corresponding indicator and dimension.</p>
+        <dl>
+            <dt>assessment_id</dt><dd>Identifier of the assessment this check belongs to.</dd>
+            <dt>software_name</dt><dd>Name of the assessed software.</dd>
+            <dt>indicator_id</dt><dd>Identifier of the quality indicator being assessed.</dd>
+            <dt>status</dt><dd>The result of the check (e.g., Pass, Fail).</dd>
+            <dt>indicator_name</dt><dd>Name of the indicator.</dd>
+            <dt>dimension_name</dt><dd>Name of the quality dimension.</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>assessment_summary</h3>
+        <p>Aggregated metrics per software project.</p>
+        <dl>
+            <dt>software_name</dt><dd>Software name</dd>
+            <dt>assessment_count</dt><dd>Total assessments</dd>
+            <dt>latest_assessment</dt><dd>Most recent assessment date</dd>
+            <dt>avg_checks</dt><dd>Average checks per assessment</dd>
+            <dt>unique_indicators</dt><dd>Unique indicators assessed</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>dimension_coverage</h3>
+        <p>Pass/fail statistics per quality dimension.</p>
+        <dl>
+            <dt>dimension_name</dt><dd>Dimension name</dd>
+            <dt>total_checks</dt><dd>Total checks in this dimension</dd>
+            <dt>passed</dt><dd>Checks with Pass status</dd>
+            <dt>failed</dt><dd>Checks with Fail status</dd>
+            <dt>pass_rate</dt><dd>Percentage of passed checks</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>indicator_results</h3>
+        <p>Results grouped by indicator and status.</p>
+        <dl>
+            <dt>indicator_name</dt><dd>Indicator name</dd>
+            <dt>dimension_name</dt><dd>Dimension name</dd>
+            <dt>status</dt><dd>Check status</dd>
+            <dt>occurrences</dt><dd>Count of this status</dd>
+            <dt>percentage</dt><dd>Percentage of total for indicator</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>software_quality_scores</h3>
+        <p>Quality scores per software and dimension.</p>
+        <dl>
+            <dt>software_name</dt><dd>Software name</dd>
+            <dt>dimension_name</dt><dd>Dimension name</dd>
+            <dt>score</dt><dd>Pass rate as percentage</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>assessment_trends</h3>
+        <p>Monthly assessment statistics.</p>
+        <dl>
+            <dt>month</dt><dd>Month (truncated date)</dd>
+            <dt>assessments</dt><dd>Assessments in this month</dd>
+            <dt>software_count</dt><dd>Unique software assessed</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>common_issues</h3>
+        <p>Frequently failing indicators across all assessments.</p>
+        <dl>
+            <dt>indicator_name</dt><dd>Indicator name</dd>
+            <dt>dimension_name</dt><dd>Parent dimension</dd>
+            <dt>failure_count</dt><dd>Number of failures</dd>
+            <dt>affected_software</dt><dd>Software affected by this issue</dd>
+        </dl>
+    </div>
+
+    <div class="data-source-card">
+        <h3>software_languages</h3>
+        <p>Software projects with programming languages.</p>
+        <dl>
+            <dt>software_name</dt><dd>Software name</dd>
+            <dt>language</dt><dd>Programming languages array</dd>
+        </dl>
+    </div>
+
+</section>
+{% endblock %}
