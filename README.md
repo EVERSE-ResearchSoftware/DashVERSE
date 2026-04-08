@@ -9,6 +9,15 @@ The dashboard prototype for the [EVERSE project](https://everse.software/).
 >
 > We welcome feedback, contributions, and suggestions! If you encounter issues or have ideas for improvement, please feel free to open an issue or submit a pull request.
 
+## Documentation
+
+- `docs/README.dev.md` – **Developer Notes**: Instructions on configuration and deployment
+- `docs/architecture/README.md` – **System Architecture**: Detailed diagrams of the system, data flow, and security model.
+- `docs/Deployment.md` – deployment checklist and prerequisites.
+- `docs/Kubernetes.md` – operational commands for managing the Minikube deployment.
+- `docs/Database.md` – details of the PostgreSQL schema, assessment mapping, and populate script usage.
+- `docs/API_examples.md` – practical PostgREST calls, including the multi-step workflow for creating assessments.
+
 ## Use of AI in the Development Process
 
 The core functionality of this project was designed and implemented by the development team without the use of AI code generation tools. In the later stages of the project, AI-assisted development tools were selectively used as a helper for specific tasks such as documentation drafting, boilerplate generation, and code formatting.
