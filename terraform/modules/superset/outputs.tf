@@ -2,6 +2,10 @@ output "release_name" {
   value = helm_release.superset.name
 }
 
+output "service_name" {
+  value = helm_release.superset.name
+}
+
 output "url" {
   value = "http://superset.${var.namespace}.svc.cluster.local:8088"
 }
