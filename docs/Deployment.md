@@ -12,30 +12,23 @@ Steps for deploying DashVERSE to a new environment.
 
 ## Initial Setup
 
-1. Build container images
+1. Deploy all services
 
    ```shell
-   make build-auth
-   make build-demo
+   make deploy ENV=local
+   make setup-dashboards ENV=local
    ```
 
-2. Initialize Terraform
-
-   ```shell
-   cd terraform
-   tofu init
-   ```
-
-3. Deploy all services
-
-   ```shell
-   make deploy
-   ```
-
-4. Verify pods are running
+1. Verify pods are running
 
    ```shell
    make status
+   ```
+
+1. Do port forwarding to be able to access the service
+
+   ```shell
+   make port-forward
    ```
 
 ## Post-Deploy
