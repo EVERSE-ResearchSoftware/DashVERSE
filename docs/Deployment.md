@@ -10,6 +10,10 @@ Steps for deploying DashVERSE to a new environment.
 - [ ] Helm installed
 - [ ] Docker or Podman available for building images
 
+## Deployment configurations
+
+The deployment settings for both local (testing) and production environments can be found in `terraform/environments` folder.
+
 ## Initial Setup
 
 1. Deploy all services
