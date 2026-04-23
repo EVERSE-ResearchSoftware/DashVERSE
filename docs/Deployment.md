@@ -20,7 +20,6 @@ The deployment settings for both local (testing) and production environments can
 
    ```shell
    make deploy ENV=local
-   make setup-dashboards ENV=local
    ```
 
 1. Verify pods are running
@@ -29,10 +28,16 @@ The deployment settings for both local (testing) and production environments can
    make status
    ```
 
-1. Do port forwarding to be able to access the service
+1. On a `separate terminal` do port forwarding to be able to access the service
 
    ```shell
    make port-forward
+   ```
+
+1. Deploy the dashboards
+
+   ```shell
+   make setup-dashboards ENV=local
    ```
 
 ## Post-Deploy
