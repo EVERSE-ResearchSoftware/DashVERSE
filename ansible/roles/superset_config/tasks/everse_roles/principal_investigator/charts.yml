@@ -9,6 +9,7 @@
     body_format: json
     body:
       slice_name: "Projects Overview"
+      description: "Count of unique software projects you have submitted assessments for. Acts as the denominator for the rest of this dashboard."
       datasource_id: "{{ dataset_ids['assessments_detailed'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
@@ -33,6 +34,7 @@
     body_format: json
     body:
       slice_name: "Quality Across Projects"
+      description: "Average quality score per project across all dimensions. Compare projects side-by-side to spot which need the most attention."
       datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -59,6 +61,7 @@
     body_format: json
     body:
       slice_name: "Assessment Timeline"
+      description: "Number of assessments per month across your projects. Gaps may indicate paused work; spikes typically correspond to release-time review pushes."
       datasource_id: "{{ dataset_ids['assessment_trends'] }}"
       datasource_type: "table"
       viz_type: "echarts_timeseries_line"
@@ -84,6 +87,7 @@
     body_format: json
     body:
       slice_name: "Dimensions by Project"
+      description: "Sunburst showing per-project distribution of checks across dimensions. Click a project segment to drill into how its quality is split across dimensions."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "sunburst_v2"
@@ -107,6 +111,7 @@
     body_format: json
     body:
       slice_name: "Failed Checks Requiring Action"
+      description: "Detailed list of every failing check with software, dimension, indicator, and output. Sort by software or dimension to triage what needs fixing first."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -130,6 +135,7 @@
     body_format: json
     body:
       slice_name: "Project Health Gauge"
+      description: "Average pass rate across your portfolio shown as a gauge. Use as an at-a-glance health indicator at PI status meetings."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "gauge_chart"
@@ -154,6 +160,7 @@
     body_format: json
     body:
       slice_name: "Check Status Distribution"
+      description: "Donut showing the proportion of pass/fail/other check outcomes across all your assessments. A large fail slice signals a portfolio-wide quality gap."
       datasource_id: "{{ dataset_ids['indicator_results'] }}"
       datasource_type: "table"
       viz_type: "pie"
@@ -181,6 +188,7 @@
     body_format: json
     body:
       slice_name: "Recent Assessments"
+      description: "Most recently submitted assessments, ordered by date. Use to confirm assessments arrived on schedule for the projects you expect."
       datasource_id: "{{ dataset_ids['assessments_detailed'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -204,6 +212,7 @@
     body_format: json
     body:
       slice_name: "Quality Improvement Tracking"
+      description: "Trend of assessment volume over time. A rising line means quality engagement is growing; a flat line suggests improvement work has stalled."
       datasource_id: "{{ dataset_ids['assessment_trends'] }}"
       datasource_type: "table"
       viz_type: "echarts_timeseries_line"
@@ -228,6 +237,7 @@
     body_format: json
     body:
       slice_name: "Check Distribution Treemap"
+      description: "Tile area shows how many checks each dimension-indicator combination has accumulated. Dominant tiles flag indicators that drive most of the testing effort."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "treemap_v2"

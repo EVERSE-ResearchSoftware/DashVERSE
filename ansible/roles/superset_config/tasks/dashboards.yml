@@ -74,6 +74,9 @@
         row_key TEXT;
         chart_count INTEGER;
         grid_children jsonb;
+        chart_height INTEGER;
+        current_tier TEXT;
+        prev_tier TEXT;
     BEGIN
         FOR dash_record IN
             SELECT id, slug FROM dashboards
@@ -85,16 +88,33 @@
             col_num := 0;
             chart_count := 0;
             grid_children := '[]'::jsonb;
+            prev_tier := NULL;
 
             FOR chart_record IN
                 SELECT s.id, s.slice_name, s.viz_type
                 FROM slices s
                 JOIN dashboard_slices ds ON s.id = ds.slice_id
                 WHERE ds.dashboard_id = dash_record.id
-                ORDER BY s.id
+                ORDER BY
+                    CASE WHEN s.viz_type IN ('big_number_total', 'gauge_chart') THEN 0 ELSE 1 END,
+                    s.id
             LOOP
                 chart_count := chart_count + 1;
                 chart_key := 'CHART-' || chart_count;
+
+                IF chart_record.viz_type IN ('big_number_total', 'gauge_chart') THEN
+                    current_tier := 'kpi';
+                    chart_height := 35;
+                ELSE
+                    current_tier := 'chart';
+                    chart_height := 50;
+                END IF;
+
+                IF prev_tier IS NOT NULL AND prev_tier <> current_tier AND col_num <> 0 THEN
+                    row_num := row_num + 1;
+                    col_num := 0;
+                END IF;
+
                 row_key := 'ROW-' || row_num;
 
                 IF col_num = 0 THEN
@@ -115,7 +135,7 @@
                         'chartId', chart_record.id,
                         'sliceName', chart_record.slice_name,
                         'width', 6,
-                        'height', CASE WHEN chart_record.viz_type = 'big_number_total' THEN 35 ELSE 50 END
+                        'height', chart_height
                     ),
                     'parents', jsonb_build_array('ROOT_ID', 'GRID_ID', row_key),
                     'children', '[]'::jsonb
@@ -132,6 +152,8 @@
                     col_num := 0;
                     row_num := row_num + 1;
                 END IF;
+
+                prev_tier := current_tier;
             END LOOP;
 
             new_position_json := jsonb_set(new_position_json, ARRAY['GRID_ID', 'children'], grid_children);

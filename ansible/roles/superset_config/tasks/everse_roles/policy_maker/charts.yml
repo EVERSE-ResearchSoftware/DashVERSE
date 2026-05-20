@@ -9,7 +9,7 @@
     body_format: json
     body:
       slice_name: "Total Software Projects"
-      description: "Total number of software projects registered in the system for quality assessment."
+      description: "Count of distinct software projects registered for assessment in DashVERSE. Use as the denominator when interpreting per-project metrics elsewhere on this dashboard."
       datasource_id: "{{ dataset_ids['software'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
@@ -34,6 +34,7 @@
     body_format: json
     body:
       slice_name: "Total Assessments"
+      description: "Total quality assessments submitted across all software. Compare against Total Software Projects to gauge how often each project is being reassessed."
       datasource_id: "{{ dataset_ids['assessments_detailed'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
@@ -58,6 +59,7 @@
     body_format: json
     body:
       slice_name: "Assessment Activity Over Time"
+      description: "Number of assessments submitted each month. Use to spot adoption peaks and lulls, or to correlate spikes with training rounds and release cycles."
       datasource_id: "{{ dataset_ids['assessment_trends'] }}"
       datasource_type: "table"
       viz_type: "echarts_timeseries_line"
@@ -83,6 +85,7 @@
     body_format: json
     body:
       slice_name: "Quality by Software"
+      description: "Total number of checks performed per software project. Wide bars indicate well-tested projects; short bars suggest assessments were skipped or limited."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -108,6 +111,7 @@
     body_format: json
     body:
       slice_name: "Compliance Heatmap"
+      description: "Cross-tab of check counts per software-by-dimension. Empty cells flag dimensions a software has never been assessed against; use to prioritize coverage gaps."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "heatmap"
@@ -133,6 +137,7 @@
     body_format: json
     body:
       slice_name: "Dimension Coverage"
+      description: "Share of checks performed across each quality dimension. Lopsided slices reveal which dimensions are over- or under-tested at the portfolio level."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "pie"
@@ -160,6 +165,7 @@
     body_format: json
     body:
       slice_name: "Quality Dimension Profile"
+      description: "Number of passing checks per dimension. The largest slices show where the portfolio scores best; smallest slices flag systemic weaknesses to address."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "pie"
@@ -185,6 +191,7 @@
     body_format: json
     body:
       slice_name: "Top Performing Software"
+      description: "Software ranked by quality score per dimension. Use to identify exemplars for case studies and shared best-practice sessions."
       datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -208,6 +215,7 @@
     body_format: json
     body:
       slice_name: "Pass Rate by Dimension"
+      description: "Average pass-rate percentage for each quality dimension across all software. Bars below 50% point to organization-wide gaps to address with policy or funding."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -233,6 +241,7 @@
     body_format: json
     body:
       slice_name: "Assessment Summary"
+      description: "Per-software assessment count, latest assessment date, and number of unique indicators covered. A low unique-indicator count suggests partial coverage even if assessment count is high."
       datasource_id: "{{ dataset_ids['assessment_summary'] }}"
       datasource_type: "table"
       viz_type: "table"

@@ -9,6 +9,7 @@
     body_format: json
     body:
       slice_name: "My Quality Score"
+      description: "Average percentage of checks that passed across all dimensions for the assessed software. Aim above 75% for a healthy project; below 50% indicates significant gaps to address."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
@@ -33,6 +34,7 @@
     body_format: json
     body:
       slice_name: "Check Pass Rate Gauge"
+      description: "The same overall pass rate displayed as a gauge for at-a-glance reading. Use during stand-ups or progress reports to show project health quickly."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "gauge_chart"
@@ -57,6 +59,7 @@
     body_format: json
     body:
       slice_name: "Quality Over Time"
+      description: "Number of assessments performed per month. Spikes signal active improvement work; a flat line suggests room to schedule re-assessments."
       datasource_id: "{{ dataset_ids['assessment_trends'] }}"
       datasource_type: "table"
       viz_type: "echarts_timeseries_line"
@@ -81,6 +84,7 @@
     body_format: json
     body:
       slice_name: "My Quality Profile"
+      description: "Distribution of passed checks across quality dimensions. Large slices identify your strengths; small slices show neglected dimensions worth investing in."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "pie"
@@ -106,6 +110,7 @@
     body_format: json
     body:
       slice_name: "Action Items"
+      description: "Detailed list of every check with its dimension, indicator, status, output, and evidence. Filter by status to focus on failed checks needing attention first."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -129,6 +134,7 @@
     body_format: json
     body:
       slice_name: "Indicator Results"
+      description: "Per-indicator count and percentage of each status outcome. Helps you spot which specific checks are most often failing for your software."
       datasource_id: "{{ dataset_ids['indicator_results'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -152,6 +158,7 @@
     body_format: json
     body:
       slice_name: "Focus Areas"
+      description: "Top 10 indicators with the most failures across the portfolio. Tackle these first for the biggest quality gains."
       datasource_id: "{{ dataset_ids['common_issues'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -177,6 +184,7 @@
     body_format: json
     body:
       slice_name: "Top Performing Projects"
+      description: "Software ranked by quality score per dimension. Compare your project against peers to set realistic improvement targets."
       datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -200,6 +208,7 @@
     body_format: json
     body:
       slice_name: "Easy Improvements"
+      description: "Detailed list of check evidence text. Scan the evidence column for one-line fixes (e.g. 'add a CITATION.cff') you can act on quickly."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -223,6 +232,7 @@
     body_format: json
     body:
       slice_name: "Checks by Status"
+      description: "Share of checks that passed, failed, or were not applicable. A large fail slice signals systematic issues; a small fail slice means the project is healthy."
       datasource_id: "{{ dataset_ids['indicator_results'] }}"
       datasource_type: "table"
       viz_type: "pie"

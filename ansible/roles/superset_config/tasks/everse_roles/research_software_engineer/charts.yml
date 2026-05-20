@@ -9,6 +9,7 @@
     body_format: json
     body:
       slice_name: "Total Checks"
+      description: "Total number of individual quality checks executed across all assessments. Acts as the atomic-unit denominator when interpreting per-check ratios elsewhere."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
@@ -33,6 +34,7 @@
     body_format: json
     body:
       slice_name: "Pass Rate KPI"
+      description: "Overall percentage of checks that passed across all assessments. Aim for 80% or higher as a healthy target across the portfolio."
       datasource_id: "{{ dataset_ids['dimension_coverage'] }}"
       datasource_type: "table"
       viz_type: "big_number_total"
@@ -57,6 +59,7 @@
     body_format: json
     body:
       slice_name: "Technical Debt Heatmap"
+      description: "Score per software-by-dimension; greener cells are stronger, oranger cells weaker. Use to spot which project-dimension pairs need the most engineering effort."
       datasource_id: "{{ dataset_ids['software_quality_scores'] }}"
       datasource_type: "table"
       viz_type: "heatmap"
@@ -82,6 +85,7 @@
     body_format: json
     body:
       slice_name: "Check Results Pie"
+      description: "Donut breakdown of check status outcomes. The fail slice sizes the technical-debt backlog at a glance."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "pie"
@@ -109,6 +113,7 @@
     body_format: json
     body:
       slice_name: "Coverage by Dimension"
+      description: "Number of checks performed per quality dimension across all software. Tall bars show well-tested dimensions; short bars expose coverage gaps."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -134,6 +139,7 @@
     body_format: json
     body:
       slice_name: "Checking Tools Usage"
+      description: "Number of checks contributed by each checking tool, e.g. howfairis or cffconvert. Use to plan tool-suite changes and to track adoption of new tools."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -159,6 +165,7 @@
     body_format: json
     body:
       slice_name: "Failed Checks Detail"
+      description: "Searchable table of failing checks with software, dimension, indicator, status, output, and evidence. Filter to a specific repo or dimension to plan remediation."
       datasource_id: "{{ dataset_ids['checks_detailed'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -182,6 +189,7 @@
     body_format: json
     body:
       slice_name: "Pass Rate Trend"
+      description: "Assessment volume over time. A rising line means active improvement effort; flat or falling lines suggest engagement is stagnating."
       datasource_id: "{{ dataset_ids['assessment_trends'] }}"
       datasource_type: "table"
       viz_type: "echarts_timeseries_line"
@@ -207,6 +215,7 @@
     body_format: json
     body:
       slice_name: "Software by Language"
+      description: "Donut of software counts grouped by primary programming language. Useful when planning language-specific tooling, training, or quality-checking pipelines."
       datasource_id: "{{ dataset_ids['software_languages'] }}"
       datasource_type: "table"
       viz_type: "pie"
@@ -234,6 +243,7 @@
     body_format: json
     body:
       slice_name: "Common Issues Bar"
+      description: "Top 15 indicators with the highest failure counts across all assessed software. Tackle the largest bars first for the highest-impact fixes."
       datasource_id: "{{ dataset_ids['common_issues'] }}"
       datasource_type: "table"
       viz_type: "dist_bar"
@@ -259,6 +269,7 @@
     body_format: json
     body:
       slice_name: "Quality Dimensions Table"
+      description: "Reference table of all quality dimensions with name, description, and status. Read alongside other charts to look up what each dimension means."
       datasource_id: "{{ dataset_ids['dimensions'] }}"
       datasource_type: "table"
       viz_type: "table"
@@ -281,6 +292,7 @@
     body_format: json
     body:
       slice_name: "Quality Indicators Table"
+      description: "Reference table of all indicators with their identifier and description. Look up an indicator's exact definition when interpreting failed-check evidence."
       datasource_id: "{{ dataset_ids['indicators'] }}"
       datasource_type: "table"
       viz_type: "table"
