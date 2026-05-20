@@ -230,3 +230,119 @@
 - name: Show public role assignment result
   debug:
     var: public_role_result.stdout_lines
+
+- name: Apply native filter configuration to dashboards
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    DO \$\$
+    DECLARE
+        ds_assessments INTEGER;
+        ds_checks INTEGER;
+        ds_languages INTEGER;
+        f_software jsonb;
+        f_creator jsonb;
+        f_dimension jsonb;
+        f_indicator jsonb;
+        f_status jsonb;
+        f_daterange jsonb;
+        f_language jsonb;
+        f_license jsonb;
+    BEGIN
+        SELECT id INTO ds_assessments FROM tables WHERE table_name = 'assessments_detailed' LIMIT 1;
+        SELECT id INTO ds_checks      FROM tables WHERE table_name = 'checks_detailed'      LIMIT 1;
+        SELECT id INTO ds_languages   FROM tables WHERE table_name = 'software_languages'   LIMIT 1;
+
+        f_software := jsonb_build_object(
+            'id', 'NATIVE_FILTER-software',
+            'type', 'NATIVE_FILTER',
+            'name', 'Software',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_assessments, 'column', jsonb_build_object('name', 'software_name'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_creator := jsonb_build_object(
+            'id', 'NATIVE_FILTER-creator',
+            'type', 'NATIVE_FILTER',
+            'name', 'Creator',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_assessments, 'column', jsonb_build_object('name', 'creator_name'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_dimension := jsonb_build_object(
+            'id', 'NATIVE_FILTER-dimension',
+            'type', 'NATIVE_FILTER',
+            'name', 'Dimension',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_checks, 'column', jsonb_build_object('name', 'dimension_name'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_indicator := jsonb_build_object(
+            'id', 'NATIVE_FILTER-indicator',
+            'type', 'NATIVE_FILTER',
+            'name', 'Indicator',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_checks, 'column', jsonb_build_object('name', 'indicator_name'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_status := jsonb_build_object(
+            'id', 'NATIVE_FILTER-status',
+            'type', 'NATIVE_FILTER',
+            'name', 'Status',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_checks, 'column', jsonb_build_object('name', 'outcome'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_daterange := jsonb_build_object(
+            'id', 'NATIVE_FILTER-daterange',
+            'type', 'NATIVE_FILTER',
+            'name', 'Date',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_assessments, 'column', jsonb_build_object('name', 'date_created'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_language := jsonb_build_object(
+            'id', 'NATIVE_FILTER-language',
+            'type', 'NATIVE_FILTER',
+            'name', 'Language',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_languages, 'column', jsonb_build_object('name', 'language'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+        f_license := jsonb_build_object(
+            'id', 'NATIVE_FILTER-license',
+            'type', 'NATIVE_FILTER',
+            'name', 'License',
+            'filterType', 'filter_select',
+            'targets', jsonb_build_array(jsonb_build_object('datasetId', ds_assessments, 'column', jsonb_build_object('name', 'license_id'))),
+            'controlValues', jsonb_build_object('multiSelect', true, 'enableEmptyFilter', false, 'inverseSelection', false, 'searchAllOptions', false),
+            'defaultDataMask', jsonb_build_object('filterState', jsonb_build_object('value', NULL)),
+            'scope', jsonb_build_object('rootPath', jsonb_build_array('ROOT_ID'), 'excluded', jsonb_build_array())
+        );
+
+        UPDATE dashboards SET json_metadata = jsonb_set(COALESCE(json_metadata::jsonb, '{}'::jsonb), '{native_filter_configuration}', jsonb_build_array(f_software, f_creator, f_dimension, f_daterange, f_license))::text WHERE slug = 'policy-maker';
+        UPDATE dashboards SET json_metadata = jsonb_set(COALESCE(json_metadata::jsonb, '{}'::jsonb), '{native_filter_configuration}', jsonb_build_array(f_software, f_creator, f_dimension, f_daterange, f_status))::text WHERE slug = 'principal-investigator';
+        UPDATE dashboards SET json_metadata = jsonb_set(COALESCE(json_metadata::jsonb, '{}'::jsonb), '{native_filter_configuration}', jsonb_build_array(f_software, f_creator, f_dimension, f_indicator, f_status, f_language))::text WHERE slug = 'research-software-engineer';
+        UPDATE dashboards SET json_metadata = jsonb_set(COALESCE(json_metadata::jsonb, '{}'::jsonb), '{native_filter_configuration}', jsonb_build_array(f_software, f_creator, f_dimension, f_status))::text WHERE slug = 'researcher-who-codes';
+        UPDATE dashboards SET json_metadata = jsonb_set(COALESCE(json_metadata::jsonb, '{}'::jsonb), '{native_filter_configuration}', jsonb_build_array(f_software, f_creator, f_dimension, f_indicator, f_status))::text WHERE slug = 'trainer';
+    END;
+    \$\$;
+    "
+  register: native_filter_result
+
+- name: Show native filter result
+  debug:
+    msg: "Applied native filters to 5 role dashboards"
