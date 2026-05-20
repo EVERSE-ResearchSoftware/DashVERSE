@@ -1,4 +1,3 @@
-# DashVERSE Infrastructure
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
@@ -10,7 +9,6 @@ provider "helm" {
   }
 }
 
-# namespace
 module "namespace" {
   source = "./modules/namespace"
 
@@ -19,7 +17,6 @@ module "namespace" {
   labels         = var.common_labels
 }
 
-# secrets
 module "secrets" {
   source = "./modules/secrets"
 
@@ -27,7 +24,6 @@ module "secrets" {
   labels    = var.common_labels
 }
 
-# db init scripts
 module "db_init" {
   source = "./modules/db-init"
 
@@ -35,7 +31,6 @@ module "db_init" {
   labels    = var.common_labels
 }
 
-# postgresql
 module "postgresql" {
   source = "./modules/postgresql"
 
@@ -48,7 +43,6 @@ module "postgresql" {
   init_configmap = module.db_init.configmap_name
 }
 
-# postgrest api
 module "postgrest" {
   source = "./modules/postgrest"
 
@@ -61,7 +55,6 @@ module "postgrest" {
   jwt_secret_key = "jwt-secret"
 }
 
-# superset
 module "superset" {
   source = "./modules/superset"
 
@@ -74,7 +67,6 @@ module "superset" {
   admin_password = module.secrets.superset_admin_password
 }
 
-# sync cronjob for everse data
 module "sync" {
   source = "./modules/sync"
 
@@ -85,7 +77,6 @@ module "sync" {
   secrets_name = module.secrets.secret_name
 }
 
-# auth service for jwt token generation
 module "auth_service" {
   source = "./modules/auth-service"
 
@@ -100,7 +91,6 @@ module "auth_service" {
   module_depends_on = [module.postgresql]
 }
 
-# landing site for public dashboard access
 module "landing" {
   source = "./modules/landing"
 
@@ -109,7 +99,6 @@ module "landing" {
   superset_url   = "http://${module.superset.service_name}:${module.superset.port}"
 }
 
-# api documentation for postgrest
 module "postgrest_docs" {
   source = "./modules/api-docs"
 
@@ -121,7 +110,6 @@ module "postgrest_docs" {
   service_port = 3001
 }
 
-# api documentation for auth service
 module "auth_docs" {
   source = "./modules/api-docs"
 

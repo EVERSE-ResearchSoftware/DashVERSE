@@ -50,7 +50,6 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)) -> UserR
         db.refresh(new_user)
     except IntegrityError:
         db.rollback()
-        # Catch constraint violation
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Username or email already registered"

@@ -1,6 +1,5 @@
 SET search_path TO api, public;
 
--- detailed assessment view
 CREATE OR REPLACE VIEW assessments_detailed AS
 SELECT
   a.id,
@@ -12,10 +11,12 @@ SELECT
   a.payload->'assessedSoftware'->>'url' AS software_url,
   jsonb_array_length(a.payload->'checks') AS total_checks,
   a.payload->'checks' AS checks,
-  a.created_at
+  a.created_at,
+  COALESCE(a.payload->'creator'->>'name', a.payload->'author'->>'name') AS creator_name,
+  a.payload->'assessedSoftware'->'schema:identifier'->>'@id' AS software_doi,
+  a.payload->'license'->>'@id' AS license_id
 FROM assessment_raw a;
 
--- checks detailed view (unnested)
 CREATE OR REPLACE VIEW checks_detailed AS
 SELECT
   a.id AS assessment_id,
@@ -30,7 +31,10 @@ SELECT
   check_item->>'evidence' AS evidence,
   i.name AS indicator_name,
   i.quality_dimension,
-  d.name AS dimension_name
+  d.name AS dimension_name,
+  COALESCE(a.payload->'creator'->>'name', a.payload->'author'->>'name') AS creator_name,
+  a.payload->'assessedSoftware'->>'url' AS software_url,
+  check_outcome(check_item) AS outcome
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
@@ -40,7 +44,6 @@ LEFT JOIN dimensions d ON d.identifier = split_part(
        ELSE i.quality_dimension::jsonb->>'@id'
   END, '/', -1);
 
--- assessment summary per software
 CREATE OR REPLACE VIEW assessment_summary AS
 SELECT
   a.payload->'assessedSoftware'->>'name' AS software_name,
@@ -55,17 +58,15 @@ GROUP BY
   a.payload->'assessedSoftware'->>'name',
   a.payload->'assessedSoftware'->>'url';
 
--- dimension coverage (pass/fail per dimension)
 CREATE OR REPLACE VIEW dimension_coverage AS
 SELECT
   d.name AS dimension_name,
   d.identifier AS dimension_id,
   COUNT(*) AS total_checks,
-  SUM(CASE WHEN check_item->'status'->>'@id' LIKE '%Pass%' THEN 1 ELSE 0 END) AS passed,
-  SUM(CASE WHEN check_item->'status'->>'@id' LIKE '%Fail%' THEN 1 ELSE 0 END) AS failed,
-  SUM(CASE WHEN check_item->'status'->>'@id' NOT LIKE '%Pass%'
-           AND check_item->'status'->>'@id' NOT LIKE '%Fail%' THEN 1 ELSE 0 END) AS other,
-  ROUND(100.0 * SUM(CASE WHEN check_item->'status'->>'@id' LIKE '%Pass%' THEN 1 ELSE 0 END)
+  SUM(CASE WHEN check_outcome(check_item) = 'pass' THEN 1 ELSE 0 END) AS passed,
+  SUM(CASE WHEN check_outcome(check_item) = 'fail' THEN 1 ELSE 0 END) AS failed,
+  SUM(CASE WHEN check_outcome(check_item) NOT IN ('pass', 'fail') THEN 1 ELSE 0 END) AS other,
+  ROUND(100.0 * SUM(CASE WHEN check_outcome(check_item) = 'pass' THEN 1 ELSE 0 END)
     / NULLIF(COUNT(*), 0), 2) AS pass_rate
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
@@ -78,7 +79,6 @@ LEFT JOIN dimensions d ON d.identifier = split_part(
 WHERE d.name IS NOT NULL
 GROUP BY d.name, d.identifier;
 
--- indicator results with status
 CREATE OR REPLACE VIEW indicator_results AS
 SELECT
   i.identifier AS indicator_id,
@@ -87,7 +87,8 @@ SELECT
   d.name AS dimension_name,
   check_item->'status'->>'@id' AS status,
   COUNT(*) AS occurrences,
-  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (PARTITION BY i.identifier), 2) AS percentage
+  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (PARTITION BY i.identifier), 2) AS percentage,
+  check_outcome(check_item) AS outcome
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
@@ -97,16 +98,15 @@ LEFT JOIN dimensions d ON d.identifier = split_part(
        ELSE i.quality_dimension::jsonb->>'@id'
   END, '/', -1)
 WHERE i.identifier IS NOT NULL
-GROUP BY i.identifier, i.name, i.quality_dimension, d.name, check_item->'status'->>'@id';
+GROUP BY i.identifier, i.name, i.quality_dimension, d.name, check_item->'status'->>'@id', check_outcome(check_item);
 
--- software quality scores
 CREATE OR REPLACE VIEW software_quality_scores AS
 SELECT
   a.payload->'assessedSoftware'->>'name' AS software_name,
   d.name AS dimension_name,
   COUNT(*) AS total_checks,
-  SUM(CASE WHEN check_item->'status'->>'@id' LIKE '%Pass%' THEN 1 ELSE 0 END) AS passed,
-  ROUND(100.0 * SUM(CASE WHEN check_item->'status'->>'@id' LIKE '%Pass%' THEN 1 ELSE 0 END)
+  SUM(CASE WHEN check_outcome(check_item) = 'pass' THEN 1 ELSE 0 END) AS passed,
+  ROUND(100.0 * SUM(CASE WHEN check_outcome(check_item) = 'pass' THEN 1 ELSE 0 END)
     / NULLIF(COUNT(*), 0), 2) AS score
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
@@ -119,7 +119,6 @@ LEFT JOIN dimensions d ON d.identifier = split_part(
 WHERE d.name IS NOT NULL
 GROUP BY a.payload->'assessedSoftware'->>'name', d.name;
 
--- assessment trends over time
 CREATE OR REPLACE VIEW assessment_trends AS
 SELECT
   date_trunc('month', (a.payload->>'dateCreated')::timestamp) AS month,
@@ -130,7 +129,6 @@ FROM assessment_raw a
 GROUP BY date_trunc('month', (a.payload->>'dateCreated')::timestamp)
 ORDER BY month;
 
--- software by programming language
 CREATE OR REPLACE VIEW software_languages AS
 SELECT
   s.id,
@@ -139,7 +137,6 @@ SELECT
 FROM software s
 WHERE s.programming_language IS NOT NULL;
 
--- common issues (frequently failing indicators)
 CREATE OR REPLACE VIEW common_issues AS
 SELECT
   i.identifier AS indicator_id,
@@ -155,7 +152,7 @@ LEFT JOIN dimensions d ON d.identifier = split_part(
        THEN i.quality_dimension::jsonb->0->>'@id'
        ELSE i.quality_dimension::jsonb->>'@id'
   END, '/', -1)
-WHERE check_item->'status'->>'@id' LIKE '%Fail%'
+WHERE check_outcome(check_item) = 'fail'
   AND i.identifier IS NOT NULL
 GROUP BY i.identifier, i.name, d.name
 ORDER BY failure_count DESC;

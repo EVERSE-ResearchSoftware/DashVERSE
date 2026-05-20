@@ -1,10 +1,8 @@
 ---
-# Database connection settings
 database_name: "DashVERSE PostgreSQL"
 database_driver: "postgresql"
 database_schema: "api"
 
-# Dataset definitions
 datasets:
   - name: dimensions
     table: dimensions
@@ -46,7 +44,6 @@ datasets:
     table: software_languages
     schema: "{{ database_schema }}"
 
-# Dashboard definitions with RSQKit role descriptions
 dashboards:
   - name: "Policy Maker"
     slug: "policy-maker"
@@ -79,8 +76,6 @@ dashboards:
       Highlights common issues, skill gaps, and areas where training can have the most impact.
       See: https://everse.software/RSQKit/trainer
 
-# Per-role include keys (folder names under tasks/everse_roles/).
-# Add a new role by appending its key here and creating everse_roles/<key>/charts.yml and everse_roles/<key>/dashboard.yml.
 dashboard_role_keys:
   - policy_maker
   - principal_investigator

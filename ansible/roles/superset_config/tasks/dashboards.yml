@@ -12,10 +12,6 @@
   include_tasks: "everse_roles/{{ item }}/dashboard.yml"
   loop: "{{ dashboard_role_keys }}"
 
-# ==========================================================
-# Link charts to dashboards using sequential IDs
-# Charts are created in order: PM(1-10), PI(11-20), RSE(21-32), RWC(33-42), TR(43-54)
-# ==========================================================
 
 - name: Get dashboard IDs from database
   shell: |

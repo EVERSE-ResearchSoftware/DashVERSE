@@ -8,7 +8,6 @@ from app.core.security import decode_access_token
 from app.models.user import User
 from app.models.token import Token
 
-# HTTP Bearer token scheme
 security = HTTPBearer()
 
 
@@ -16,15 +15,8 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:
-    """
-    Get current authenticated user from JWT token.
-
-    Validates token, checks if revoked, and returns User object.
-    Raises 401 if token invalid/expired or user not found.
-    """
     token = credentials.credentials
 
-    # Decode and validate token
     payload = decode_access_token(token)
     if payload is None:
         raise HTTPException(
@@ -33,7 +25,6 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Extract user ID from token
     user_id: str = payload.get("sub")
     if user_id is None:
         raise HTTPException(
@@ -42,8 +33,6 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Check if token exists in database and is not revoked
-    # API tokens MUST be stored in database (session tokens not valid for API)
     jti = payload.get("jti")
     if not jti:
         raise HTTPException(
@@ -67,7 +56,6 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Get user from database
     user = db.query(User).filter(User.id == int(user_id)).first()
     if user is None:
         raise HTTPException(
@@ -76,7 +64,6 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Check if user is active
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -87,14 +74,10 @@ async def get_current_user(
 
 
 def get_client_ip(request: Request) -> Optional[str]:
-    """Extract client IP from request headers."""
-    # Try to get real IP from X-Forwarded-For header (when behind proxy)
     forwarded_for = request.headers.get("X-Forwarded-For")
     if forwarded_for:
-        # X-Forwarded-For can contain multiple IPs, take the first one
         return forwarded_for.split(",")[0].strip()
 
-    # Fall back to direct client IP
     if request.client:
         return request.client.host
 

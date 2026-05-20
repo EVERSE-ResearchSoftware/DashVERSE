@@ -8,7 +8,6 @@ from app.models.failed_login_attempt import FailedLoginAttempt
 
 
 def record_failed_login(db, username, ip_address=None):
-    """Record failed login attempt."""
     attempt = FailedLoginAttempt(
         username=username,
         ip_address=ip_address,
@@ -19,7 +18,6 @@ def record_failed_login(db, username, ip_address=None):
 
 
 def get_recent_failed_attempts(db: Session, username: str, window_minutes: int = 15):
-    """Get count of recent failed login attempts."""
     cutoff_time = datetime.now(timezone.utc) - timedelta(minutes=window_minutes)
 
     count = db.query(FailedLoginAttempt).filter(
@@ -33,8 +31,6 @@ def get_recent_failed_attempts(db: Session, username: str, window_minutes: int =
 
 
 def is_account_locked(db: Session, username: str) -> tuple[bool, Optional[datetime]]:
-    """Check if acount is currently locked."""
-    # Get the most recent locked_until timestamp
     latest_attempt = db.query(FailedLoginAttempt).filter(
         and_(
             FailedLoginAttempt.username == username,
@@ -52,13 +48,11 @@ def is_account_locked(db: Session, username: str) -> tuple[bool, Optional[dateti
 
 
 def lock_account(db, username, duration_minutes=None):
-    """Lock account after too many failed attempts."""
     if duration_minutes is None:
         duration_minutes = settings.LOCKOUT_DURATION_MINUTES
 
     locked_until = datetime.now(timezone.utc) + timedelta(minutes=duration_minutes)
 
-    # Create a lockout record
     lockout_record = FailedLoginAttempt(
         username=username,
         attempt_time=datetime.now(timezone.utc),
@@ -71,7 +65,6 @@ def lock_account(db, username, duration_minutes=None):
 
 
 def clear_failed_attempts(db, username):
-    """Clear failed attempts after successful login."""
     db.query(FailedLoginAttempt).filter(
         FailedLoginAttempt.username == username
     ).delete()
@@ -83,13 +76,6 @@ def check_and_handle_login_attempt(
     username: str,
     ip_address: Optional[str] = None
 ) -> tuple[bool, Optional[str], Optional[datetime]]:
-    """
-    Check if login attempt is allowed and handle lockout logic.
-
-    Should be called BEFORE attempting authentication.
-    Returns (is_allowed, error_message, locked_until).
-    """
-    # Check if account is currently locked
     is_locked, locked_until = is_account_locked(db, username)
 
     if is_locked:
@@ -100,11 +86,9 @@ def check_and_handle_login_attempt(
         )
         return False, error_msg, locked_until
 
-    # Check recent failed attempts
     recent_failures = get_recent_failed_attempts(db, username)
 
     if recent_failures >= settings.MAX_LOGIN_ATTEMPTS:
-        # Lock the account
         locked_until = lock_account(db, username)
         minutes_remaining = settings.LOCKOUT_DURATION_MINUTES
         error_msg = (
@@ -113,5 +97,4 @@ def check_and_handle_login_attempt(
         )
         return False, error_msg, locked_until
 
-    # Login attempt is allowed
     return True, None, None

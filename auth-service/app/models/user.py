@@ -6,7 +6,6 @@ from app.core.database import Base
 
 
 class User(Base):
-    """User model for authentication."""
 
     __tablename__ = "users"
     __table_args__ = {"schema": "auth"}
@@ -20,7 +19,6 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    # Relationships - cascade delete removes all tokens when user is deleted
     tokens = relationship("Token", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):

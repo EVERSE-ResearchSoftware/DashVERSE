@@ -29,7 +29,6 @@ resource "kubernetes_resource_quota" "this" {
   }
 }
 
-# default limits for containers
 resource "kubernetes_limit_range" "this" {
   metadata {
     name      = "${var.namespace_name}-limits"

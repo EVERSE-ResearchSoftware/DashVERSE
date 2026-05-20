@@ -100,35 +100,6 @@ kubectl get secret dashverse-secrets -n dashverse -o jsonpath='{.data.postgres-p
 kubectl get secret dashverse-secrets -n dashverse -o jsonpath='{.data.superset-admin-password}' | base64 -d
 ```
 
-### Justfile Recipes
-
-> Run `just --list` at any time to see all available recipes with descriptions.
-> To override a default variable (such as `env=local`), put the assignment **before** the recipe name: `just env=production deploy`.
-
-| Recipe                          | Description                                            |
-| ------------------------------- | ------------------------------------------------------ |
-| `just deploy`                   | Build images and deploy all services                   |
-| `just destroy`                  | Remove all deployed services                           |
-| `just destroy-all`              | Destroy services and delete the minikube cluster       |
-| `just status`                   | Show deployment status                                 |
-| `just port-forward`             | Forward all service ports to localhost (Ctrl+C stops)  |
-| `just show-access`              | Print PostgreSQL and Superset credentials              |
-| `just logs`                     | Tail all service logs                                  |
-| `just logs-auth`                | Tail auth-service logs                                 |
-| `just logs-landing`             | Tail landing logs                                      |
-| `just logs-postgres`            | Tail PostgreSQL logs                                   |
-| `just logs-postgrest`           | Tail PostgREST logs                                    |
-| `just logs-superset`            | Tail Superset logs                                     |
-| `just sync`                     | Download EVERSE indicators/dimensions (no DB apply)    |
-| `just sync-apply`               | Download and import to database                        |
-| `just sync-trigger`             | Trigger the in-cluster sync cronjob manually           |
-| `just jwt <username> <password>`| Generate a JWT token via auth-service login            |
-| `just build-auth`               | Build the auth-service image                           |
-| `just build-landing`            | Build the landing image                                |
-| `just setup-dashboards`         | Configure Superset dashboards via Ansible              |
-| `just seed-data`                | Import sample assessment data                          |
-| `just clean`                    | Remove local terraform state and lock files            |
-
 ### Manual Deployment
 
 ```shell
@@ -218,12 +189,11 @@ Prerequisites:
 
 The Superset admin password is automatically retrieved from Kubernetes secrets during setup.
 
-
 ## Documentation
 
-- `docs/Kubernetes.md` – operational commands for managing the Minikube deployment.
-- `docs/Database.md` – details of the PostgreSQL schema, assessment mapping, and populate script usage.
-- `docs/API_examples.md` – practical PostgREST calls, including the multi-step workflow for creating assessments.
+- `docs/Kubernetes.md` - operational commands for managing the Minikube deployment.
+- `docs/Database.md` - details of the PostgreSQL schema, assessment mapping, and populate script usage.
+- `docs/API_examples.md` - practical PostgREST calls, including the multi-step workflow for creating assessments.
 
 ## Clean up
 

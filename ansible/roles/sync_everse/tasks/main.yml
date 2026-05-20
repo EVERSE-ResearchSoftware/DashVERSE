@@ -1,7 +1,4 @@
 ---
-# Fetch dimension and indicator definitions from the EVERSE indicators repo
-# and upsert them into the dashverse database. Idempotent: re-running picks
-# up upstream changes via ON CONFLICT ... UPDATE.
 
 - name: List dimension files
   uri:

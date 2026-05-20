@@ -1,4 +1,3 @@
-# generate passwords if not provided
 resource "random_password" "postgres" {
   count   = var.postgres_password == "" ? 1 : 0
   length  = 32

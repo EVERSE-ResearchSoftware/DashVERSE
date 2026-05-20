@@ -1,7 +1,4 @@
 ---
-# Apply example assessments from the local SQL file to PostgreSQL.
-# The SQL file is idempotent: it deletes rows tagged with the seed @id prefix
-# before inserting fresh ones, so re-running the play is safe.
 
 - name: Apply assessment example seed data
   command:

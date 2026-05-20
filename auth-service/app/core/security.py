@@ -6,19 +6,16 @@ import uuid
 
 from app.core.config import settings
 
-# argon2 for password hashing
 pwd_context = CryptContext(
     schemes=["argon2"],
     deprecated="auto",
-    argon2__memory_cost=65536,  # 64 MB
-    argon2__time_cost=3,  # 3 iterations
-    argon2__parallelism=4,  # 4 parallel threads
+    argon2__memory_cost=65536,
+    argon2__time_cost=3,
+    argon2__parallelism=4,
 )
 
 
-
 def hash_password(password):
-    # Use Argon2id for hashing
     return pwd_context.hash(password)
 
 
@@ -39,20 +36,18 @@ def create_access_token(
     is_superuser: bool = False,
     expires_delta: Optional[timedelta] = None
 ) -> tuple[str, str, datetime]:
-    # Returns (jwt_token, jti, expires_at)
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
         expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_EXPIRATION_DAYS)
 
-    # unique jti for tracking this token
     jti = str(uuid.uuid4())
 
     to_encode = {
         "sub": str(user_id),
         "username": username,
         "is_superuser": is_superuser,
-        "role": "web_user",  # role for postgrest
+        "role": "web_user",
         "aud": "postgrest",
         "exp": expire,
         "iat": datetime.now(timezone.utc),
@@ -98,7 +93,6 @@ def verify_token(token: str) -> tuple[bool, Optional[dict], Optional[str]]:
 
 
 def _get_jti(token):
-    # extract jti without validating
     try:
         unverified_payload = jwt.decode(
             token,

@@ -61,7 +61,6 @@ resource "kubernetes_deployment" "postgrest" {
             value = "3000"
           }
 
-          # jwt config
           dynamic "env" {
             for_each = var.jwt_secret_key != "" ? [1] : []
             content {

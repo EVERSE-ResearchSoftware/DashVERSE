@@ -1,6 +1,5 @@
 SET search_path TO api, public;
 
--- jwt helper functions
 CREATE OR REPLACE FUNCTION current_user_id()
 RETURNS INTEGER AS $$
 BEGIN
@@ -17,13 +16,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
--- enable RLS on tables
 ALTER TABLE software ENABLE ROW LEVEL SECURITY;
 ALTER TABLE dimensions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE indicators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assessment_raw ENABLE ROW LEVEL SECURITY;
 
--- public read policies
 DROP POLICY IF EXISTS read_software ON software;
 CREATE POLICY read_software ON software FOR SELECT TO web_anon, web_user USING (true);
 
@@ -36,7 +33,6 @@ CREATE POLICY read_indicators ON indicators FOR SELECT TO web_anon, web_user USI
 DROP POLICY IF EXISTS read_assessment ON assessment_raw;
 CREATE POLICY read_assessment ON assessment_raw FOR SELECT TO web_anon, web_user USING (true);
 
--- authenticated write policies
 DROP POLICY IF EXISTS write_software ON software;
 CREATE POLICY write_software ON software FOR ALL TO web_user
   USING (is_authenticated()) WITH CHECK (is_authenticated());

@@ -1,5 +1,3 @@
-# configmap for db initialization scripts
-# loads SQL from database/sql/schema/ files
 
 locals {
   sql_path = "${path.module}/../../../database/sql/schema"

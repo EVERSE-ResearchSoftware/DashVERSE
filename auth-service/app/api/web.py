@@ -25,18 +25,15 @@ from app.models.token import Token
 
 router = APIRouter(tags=["Web Interface"])
 
-# Get the absolute path to templates directory
 templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
 templates = Jinja2Templates(directory=templates_dir)
 
 
 def get_user_from_session(request: Request, db: Session) -> Optional[User]:
-    """Retrive user from session cookie."""
     token = request.cookies.get("access_token")
     if not token:
         return None
 
-    # Decode token and get user
     from app.core.security import decode_access_token
     payload = decode_access_token(token)
     if not payload:
@@ -79,7 +76,6 @@ async def login_submit(
 ):
     client_ip = get_client_ip(request)
 
-    # Check if login attempt is allowed
     is_allowed, error_msg, locked_until = check_and_handle_login_attempt(
         db, username, client_ip
     )
@@ -95,7 +91,6 @@ async def login_submit(
             }
         )
 
-    # Get user and verify password
     user = db.query(User).filter(User.username == username).first()
 
     if not user or not verify_password(password, user.hashed_password):
@@ -121,17 +116,14 @@ async def login_submit(
             }
         )
 
-    # Successful login
     clear_failed_attempts(db, username)
 
-    # Create session JWT token (not stored in database - for web session only)
     session_token, _, _ = create_access_token(
         user_id=user.id,
         username=user.username,
         is_superuser=user.is_superuser
     )
 
-    # Redirect to dashboard with session token in cookie
     response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
     response.set_cookie(
         key="access_token",
@@ -145,7 +137,6 @@ async def login_submit(
 
 @router.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request, db: Session = Depends(get_db)):
-    """Display registration page."""
     user = get_user_from_session(request, db)
     if user:
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
@@ -169,8 +160,6 @@ async def register_submit(
     confirm_password: str = Form(...),
     db: Session = Depends(get_db)
 ):
-    """Handle registration form."""
-    # Validate passwords match
     if password != confirm_password:
         return templates.TemplateResponse(
             "register.html",
@@ -184,7 +173,6 @@ async def register_submit(
             }
         )
 
-    # Validate password strength
     is_valid, error_msg = validate_password_strength(password)
     if not is_valid:
         return templates.TemplateResponse(
@@ -199,7 +187,6 @@ async def register_submit(
             }
         )
 
-    # Check if username exists
     existing_user = db.query(User).filter(User.username == username).first()
     if existing_user:
         return templates.TemplateResponse(
@@ -213,7 +200,6 @@ async def register_submit(
             }
         )
 
-    # Check if email exists
     existing_email = db.query(User).filter(User.email == email).first()
     if existing_email:
         return templates.TemplateResponse(
@@ -227,7 +213,6 @@ async def register_submit(
             }
         )
 
-    # Create new user
     hashed_password = hash_password(password)
     new_user = User(
         username=username,
@@ -252,7 +237,6 @@ async def register_submit(
             }
         )
 
-    # Redirect to login with success message
     return RedirectResponse(
         url="/login?message=Registration successful! Please login.",
         status_code=status.HTTP_302_FOUND
@@ -261,15 +245,12 @@ async def register_submit(
 
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_page(request: Request, db: Session = Depends(get_db)):
-    """Display dashboard with token management."""
     user = get_user_from_session(request, db)
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
 
-    # Get user's tokens
     tokens = db.query(Token).filter(Token.user_id == user.id).order_by(Token.created_at.desc()).all()
 
-    # Check for new token in query params
     new_token = request.query_params.get("token")
 
     return templates.TemplateResponse(
@@ -285,19 +266,16 @@ async def dashboard_page(request: Request, db: Session = Depends(get_db)):
 
 @router.post("/tokens/generate")
 async def generate_token_web(request: Request, db: Session = Depends(get_db)):
-    """Generate new token from web UI."""
     user = get_user_from_session(request, db)
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
 
-    # Create JWT token
     jwt_token, jti, expires_at = create_access_token(
         user_id=user.id,
         username=user.username,
         is_superuser=user.is_superuser
     )
 
-    # Store token in database
     token_record = Token(
         user_id=user.id,
         jti=jti,
@@ -307,7 +285,6 @@ async def generate_token_web(request: Request, db: Session = Depends(get_db)):
     db.add(token_record)
     db.commit()
 
-    # Redirect to dashboard with new token
     return RedirectResponse(
         url=f"/dashboard?token={jwt_token}",
         status_code=status.HTTP_302_FOUND
@@ -320,12 +297,10 @@ async def revoke_token_web(
     token_id: int = Form(...),
     db: Session = Depends(get_db)
 ):
-    """Revoke token from web UI."""
     user = get_user_from_session(request, db)
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
 
-    # Get token
     token = db.query(Token).filter(
         Token.id == token_id,
         Token.user_id == user.id
@@ -344,12 +319,10 @@ async def delete_token_web(
     token_id: int = Form(...),
     db: Session = Depends(get_db)
 ):
-    """Delete revoked token from web UI."""
     user = get_user_from_session(request, db)
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
 
-    # Get token - only allow deletion of revoked tokens
     token = db.query(Token).filter(
         Token.id == token_id,
         Token.user_id == user.id,
@@ -365,7 +338,6 @@ async def delete_token_web(
 
 @router.get("/logout")
 async def logout(request: Request):
-    """Logout user by clearing cookie."""
     response = RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
     response.delete_cookie("access_token")
     return response

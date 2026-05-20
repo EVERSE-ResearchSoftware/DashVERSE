@@ -6,7 +6,6 @@ from app.core.database import Base
 
 
 class Token(Base):
-    """Token model for JWT management."""
 
     __tablename__ = "tokens"
     __table_args__ = {"schema": "auth"}
@@ -19,7 +18,6 @@ class Token(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
 
-    # Relationships
     user = relationship("User", back_populates="tokens")
 
     def __repr__(self):

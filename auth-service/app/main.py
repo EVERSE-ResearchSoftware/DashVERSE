@@ -9,7 +9,6 @@ from app.core.database import engine, Base
 from app.core.logging_config import configure_logging
 from app.api import auth, tokens, web
 
-# Configure logging with automatic secret masking
 configure_logging(level=settings.LOG_LEVEL)
 
 logger = logging.getLogger(__name__)
@@ -19,7 +18,6 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("Starting up auth-service...")
 
-    # Create database tables
     logger.info("Creating database tables...")
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created successfully")
@@ -45,7 +43,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register API routers
 app.include_router(auth.router)
 app.include_router(tokens.router)
 app.include_router(web.router)
@@ -53,9 +50,6 @@ app.include_router(web.router)
 
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health"])
 async def health_check():
-    """
-    Health check endpoint for Kubernetes liveness and readiness probes.
-    """
     return {
         "status": "healthy",
         "service": "auth-service",
@@ -65,9 +59,6 @@ async def health_check():
 
 @app.get("/", tags=["Root"])
 async def root():
-    """
-    Root endpoint providing service information.
-    """
     return {
         "service": "DashVERSE Auth Service",
         "version": "1.0.0",
@@ -94,9 +85,6 @@ async def root():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """
-    Global exception handler for unhandled exceptions.
-    """
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

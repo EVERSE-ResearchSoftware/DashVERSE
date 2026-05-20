@@ -1,10 +1,3 @@
--- Example assessments for development and demo purposes.
---
--- Payload follows the EVERSE rsqa 0.0.1 schema:
---   https://github.com/EVERSE-ResearchSoftware/schemas/tree/main/assessment
---
--- Each row is keyed under the @id prefix `urn:dashverse:seed:` so that the
--- DELETE at the top makes re-running this file idempotent.
 
 SET search_path TO api, public;
 
@@ -12,8 +5,6 @@ BEGIN;
 
 DELETE FROM assessment_raw WHERE payload->>'@id' LIKE 'urn:dashverse:seed:%';
 
-
--- CFFinit v2.3.1 -- baseline assessment
 
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
@@ -107,8 +98,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 $$::jsonb, '2025-09-15T10:30:00+00:00');
 
 
--- CFFinit v2.4.0 -- 3 months later, CI added, codemeta still missing
-
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
 {
@@ -145,8 +134,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 $$::jsonb, '2025-12-10T14:18:00+00:00');
 
 
--- CFFinit v2.5.0
-
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
 {
@@ -182,8 +169,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 $$::jsonb, '2026-03-05T09:42:00+00:00');
 
 
--- howfairis
-
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
 {
@@ -216,8 +201,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 }
 $$::jsonb, '2025-12-12T11:05:00+00:00');
 
-
--- PyANI
 
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
@@ -252,8 +235,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 $$::jsonb, '2025-09-22T15:48:00+00:00');
 
 
--- PyANI v0.2.14 -- 3 months later
-
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
 {
@@ -286,7 +267,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 }
 $$::jsonb, '2025-12-20T16:33:00+00:00');
 
--- Apptainer
 
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
@@ -320,8 +300,6 @@ INSERT INTO assessment_raw (payload, created_at) VALUES
 }
 $$::jsonb, '2025-12-08T13:11:00+00:00');
 
-
--- OpenSSF Scorecard
 
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$

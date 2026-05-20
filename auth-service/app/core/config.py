@@ -3,12 +3,6 @@ from pydantic import Field
 
 
 class Settings(BaseSettings):
-    """
-    Application settings loaded from environment variables.
-
-    Environment variables are injected by Kubernetes from secrets and configmaps.
-    See terraform/modules/auth-service/main.tf for the full configuration.
-    """
 
     DATABASE_URL: str = Field(
         description="PostgreSQL database connection URL"

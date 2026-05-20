@@ -17,7 +17,6 @@ variable "common_labels" {
   }
 }
 
-# PostgreSQL configuration
 variable "postgres_image" {
   type    = string
   default = "postgres:17-alpine"
@@ -40,7 +39,6 @@ variable "postgres_storage_size" {
   default = "10Gi"
 }
 
-# PostgREST config
 variable "postgrest_db_schema" {
   type    = string
   default = "api"
@@ -51,7 +49,6 @@ variable "postgrest_anon_role" {
   default = "web_anon"
 }
 
-# Superset config
 variable "superset_admin_user" {
   type    = string
   default = "admin"

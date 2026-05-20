@@ -11,7 +11,6 @@ router = APIRouter()
 templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
 templates = Jinja2Templates(directory=templates_dir)
 
-# dashboard definitions based on RSQKit roles
 DASHBOARDS = {
     "policy-maker": {
         "title": "Policy Maker",
@@ -134,7 +133,6 @@ async def dashboard(request: Request, slug: str):
 
     dashboard_info = DASHBOARDS[slug]
 
-    # use external URL if configured, otherwise leave empty for JS fallback
     superset_base = settings.superset_external_url or ""
     embed_url = f"{superset_base}/superset/dashboard/{slug}/?standalone=2" if superset_base else ""
 

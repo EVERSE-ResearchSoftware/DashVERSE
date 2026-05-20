@@ -29,19 +29,12 @@ def generate_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> TokenWithJWT:
-    """
-    Generate a new JWT access token for the authenticated user.
-    Requires bearer token in Authorization header.
-    Optional token_name for identifying the token later.
-    """
-    # Create JWT access token
     jwt_token, jti, expires_at = create_access_token(
         user_id=current_user.id,
         username=current_user.username,
         is_superuser=current_user.is_superuser
     )
 
-    # Store token in database for tracking and revocation
     token_record = Token(
         user_id=current_user.id,
         token_name=token_data.token_name,
@@ -53,7 +46,6 @@ def generate_token(
     db.commit()
     db.refresh(token_record)
 
-    # Return token with JWT
     return TokenWithJWT(
         id=token_record.id,
         user_id=token_record.user_id,
@@ -76,10 +68,8 @@ def list_tokens(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> TokenListResponse:
-    """List all tokens for the current user (both active and revoked)."""
     tokens = db.query(Token).filter(Token.user_id == current_user.id).order_by(Token.created_at.desc()).all()
 
-    # Convert to response models
     token_responses = [TokenResponse.model_validate(token) for token in tokens]
 
     return TokenListResponse(
@@ -98,12 +88,6 @@ def revoke_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> dict:
-    """
-    Revoke a token by ID. The token becomes invalid immediately.
-    Users can only revoke their own tokens.
-    Returns 404 if token not found, 400 if already revoked.
-    """
-    # Get the token from database
     token = db.query(Token).filter(
         Token.id == revoke_request.token_id,
         Token.user_id == current_user.id
@@ -121,7 +105,6 @@ def revoke_token(
             detail="Token is already revoked"
         )
 
-    # Revoke the token
     token.is_revoked = True
     db.commit()
 
@@ -143,11 +126,6 @@ def delete_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> dict:
-    """
-    Delete a token permanently. Token must be revoked first.
-    Consider keeping revoked tokens for audit trail instead of deleting.
-    """
-    # Get the token from database
     token = db.query(Token).filter(
         Token.id == token_id,
         Token.user_id == current_user.id
@@ -159,14 +137,12 @@ def delete_token(
             detail="Token not found or does not belong to current user"
         )
 
-    # Only allow deletion of revoked tokens (for audit purposes)
     if not token.is_revoked:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Cannot delete active token. Revoke it first."
         )
 
-    # Delete the token
     token_info = {
         "token_id": token.id,
         "token_name": token.token_name,

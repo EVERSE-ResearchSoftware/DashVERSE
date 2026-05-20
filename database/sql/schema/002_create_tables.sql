@@ -1,6 +1,5 @@
 SET search_path TO api, public;
 
--- software table
 CREATE TABLE IF NOT EXISTS software (
   id SERIAL PRIMARY KEY,
   identifier VARCHAR NOT NULL UNIQUE,
@@ -15,7 +14,6 @@ CREATE TABLE IF NOT EXISTS software (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- dimensions table
 CREATE TABLE IF NOT EXISTS dimensions (
   id SERIAL PRIMARY KEY,
   identifier VARCHAR NOT NULL UNIQUE,
@@ -27,7 +25,6 @@ CREATE TABLE IF NOT EXISTS dimensions (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- indicators table
 CREATE TABLE IF NOT EXISTS indicators (
   id SERIAL PRIMARY KEY,
   identifier VARCHAR NOT NULL UNIQUE,
@@ -41,15 +38,12 @@ CREATE TABLE IF NOT EXISTS indicators (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- base table for assessment storage (resqui compatible)
 CREATE TABLE IF NOT EXISTS assessment_raw (
   id SERIAL PRIMARY KEY,
   payload JSONB NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- view for resqui compatibility
--- PostgREST exposes this as /assessment endpoint
 CREATE OR REPLACE VIEW assessment AS
 SELECT
   id,

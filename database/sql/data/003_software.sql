@@ -1,6 +1,5 @@
 SET search_path TO api, public;
 
--- sample software entries
 INSERT INTO software (identifier, name, description, version, license, repository_url)
 VALUES
   ('numpy', 'NumPy', 'Numerical computing library for Python', '1.26.4', 'BSD-3-Clause', 'https://github.com/numpy/numpy'),

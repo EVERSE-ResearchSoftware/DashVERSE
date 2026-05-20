@@ -1,6 +1,4 @@
 ---
-# Configure Public role permissions for embedded dashboards
-# Removes edit/query/table view options from chart menu
 
 - name: Remove chart edit and query permissions from Public role
   shell: |
@@ -22,3 +20,29 @@
 - name: Show permission removal result
   debug:
     var: permission_removal_result.stdout_lines
+
+- name: Grant Public role datasource_access on each embedded dataset
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    INSERT INTO ab_permission_view_role (permission_view_id, role_id)
+    SELECT pv.id, r.id
+    FROM ab_permission_view pv
+    JOIN ab_permission p ON pv.permission_id = p.id
+    JOIN ab_view_menu vm ON pv.view_menu_id = vm.id
+    CROSS JOIN ab_role r
+    WHERE p.name = 'datasource_access'
+      AND r.name = 'Public'
+      AND vm.name LIKE '%].[{{ item.table }}](id:%'
+      AND NOT EXISTS (
+        SELECT 1 FROM ab_permission_view_role
+        WHERE permission_view_id = pv.id AND role_id = r.id
+      );
+    "
+  loop: "{{ datasets }}"
+  loop_control:
+    label: "{{ item.table }}"
+  register: dataset_grant_results
+
+- name: Show dataset grant results
+  debug:
+    msg: "Granted Public access to {{ datasets | length }} embedded datasets"
