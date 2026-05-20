@@ -6,6 +6,27 @@ BEGIN;
 DELETE FROM assessment_raw WHERE payload->>'@id' LIKE 'urn:dashverse:seed:%';
 
 
+INSERT INTO software (identifier, name, description, version, license, repository_url, homepage_url, programming_language) VALUES
+    ('cffinit',        'CFFinit',           'CITATION.cff initializer web app.',           '2.6.0',  'Apache-2.0',   'https://github.com/citation-file-format/cff-initializer-javascript', 'https://citation-file-format.github.io/cff-initializer-javascript/', ARRAY['TypeScript']),
+    ('apptainer',      'Apptainer',         'Container platform for HPC and research.',    '1.4.0',  'BSD-3-Clause', 'https://github.com/apptainer/apptainer',                              'https://apptainer.org/',                                              ARRAY['Go']),
+    ('howfairis',      'howfairis',         'Compliance check for the fair-software.eu recommendations.', '0.15.0', 'Apache-2.0', 'https://github.com/fair-software/howfairis',           NULL,                                                                  ARRAY['Python']),
+    ('ossf-scorecard', 'OpenSSF Scorecard', 'Automated open-source software health checks.', '5.2.0', 'Apache-2.0',   'https://github.com/ossf/scorecard',                                   'https://scorecard.dev/',                                              ARRAY['Go']),
+    ('pyani',          'PyANI',             'Average nucleotide identity for prokaryotic genomes.', '0.2.14', 'MIT',  'https://github.com/widdowquinn/pyani',                                NULL,                                                                  ARRAY['Python']),
+    ('projectalpha',   'ProjectAlpha',      'Demo project: early-stage research tool.',     '2.0.0',  'MIT',          'https://example.org/projectalpha',                                    NULL,                                                                  ARRAY['Python']),
+    ('simulab',        'SimuLab',           'Demo project: simulation framework.',          '0.7.0',  'GPL-3.0',      'https://example.org/simulab',                                         NULL,                                                                  ARRAY['C++']),
+    ('datapipe',       'DataPipe',          'Demo project: data processing pipeline.',      '3.3.0',  'BSD-3-Clause', 'https://example.org/datapipe',                                        NULL,                                                                  ARRAY['Rust']),
+    ('terragen',       'TerraGen',          'Demo project: terrain generation library.',   '1.1.0',  'MIT',          'https://example.org/terragen',                                        NULL,                                                                  ARRAY['Python'])
+ON CONFLICT (identifier) DO UPDATE SET
+    name = EXCLUDED.name,
+    description = EXCLUDED.description,
+    version = EXCLUDED.version,
+    license = EXCLUDED.license,
+    repository_url = EXCLUDED.repository_url,
+    homepage_url = EXCLUDED.homepage_url,
+    programming_language = EXCLUDED.programming_language,
+    updated_at = CURRENT_TIMESTAMP;
+
+
 INSERT INTO assessment_raw (payload, created_at) VALUES
 ($$
 {

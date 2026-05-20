@@ -24,8 +24,8 @@
 - name: Grant Public role datasource_access on each embedded dataset
   shell: |
     kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
-    INSERT INTO ab_permission_view_role (permission_view_id, role_id)
-    SELECT pv.id, r.id
+    INSERT INTO ab_permission_view_role (id, permission_view_id, role_id)
+    SELECT nextval('ab_permission_view_role_id_seq'), pv.id, r.id
     FROM ab_permission_view pv
     JOIN ab_permission p ON pv.permission_id = p.id
     JOIN ab_view_menu vm ON pv.view_menu_id = vm.id

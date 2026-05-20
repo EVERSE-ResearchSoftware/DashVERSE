@@ -346,3 +346,78 @@
 - name: Show native filter result
   debug:
     msg: "Applied native filters to 5 role dashboards"
+
+- name: Wire cross-filter and native-filter chart scope per dashboard
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    DO \$\$
+    DECLARE
+        dash_record RECORD;
+        chart_ids INTEGER[];
+        chart_config jsonb;
+        cur_filters jsonb;
+        updated_filters jsonb;
+        i INTEGER;
+        cid INTEGER;
+    BEGIN
+        FOR dash_record IN
+            SELECT d.id, d.slug, COALESCE(d.json_metadata::jsonb, '{}'::jsonb) AS meta
+            FROM dashboards d
+            WHERE d.slug IN ('policy-maker', 'principal-investigator', 'research-software-engineer', 'researcher-who-codes', 'trainer')
+        LOOP
+            SELECT array_agg(s.id ORDER BY s.id) INTO chart_ids
+            FROM slices s
+            JOIN dashboard_slices ds ON s.id = ds.slice_id
+            WHERE ds.dashboard_id = dash_record.id;
+
+            IF chart_ids IS NULL OR array_length(chart_ids, 1) IS NULL THEN
+                CONTINUE;
+            END IF;
+
+            -- chart_configuration: each chart cross-filters every other chart in the dashboard
+            chart_config := '{}'::jsonb;
+            FOREACH cid IN ARRAY chart_ids LOOP
+                chart_config := chart_config || jsonb_build_object(
+                    cid::text,
+                    jsonb_build_object(
+                        'id', cid,
+                        'crossFilters', jsonb_build_object(
+                            'scope', 'global',
+                            'chartsInScope', to_jsonb(array(SELECT u FROM unnest(chart_ids) u WHERE u <> cid))
+                        )
+                    )
+                );
+            END LOOP;
+
+            -- native_filter_configuration: stamp chartsInScope on each existing filter
+            cur_filters := COALESCE(dash_record.meta->'native_filter_configuration', '[]'::jsonb);
+            updated_filters := '[]'::jsonb;
+            IF jsonb_array_length(cur_filters) > 0 THEN
+                FOR i IN 0..(jsonb_array_length(cur_filters) - 1) LOOP
+                    updated_filters := updated_filters || jsonb_build_array(
+                        jsonb_set(cur_filters->i, '{chartsInScope}', to_jsonb(chart_ids))
+                    );
+                END LOOP;
+            END IF;
+
+            UPDATE dashboards
+            SET json_metadata = jsonb_set(
+                jsonb_set(
+                    jsonb_set(
+                        COALESCE(json_metadata::jsonb, '{}'::jsonb),
+                        '{cross_filters_enabled}', 'true'::jsonb
+                    ),
+                    '{chart_configuration}', chart_config
+                ),
+                '{native_filter_configuration}', updated_filters
+            )::text
+            WHERE id = dash_record.id;
+        END LOOP;
+    END;
+    \$\$;
+    "
+  register: cross_filter_result
+
+- name: Show cross-filter result
+  debug:
+    msg: "Wired cross-filter and native-filter scope on 5 dashboards"

@@ -15,6 +15,7 @@ GRANT SELECT ON indicator_results TO web_anon, web_user;
 GRANT SELECT ON software_quality_scores TO web_anon, web_user;
 GRANT SELECT ON assessment_trends TO web_anon, web_user;
 GRANT SELECT ON common_issues TO web_anon, web_user;
+GRANT SELECT ON software_languages TO web_anon, web_user;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT SELECT ON TABLES TO web_anon;
 ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT ALL ON TABLES TO web_user;

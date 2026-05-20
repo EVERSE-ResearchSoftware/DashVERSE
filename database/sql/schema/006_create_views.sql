@@ -37,11 +37,14 @@ SELECT
   check_outcome(check_item) AS outcome
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
-LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
+LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
 LEFT JOIN dimensions d ON d.identifier = split_part(
-  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
-       THEN i.quality_dimension::jsonb->0->>'@id'
-       ELSE i.quality_dimension::jsonb->>'@id'
+  CASE
+    WHEN i.quality_dimension IS NULL THEN NULL
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'string' THEN i.quality_dimension::jsonb #>> '{}'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'  THEN i.quality_dimension::jsonb->0->>'@id'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'object' THEN i.quality_dimension::jsonb->>'@id'
+    ELSE NULL
   END, '/', -1);
 
 CREATE OR REPLACE VIEW assessment_summary AS
@@ -70,11 +73,14 @@ SELECT
     / NULLIF(COUNT(*), 0), 2) AS pass_rate
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
-LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
+LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
 LEFT JOIN dimensions d ON d.identifier = split_part(
-  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
-       THEN i.quality_dimension::jsonb->0->>'@id'
-       ELSE i.quality_dimension::jsonb->>'@id'
+  CASE
+    WHEN i.quality_dimension IS NULL THEN NULL
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'string' THEN i.quality_dimension::jsonb #>> '{}'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'  THEN i.quality_dimension::jsonb->0->>'@id'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'object' THEN i.quality_dimension::jsonb->>'@id'
+    ELSE NULL
   END, '/', -1)
 WHERE d.name IS NOT NULL
 GROUP BY d.name, d.identifier;
@@ -91,11 +97,14 @@ SELECT
   check_outcome(check_item) AS outcome
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
-LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
+LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
 LEFT JOIN dimensions d ON d.identifier = split_part(
-  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
-       THEN i.quality_dimension::jsonb->0->>'@id'
-       ELSE i.quality_dimension::jsonb->>'@id'
+  CASE
+    WHEN i.quality_dimension IS NULL THEN NULL
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'string' THEN i.quality_dimension::jsonb #>> '{}'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'  THEN i.quality_dimension::jsonb->0->>'@id'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'object' THEN i.quality_dimension::jsonb->>'@id'
+    ELSE NULL
   END, '/', -1)
 WHERE i.identifier IS NOT NULL
 GROUP BY i.identifier, i.name, i.quality_dimension, d.name, check_item->'status'->>'@id', check_outcome(check_item);
@@ -110,11 +119,14 @@ SELECT
     / NULLIF(COUNT(*), 0), 2) AS score
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
-LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
+LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
 LEFT JOIN dimensions d ON d.identifier = split_part(
-  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
-       THEN i.quality_dimension::jsonb->0->>'@id'
-       ELSE i.quality_dimension::jsonb->>'@id'
+  CASE
+    WHEN i.quality_dimension IS NULL THEN NULL
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'string' THEN i.quality_dimension::jsonb #>> '{}'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'  THEN i.quality_dimension::jsonb->0->>'@id'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'object' THEN i.quality_dimension::jsonb->>'@id'
+    ELSE NULL
   END, '/', -1)
 WHERE d.name IS NOT NULL
 GROUP BY a.payload->'assessedSoftware'->>'name', d.name;
@@ -129,12 +141,13 @@ FROM assessment_raw a
 GROUP BY date_trunc('month', (a.payload->>'dateCreated')::timestamp)
 ORDER BY month;
 
-CREATE OR REPLACE VIEW software_languages AS
+DROP VIEW IF EXISTS software_languages;
+CREATE VIEW software_languages AS
 SELECT
-  s.id,
+  s.id AS software_id,
   s.name AS software_name,
-  s.programming_language AS language
-FROM software s
+  lang AS language
+FROM software s, UNNEST(s.programming_language) AS lang
 WHERE s.programming_language IS NOT NULL;
 
 CREATE OR REPLACE VIEW common_issues AS
@@ -146,11 +159,14 @@ SELECT
   array_agg(DISTINCT a.payload->'assessedSoftware'->>'name') AS affected_software
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
-LEFT JOIN indicators i ON (check_item->'assessesIndicator'->>'@id') = i.identifier
+LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
 LEFT JOIN dimensions d ON d.identifier = split_part(
-  CASE WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'
-       THEN i.quality_dimension::jsonb->0->>'@id'
-       ELSE i.quality_dimension::jsonb->>'@id'
+  CASE
+    WHEN i.quality_dimension IS NULL THEN NULL
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'string' THEN i.quality_dimension::jsonb #>> '{}'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'array'  THEN i.quality_dimension::jsonb->0->>'@id'
+    WHEN jsonb_typeof(i.quality_dimension::jsonb) = 'object' THEN i.quality_dimension::jsonb->>'@id'
+    ELSE NULL
   END, '/', -1)
 WHERE check_outcome(check_item) = 'fail'
   AND i.identifier IS NOT NULL
