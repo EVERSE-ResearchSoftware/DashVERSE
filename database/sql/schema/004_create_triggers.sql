@@ -75,3 +75,58 @@ BEGIN
   RETURN 'unknown';
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION validate_assessment_payload() RETURNS TRIGGER AS $$
+DECLARE
+  err TEXT;
+  i INTEGER;
+  check_item jsonb;
+  checks_arr jsonb;
+BEGIN
+  IF jsonb_typeof(NEW.payload) <> 'object' THEN
+    err := 'payload must be a JSON object';
+  ELSIF (NEW.payload->>'@context') IS NULL OR (NEW.payload->>'@context') NOT LIKE '%rsqa/%' THEN
+    err := '@context is required and must reference the EVERSE rsqa schema';
+  ELSIF (NEW.payload->>'@type') <> 'SoftwareQualityAssessment' THEN
+    err := '@type must be "SoftwareQualityAssessment"';
+  ELSIF (NEW.payload->'assessedSoftware'->>'name') IS NULL THEN
+    err := 'assessedSoftware.name is required';
+  ELSIF (NEW.payload->'creator'->>'name') IS NULL
+     AND (NEW.payload->'author'->>'name') IS NULL THEN
+    err := 'creator.name (or legacy author.name) is required';
+  ELSIF (NEW.payload->>'dateCreated') IS NULL THEN
+    err := 'dateCreated is required';
+  ELSIF jsonb_typeof(NEW.payload->'checks') <> 'array' THEN
+    err := 'checks must be a JSON array';
+  ELSIF jsonb_array_length(NEW.payload->'checks') = 0 THEN
+    err := 'checks must not be empty';
+  ELSE
+    checks_arr := NEW.payload->'checks';
+    FOR i IN 0 .. jsonb_array_length(checks_arr) - 1 LOOP
+      check_item := checks_arr->i;
+      IF (check_item->'assessesIndicator'->>'@id') IS NULL THEN
+        err := format('check[%s] requires assessesIndicator.@id', i);
+        EXIT;
+      ELSIF (check_item->'status'->>'@id') IS NULL THEN
+        err := format('check[%s] requires status.@id', i);
+        EXIT;
+      ELSIF (check_item->>'output') IS NULL THEN
+        err := format('check[%s] requires output', i);
+        EXIT;
+      END IF;
+    END LOOP;
+  END IF;
+
+  IF err IS NOT NULL THEN
+    RAISE EXCEPTION 'invalid assessment payload: %', err
+      USING HINT = 'see https://github.com/EVERSE-ResearchSoftware/schemas for the rsqa schema';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tr_validate_assessment_payload ON assessment_raw;
+CREATE TRIGGER tr_validate_assessment_payload
+  BEFORE INSERT ON assessment_raw
+  FOR EACH ROW EXECUTE FUNCTION validate_assessment_payload();

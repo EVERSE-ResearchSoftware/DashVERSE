@@ -88,12 +88,11 @@ setup-dashboards:
 
 export-superset-assets:
     @OUT_DIR=ansible/files/superset_assets && \
-    POD=$(kubectl get pod -n {{ns}} -l app.kubernetes.io/name=superset -o jsonpath='{.items[0].metadata.name}') && \
-    echo "Exporting from pod $POD" && \
+    echo "Exporting from deploy/superset" && \
     rm -rf $OUT_DIR && \
     mkdir -p $OUT_DIR && \
-    kubectl exec -n {{ns}} $POD -- superset export-dashboards -f /tmp/dashverse-assets.zip && \
-    kubectl cp {{ns}}/$POD:/tmp/dashverse-assets.zip /tmp/dashverse-assets.zip && \
+    kubectl exec -n {{ns}} deploy/superset -- bash -c "superset export-dashboards -f /tmp/dashverse-assets.zip 2>/dev/null && base64 /tmp/dashverse-assets.zip" \
+        | base64 -d > /tmp/dashverse-assets.zip && \
     unzip -q /tmp/dashverse-assets.zip -d $OUT_DIR && \
     rm /tmp/dashverse-assets.zip && \
     echo "Exported $(find $OUT_DIR -name '*.yaml' | wc -l) YAML files to $OUT_DIR"

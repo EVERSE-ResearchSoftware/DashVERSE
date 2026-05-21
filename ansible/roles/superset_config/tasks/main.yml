@@ -5,11 +5,24 @@
 - name: Configure datasets
   include_tasks: datasets.yml
 
-- name: Configure charts
-  include_tasks: charts.yml
+- name: Detect exported asset YAMLs
+  find:
+    paths: "{{ playbook_dir }}/../files/superset_assets"
+    patterns: "*.yaml"
+    recurse: yes
+  register: superset_asset_files
 
-- name: Configure dashboards
+- name: Import asset bundle when YAMLs are present
+  include_tasks: import_assets.yml
+  when: superset_asset_files.matched | int > 0
+
+- name: Configure charts (legacy path)
+  include_tasks: charts.yml
+  when: superset_asset_files.matched | int == 0
+
+- name: Configure dashboards (legacy path)
   include_tasks: dashboards.yml
+  when: superset_asset_files.matched | int == 0
 
 - name: Configure permissions
   include_tasks: permissions.yml

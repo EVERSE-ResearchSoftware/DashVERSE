@@ -1,0 +1,36 @@
+---
+- name: Stage assets in a wrapper folder for the import bundle
+  shell: |
+    set -e
+    rm -rf /tmp/dashverse_bundle /tmp/dashverse-superset-assets.zip
+    mkdir -p /tmp/dashverse_bundle/dashverse_assets
+    cp -r "{{ playbook_dir }}/../files/superset_assets/." /tmp/dashverse_bundle/dashverse_assets/
+    rm -f /tmp/dashverse_bundle/dashverse_assets/README.md
+    cd /tmp/dashverse_bundle
+    zip -qr /tmp/dashverse-superset-assets.zip dashverse_assets
+  changed_when: true
+
+- name: Import asset bundle into Superset
+  shell: |
+    curl -s -X POST "{{ superset_api }}/dashboard/import/" \
+        -H "Authorization: Bearer {{ access_token }}" \
+        -H "Cookie: {{ session_cookie }}" \
+        -H "X-CSRFToken: {{ csrf_token }}" \
+        -F "formData=@/tmp/dashverse-superset-assets.zip" \
+        -F 'passwords={"dashverse_assets/databases/{{ database_name }}.yaml":"{{ database_password }}"}' \
+        -F "overwrite=true" \
+        -w "\nHTTP_STATUS:%{http_code}\n"
+  register: superset_assets_import
+  failed_when: "'HTTP_STATUS:200' not in superset_assets_import.stdout"
+
+- name: Show import result
+  debug:
+    var: superset_assets_import.stdout_lines
+
+- name: Clean up temp bundle
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/dashverse-superset-assets.zip
+    - /tmp/dashverse_bundle
