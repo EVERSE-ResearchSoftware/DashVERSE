@@ -191,8 +191,12 @@ The Superset admin password is automatically retrieved from Kubernetes secrets d
 
 ## Documentation
 
-- `docs/Kubernetes.md` - operational commands for managing the Minikube deployment.
-- `docs/Database.md` - details of the PostgreSQL schema, assessment mapping, and populate script usage.
+- `docs/developer/codebase.md` - the entry point for new contributors: how the pieces fit, where things live, and the per-component rationale.
+- `docs/developer/dashboards.md` - how to add or edit charts and dashboards in code (export from the Superset UI, commit the YAML).
+- `docs/user/editing-dashboards.md` - end-user UI walkthrough for editing charts and dashboards in the Superset interface.
+- `docs/Database.md` - PostgreSQL schema, view definitions, and assessment payload mapping.
+- `docs/Superset.md` - list of registered datasets and views.
+- `docs/Kubernetes.md` - operational commands for the Minikube deployment.
 - `docs/API_examples.md` - practical PostgREST calls, including the multi-step workflow for creating assessments.
 
 ## Clean up

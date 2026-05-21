@@ -86,6 +86,18 @@ setup-dashboards:
     SUPERSET_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.superset-admin-password}' | base64 -d) \
     ansible-playbook -i inventory/{{env}}.yml playbooks/configure_superset.yml
 
+export-superset-assets:
+    @OUT_DIR=ansible/files/superset_assets && \
+    POD=$(kubectl get pod -n {{ns}} -l app.kubernetes.io/name=superset -o jsonpath='{.items[0].metadata.name}') && \
+    echo "Exporting from pod $POD" && \
+    rm -rf $OUT_DIR && \
+    mkdir -p $OUT_DIR && \
+    kubectl exec -n {{ns}} $POD -- superset export-dashboards -f /tmp/dashverse-assets.zip && \
+    kubectl cp {{ns}}/$POD:/tmp/dashverse-assets.zip /tmp/dashverse-assets.zip && \
+    unzip -q /tmp/dashverse-assets.zip -d $OUT_DIR && \
+    rm /tmp/dashverse-assets.zip && \
+    echo "Exported $(find $OUT_DIR -name '*.yaml' | wc -l) YAML files to $OUT_DIR"
+
 seed-data:
     cd ansible && \
         ansible-playbook -i inventory/{{env}}.yml playbooks/seed_data.yml
