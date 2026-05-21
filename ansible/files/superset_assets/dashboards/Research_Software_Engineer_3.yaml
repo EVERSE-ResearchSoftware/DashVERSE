@@ -481,7 +481,12 @@ metadata:
     name: Software
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 22
+      - 28
+      - 30
+      - 31
+      - 32
       rootPath:
       - ROOT_ID
     targets:
@@ -491,17 +496,12 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 21
-    - 22
     - 23
     - 24
     - 25
     - 26
     - 27
-    - 28
     - 29
-    - 30
-    - 31
-    - 32
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -514,7 +514,14 @@ metadata:
     name: Creator
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 22
+      - 23
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
       rootPath:
       - ROOT_ID
     targets:
@@ -524,17 +531,10 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 21
-    - 22
-    - 23
     - 24
     - 25
     - 26
     - 27
-    - 28
-    - 29
-    - 30
-    - 31
-    - 32
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -547,7 +547,11 @@ metadata:
     name: Dimension
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 28
+      - 29
+      - 31
+      - 32
       rootPath:
       - ROOT_ID
     targets:
@@ -563,11 +567,7 @@ metadata:
     - 25
     - 26
     - 27
-    - 28
-    - 29
     - 30
-    - 31
-    - 32
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -580,7 +580,13 @@ metadata:
     name: Indicator
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 22
+      - 23
+      - 28
+      - 29
+      - 31
+      - 32
       rootPath:
       - ROOT_ID
     targets:
@@ -590,17 +596,11 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 21
-    - 22
-    - 23
     - 24
     - 25
     - 26
     - 27
-    - 28
-    - 29
     - 30
-    - 31
-    - 32
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -613,7 +613,14 @@ metadata:
     name: Status
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 22
+      - 23
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
       rootPath:
       - ROOT_ID
     targets:
@@ -623,17 +630,10 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 21
-    - 22
-    - 23
     - 24
     - 25
     - 26
     - 27
-    - 28
-    - 29
-    - 30
-    - 31
-    - 32
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -646,7 +646,18 @@ metadata:
     name: Language
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 21
+      - 22
+      - 23
+      - 24
+      - 25
+      - 26
+      - 27
+      - 28
+      - 30
+      - 31
+      - 32
       rootPath:
       - ROOT_ID
     targets:
@@ -655,18 +666,7 @@ metadata:
       datasetUuid: 238d1c96-d76c-47cc-bc14-b957fd1c27c2
     filterType: filter_select
     chartsInScope:
-    - 21
-    - 22
-    - 23
-    - 24
-    - 25
-    - 26
-    - 27
-    - 28
     - 29
-    - 30
-    - 31
-    - 32
     controlValues:
       multiSelect: true
       inverseSelection: false

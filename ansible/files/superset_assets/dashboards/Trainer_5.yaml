@@ -481,7 +481,11 @@ metadata:
     name: Software
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 44
+      - 45
+      - 46
+      - 50
       rootPath:
       - ROOT_ID
     targets:
@@ -491,13 +495,9 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 43
-    - 44
-    - 45
-    - 46
     - 47
     - 48
     - 49
-    - 50
     - 51
     - 52
     - 53
@@ -514,7 +514,13 @@ metadata:
     name: Creator
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 44
+      - 45
+      - 46
+      - 47
+      - 50
+      - 54
       rootPath:
       - ROOT_ID
     targets:
@@ -524,17 +530,11 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 43
-    - 44
-    - 45
-    - 46
-    - 47
     - 48
     - 49
-    - 50
     - 51
     - 52
     - 53
-    - 54
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -547,7 +547,11 @@ metadata:
     name: Dimension
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 43
+      - 45
+      - 50
+      - 51
       rootPath:
       - ROOT_ID
     targets:
@@ -556,15 +560,11 @@ metadata:
       datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
     filterType: filter_select
     chartsInScope:
-    - 43
     - 44
-    - 45
     - 46
     - 47
     - 48
     - 49
-    - 50
-    - 51
     - 52
     - 53
     - 54
@@ -580,7 +580,14 @@ metadata:
     name: Indicator
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 43
+      - 44
+      - 45
+      - 47
+      - 50
+      - 51
+      - 54
       rootPath:
       - ROOT_ID
     targets:
@@ -589,18 +596,11 @@ metadata:
       datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
     filterType: filter_select
     chartsInScope:
-    - 43
-    - 44
-    - 45
     - 46
-    - 47
     - 48
     - 49
-    - 50
-    - 51
     - 52
     - 53
-    - 54
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -613,7 +613,15 @@ metadata:
     name: Status
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 43
+      - 44
+      - 45
+      - 46
+      - 47
+      - 50
+      - 51
+      - 54
       rootPath:
       - ROOT_ID
     targets:
@@ -622,18 +630,10 @@ metadata:
       datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
     filterType: filter_select
     chartsInScope:
-    - 43
-    - 44
-    - 45
-    - 46
-    - 47
     - 48
     - 49
-    - 50
-    - 51
     - 52
     - 53
-    - 54
     controlValues:
       multiSelect: true
       inverseSelection: false

@@ -387,7 +387,14 @@ metadata:
     name: Software
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 33
+      - 34
+      - 35
+      - 36
+      - 38
+      - 39
+      - 42
       rootPath:
       - ROOT_ID
     targets:
@@ -396,16 +403,9 @@ metadata:
       datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
     filterType: filter_select
     chartsInScope:
-    - 33
-    - 34
-    - 35
-    - 36
     - 37
-    - 38
-    - 39
     - 40
     - 41
-    - 42
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -418,7 +418,15 @@ metadata:
     name: Creator
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 33
+      - 34
+      - 35
+      - 36
+      - 38
+      - 39
+      - 40
+      - 42
       rootPath:
       - ROOT_ID
     targets:
@@ -427,16 +435,8 @@ metadata:
       datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
     filterType: filter_select
     chartsInScope:
-    - 33
-    - 34
-    - 35
-    - 36
     - 37
-    - 38
-    - 39
-    - 40
     - 41
-    - 42
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -449,7 +449,8 @@ metadata:
     name: Dimension
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 35
       rootPath:
       - ROOT_ID
     targets:
@@ -460,7 +461,6 @@ metadata:
     chartsInScope:
     - 33
     - 34
-    - 35
     - 36
     - 37
     - 38
@@ -480,7 +480,13 @@ metadata:
     name: Status
     type: NATIVE_FILTER
     scope:
-      excluded: []
+      excluded:
+      - 33
+      - 34
+      - 35
+      - 36
+      - 39
+      - 40
       rootPath:
       - ROOT_ID
     targets:
@@ -489,14 +495,8 @@ metadata:
       datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
     filterType: filter_select
     chartsInScope:
-    - 33
-    - 34
-    - 35
-    - 36
     - 37
     - 38
-    - 39
-    - 40
     - 41
     - 42
     controlValues:
