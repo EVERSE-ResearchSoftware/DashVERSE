@@ -1,0 +1,692 @@
+dashboard_title: Policy Maker
+description: null
+css: null
+slug: policy-maker
+certified_by: null
+certification_details: null
+published: true
+uuid: 658dd2c7-4d2e-4406-8865-69cd5dd758fe
+position:
+  ROW-1:
+    id: ROW-1
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-1
+    - CHART-2
+  ROW-2:
+    id: ROW-2
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-3
+    - CHART-4
+  ROW-3:
+    id: ROW-3
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-5
+    - CHART-6
+  ROW-4:
+    id: ROW-4
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-7
+    - CHART-8
+  ROW-5:
+    id: ROW-5
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-9
+    - CHART-10
+  CHART-1:
+    id: CHART-1
+    meta:
+      width: 6
+      height: 35
+      chartId: 1
+      sliceName: Total Software Projects
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-2:
+    id: CHART-2
+    meta:
+      width: 6
+      height: 35
+      chartId: 2
+      sliceName: Total Assessments
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-3:
+    id: CHART-3
+    meta:
+      width: 6
+      height: 50
+      chartId: 3
+      sliceName: Assessment Activity Over Time
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-4:
+    id: CHART-4
+    meta:
+      width: 6
+      height: 50
+      chartId: 4
+      sliceName: Quality by Software
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-5:
+    id: CHART-5
+    meta:
+      width: 6
+      height: 50
+      chartId: 5
+      sliceName: Compliance Heatmap
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-6:
+    id: CHART-6
+    meta:
+      width: 6
+      height: 50
+      chartId: 6
+      sliceName: Dimension Coverage
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-7:
+    id: CHART-7
+    meta:
+      width: 6
+      height: 50
+      chartId: 7
+      sliceName: Quality Dimension Profile
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-8:
+    id: CHART-8
+    meta:
+      width: 6
+      height: 50
+      chartId: 8
+      sliceName: Top Performing Software
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-9:
+    id: CHART-9
+    meta:
+      width: 6
+      height: 50
+      chartId: 9
+      sliceName: Pass Rate by Dimension
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  GRID_ID:
+    id: GRID_ID
+    type: GRID
+    parents:
+    - ROOT_ID
+    children:
+    - ROW-1
+    - ROW-2
+    - ROW-3
+    - ROW-4
+    - ROW-5
+    - ROW-N-CJKYW6MY
+  ROOT_ID:
+    id: ROOT_ID
+    type: ROOT
+    children:
+    - GRID_ID
+  CHART-10:
+    id: CHART-10
+    meta:
+      width: 6
+      height: 50
+      chartId: 10
+      sliceName: Assessment Summary
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Dashboard
+    type: HEADER
+  ROW-N-CJKYW6MY:
+    children:
+    - CHART-E0WCIID8
+    - CHART-SCESLIHA
+    - CHART-YQ5121GQ
+    - CHART-ICR5N7I4
+    - CHART-4LD62FLT
+    - CHART-U91JX764
+    - CHART-BLV0BGHA
+    - CHART-KFH73SW8
+    - CHART-HN6YVRXB
+    - CHART-2WNO0FEI
+    id: ROW-N-CJKYW6MY
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+  CHART-E0WCIID8:
+    children: []
+    id: CHART-E0WCIID8
+    meta:
+      chartId: 6
+      height: 50
+      sliceName: Dimension Coverage
+      uuid: 52a36492-efcf-457f-a025-2ac5dad9308b
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-SCESLIHA:
+    children: []
+    id: CHART-SCESLIHA
+    meta:
+      chartId: 5
+      height: 50
+      sliceName: Compliance Heatmap
+      uuid: 473de026-f3b0-4b95-824d-f45eef9fb677
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-YQ5121GQ:
+    children: []
+    id: CHART-YQ5121GQ
+    meta:
+      chartId: 2
+      height: 50
+      sliceName: Total Assessments
+      uuid: 04a5f0a9-87de-4262-a4c9-19eb93052c5a
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-ICR5N7I4:
+    children: []
+    id: CHART-ICR5N7I4
+    meta:
+      chartId: 4
+      height: 50
+      sliceName: Quality by Software
+      uuid: ded346e3-839c-4e96-b2a2-da41930ce56e
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-4LD62FLT:
+    children: []
+    id: CHART-4LD62FLT
+    meta:
+      chartId: 7
+      height: 50
+      sliceName: Quality Dimension Profile
+      uuid: 458c8c47-b59f-4480-844a-fecc49c67fa1
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-U91JX764:
+    children: []
+    id: CHART-U91JX764
+    meta:
+      chartId: 1
+      height: 50
+      sliceName: Total Software Projects
+      uuid: 00896a2d-ac2a-4800-a361-dd9838896222
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-BLV0BGHA:
+    children: []
+    id: CHART-BLV0BGHA
+    meta:
+      chartId: 3
+      height: 50
+      sliceName: Assessment Activity Over Time
+      uuid: 321421a3-b5bf-488e-8fcc-da707f7ceb60
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-KFH73SW8:
+    children: []
+    id: CHART-KFH73SW8
+    meta:
+      chartId: 9
+      height: 50
+      sliceName: Pass Rate by Dimension
+      uuid: 91889633-b07c-44d5-8406-a0ea56abacfc
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-HN6YVRXB:
+    children: []
+    id: CHART-HN6YVRXB
+    meta:
+      chartId: 10
+      height: 50
+      sliceName: Assessment Summary
+      uuid: 8590eb8a-ac16-459a-ad2d-b7e500ddb0ca
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+  CHART-2WNO0FEI:
+    children: []
+    id: CHART-2WNO0FEI
+    meta:
+      chartId: 8
+      height: 50
+      sliceName: Top Performing Software
+      uuid: b3b748b4-45c1-4427-b847-46b57599a6d8
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-CJKYW6MY
+metadata:
+  color_scheme: supersetColors
+  label_colors: {}
+  default_filters: '{}'
+  expanded_slices:
+    '1': true
+    '2': true
+    '3': true
+    '4': true
+    '5': true
+    '6': true
+    '7': true
+    '8': true
+    '9': true
+    '10': true
+  refresh_frequency: 0
+  chart_configuration:
+    '1':
+      id: 1
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+    '2':
+      id: 2
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+    '3':
+      id: 3
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+    '4':
+      id: 4
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+    '5':
+      id: 5
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+    '6':
+      id: 6
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 7
+        - 8
+        - 9
+        - 10
+    '7':
+      id: 7
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 8
+        - 9
+        - 10
+    '8':
+      id: 8
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 9
+        - 10
+    '9':
+      id: 9
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 10
+    '10':
+      id: 10
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+  shared_label_colors: {}
+  cross_filters_enabled: true
+  native_filter_configuration:
+  - id: NATIVE_FILTER-software
+    name: Software
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: software_name
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-creator
+    name: Creator
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: creator_name
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-dimension
+    name: Dimension
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: dimension_name
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-daterange
+    name: Date
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: date_created
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-license
+    name: License
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: license_id
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+version: 1.0.0

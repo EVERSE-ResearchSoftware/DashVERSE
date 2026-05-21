@@ -1,0 +1,14 @@
+database_name: DashVERSE
+sqlalchemy_uri: postgresql://dashverse:XXXXXXXXXX@postgresql.dashverse.svc.cluster.local:5432/dashverse
+cache_timeout: null
+expose_in_sqllab: true
+allow_run_async: true
+allow_ctas: false
+allow_cvas: false
+allow_dml: false
+allow_file_upload: false
+extra:
+  schemas_allowed_for_file_upload:
+  - api
+uuid: 0cdaf196-2614-43ec-a6d7-95be2590ce54
+version: 1.0.0

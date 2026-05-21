@@ -1,0 +1,20 @@
+slice_name: Recent Assessments
+description: Most recently submitted assessments, ordered by date. Use to confirm
+  assessments arrived on schedule for the projects you expect.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - software_name
+  - date_created
+  - total_checks
+  order_by_cols:
+  - - date_created
+    - false
+  row_limit: 20
+query_context: null
+cache_timeout: null
+uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd
+version: 1.0.0
+dataset_uuid: 2e5838cf-b850-4a74-997c-a709e7c36808

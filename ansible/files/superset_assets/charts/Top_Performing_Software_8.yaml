@@ -1,0 +1,20 @@
+slice_name: Top Performing Software
+description: Software ranked by quality score per dimension. Use to identify exemplars
+  for case studies and shared best-practice sessions.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - software_name
+  - dimension_name
+  - score
+  order_by_cols:
+  - - score
+    - false
+  row_limit: 15
+query_context: null
+cache_timeout: null
+uuid: b3b748b4-45c1-4427-b847-46b57599a6d8
+version: 1.0.0
+dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad

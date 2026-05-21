@@ -1,0 +1,19 @@
+slice_name: Projects Overview
+description: Count of unique software projects you have submitted assessments for.
+  Acts as the denominator for the rest of this dashboard.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(DISTINCT software_name)
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Unique Projects Assessed
+query_context: null
+cache_timeout: null
+uuid: c3bfbfe4-6b75-48f6-a02d-cb2f4ba5b1ad
+version: 1.0.0
+dataset_uuid: 2e5838cf-b850-4a74-997c-a709e7c36808

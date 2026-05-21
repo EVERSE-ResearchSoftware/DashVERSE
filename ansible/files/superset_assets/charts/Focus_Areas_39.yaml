@@ -1,0 +1,23 @@
+slice_name: Focus Areas
+description: Top 10 indicators with the most failures across the portfolio. Tackle
+  these first for the biggest quality gains.
+certified_by: null
+certification_details: null
+viz_type: dist_bar
+params:
+  groupby:
+  - indicator_name
+  metrics:
+  - label: failure_count
+    expressionType: SIMPLE
+    column:
+      column_name: failure_count
+    aggregate: SUM
+  color_scheme: supersetColors
+  row_limit: 10
+  show_bar_value: true
+query_context: null
+cache_timeout: null
+uuid: 2acea96e-6880-42a9-9a88-818e847a9333
+version: 1.0.0
+dataset_uuid: 4bcfa543-1597-476f-a4a9-ea7dc1c437d2

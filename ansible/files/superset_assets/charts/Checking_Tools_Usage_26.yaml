@@ -1,0 +1,21 @@
+slice_name: Checking Tools Usage
+description: Number of checks contributed by each checking tool, e.g. howfairis or
+  cffconvert. Use to plan tool-suite changes and to track adoption of new tools.
+certified_by: null
+certification_details: null
+viz_type: dist_bar
+params:
+  groupby:
+  - checking_software
+  metrics:
+  - label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  row_limit: 15
+  show_bar_value: true
+query_context: null
+cache_timeout: null
+uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

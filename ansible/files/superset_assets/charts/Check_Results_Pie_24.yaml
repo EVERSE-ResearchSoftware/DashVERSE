@@ -1,0 +1,23 @@
+slice_name: Check Results Pie
+description: Donut breakdown of check status outcomes. The fail slice sizes the technical-debt
+  backlog at a glance.
+certified_by: null
+certification_details: null
+viz_type: pie
+params:
+  groupby:
+  - status
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  show_labels: true
+  show_legend: true
+  donut: true
+  innerRadius: 40
+query_context: null
+cache_timeout: null
+uuid: fe8445ba-3fe9-4298-9673-bbf0949658b8
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

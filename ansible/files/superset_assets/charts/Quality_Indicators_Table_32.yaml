@@ -1,0 +1,18 @@
+slice_name: Quality Indicators Table
+description: Reference table of all indicators with their identifier and description.
+  Look up an indicator's exact definition when interpreting failed-check evidence.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - name
+  - identifier
+  - description
+  - status
+  row_limit: 50
+query_context: null
+cache_timeout: null
+uuid: fc1036e5-c147-4647-8d74-015373141bda
+version: 1.0.0
+dataset_uuid: eacc0b0c-6e6c-4c75-84c2-115ef1ffc527

@@ -1,0 +1,21 @@
+slice_name: Quality Over Time
+description: Number of assessments performed per month. Spikes signal active improvement
+  work; a flat line suggests room to schedule re-assessments.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_line
+params:
+  x_axis: month
+  metrics:
+  - label: assessments
+    expressionType: SIMPLE
+    column:
+      column_name: assessments
+    aggregate: SUM
+  color_scheme: supersetColors
+  show_legend: false
+query_context: null
+cache_timeout: null
+uuid: 1ea774fe-89b0-4dd3-a0df-4a32f2624c16
+version: 1.0.0
+dataset_uuid: 80662b12-f989-4498-be68-1afe226d00a2

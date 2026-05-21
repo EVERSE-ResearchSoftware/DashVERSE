@@ -1,0 +1,24 @@
+slice_name: Quality Across Projects
+description: Average quality score per project across all dimensions. Compare projects
+  side-by-side to spot which need the most attention.
+certified_by: null
+certification_details: null
+viz_type: dist_bar
+params:
+  groupby:
+  - software_name
+  metrics:
+  - label: score
+    expressionType: SIMPLE
+    column:
+      column_name: score
+    aggregate: AVG
+  color_scheme: supersetColors
+  row_limit: 20
+  show_bar_value: true
+  y_axis_format: .1f
+query_context: null
+cache_timeout: null
+uuid: 310ec87c-c999-4001-a628-bc7489f0f52c
+version: 1.0.0
+dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad

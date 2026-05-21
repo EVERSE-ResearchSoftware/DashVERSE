@@ -1,0 +1,17 @@
+slice_name: Quality Dimensions Table
+description: Reference table of all quality dimensions with name, description, and
+  status. Read alongside other charts to look up what each dimension means.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - name
+  - description
+  - status
+  row_limit: 20
+query_context: null
+cache_timeout: null
+uuid: c6602616-045f-4a50-8c0a-bcee2fafed1a
+version: 1.0.0
+dataset_uuid: 164f117c-f8f7-42df-88d4-445b1159d457

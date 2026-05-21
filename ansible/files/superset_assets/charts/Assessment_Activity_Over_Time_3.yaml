@@ -1,0 +1,22 @@
+slice_name: Assessment Activity Over Time
+description: Number of assessments submitted each month. Use to spot adoption peaks
+  and lulls, or to correlate spikes with training rounds and release cycles.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_line
+params:
+  x_axis: month
+  metrics:
+  - label: assessments
+    expressionType: SIMPLE
+    column:
+      column_name: assessments
+    aggregate: SUM
+  color_scheme: supersetColors
+  show_legend: true
+  rich_tooltip: true
+query_context: null
+cache_timeout: null
+uuid: 321421a3-b5bf-488e-8fcc-da707f7ceb60
+version: 1.0.0
+dataset_uuid: 80662b12-f989-4498-be68-1afe226d00a2

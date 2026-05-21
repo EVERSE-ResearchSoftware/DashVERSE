@@ -1,0 +1,25 @@
+slice_name: Check Status Distribution
+description: Donut showing the proportion of pass/fail/other check outcomes across
+  all your assessments. A large fail slice signals a portfolio-wide quality gap.
+certified_by: null
+certification_details: null
+viz_type: pie
+params:
+  groupby:
+  - status
+  metric:
+    label: occurrences
+    expressionType: SIMPLE
+    column:
+      column_name: occurrences
+    aggregate: SUM
+  color_scheme: supersetColors
+  show_labels: true
+  show_legend: true
+  donut: true
+  innerRadius: 40
+query_context: null
+cache_timeout: null
+uuid: 1e5dc66a-53fe-4d19-b6d8-f16c75b42047
+version: 1.0.0
+dataset_uuid: 596fa4e1-48bb-44c3-b664-f0586e1c7b0e

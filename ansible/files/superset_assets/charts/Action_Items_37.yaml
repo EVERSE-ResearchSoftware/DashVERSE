@@ -1,0 +1,20 @@
+slice_name: Action Items
+description: Detailed list of every check with its dimension, indicator, status, output,
+  and evidence. Filter by status to focus on failed checks needing attention first.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - dimension_name
+  - indicator_name
+  - status
+  - output
+  - evidence
+  row_limit: 20
+  table_filter: true
+query_context: null
+cache_timeout: null
+uuid: 0859dfdf-aef8-4ef0-b380-57ac6b809f64
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

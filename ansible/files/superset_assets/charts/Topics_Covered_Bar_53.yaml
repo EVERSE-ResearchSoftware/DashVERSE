@@ -1,0 +1,21 @@
+slice_name: Topics Covered Bar
+description: Number of checks performed per dimension. Wide bars show well-covered
+  topics; short bars are the curriculum holes worth filling next.
+certified_by: null
+certification_details: null
+viz_type: dist_bar
+params:
+  groupby:
+  - dimension_name
+  metrics:
+  - label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  row_limit: 15
+  show_bar_value: true
+query_context: null
+cache_timeout: null
+uuid: bb46a203-c3b9-4dc4-9877-7bfcdbfa03b4
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

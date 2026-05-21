@@ -1,0 +1,20 @@
+slice_name: Indicator Results
+description: Per-indicator count and percentage of each status outcome. Helps you
+  spot which specific checks are most often failing for your software.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - indicator_name
+  - status
+  - occurrences
+  order_by_cols:
+  - - occurrences
+    - false
+  row_limit: 50
+query_context: null
+cache_timeout: null
+uuid: aede4e99-8724-43e5-aa20-bf9f40caa7d5
+version: 1.0.0
+dataset_uuid: 596fa4e1-48bb-44c3-b664-f0586e1c7b0e

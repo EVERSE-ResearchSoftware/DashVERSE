@@ -1,0 +1,20 @@
+slice_name: Top Performing Projects
+description: Software ranked by quality score per dimension. Compare your project
+  against peers to set realistic improvement targets.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - software_name
+  - dimension_name
+  - score
+  order_by_cols:
+  - - score
+    - false
+  row_limit: 10
+query_context: null
+cache_timeout: null
+uuid: 1ee3445c-ea32-4b26-8048-58611dc841fb
+version: 1.0.0
+dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad

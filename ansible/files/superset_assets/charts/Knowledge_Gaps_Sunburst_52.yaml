@@ -1,0 +1,21 @@
+slice_name: Knowledge Gaps Sunburst
+description: Hierarchical view of dimension to indicator to status. Large fail arcs
+  surface specific topics where learners need more coaching.
+certified_by: null
+certification_details: null
+viz_type: sunburst_v2
+params:
+  columns:
+  - dimension_name
+  - indicator_name
+  - status
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+query_context: null
+cache_timeout: null
+uuid: c1e5aef6-9233-4a1d-880b-fd6bef4bec96
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

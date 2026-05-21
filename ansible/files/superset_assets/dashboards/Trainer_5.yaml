@@ -1,0 +1,824 @@
+dashboard_title: Trainer
+description: null
+css: null
+slug: trainer
+certified_by: null
+certification_details: null
+published: true
+uuid: 49fe7bef-2258-419f-8feb-01f37b38fb9c
+position:
+  ROW-1:
+    id: ROW-1
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-1
+    - CHART-2
+  ROW-2:
+    id: ROW-2
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-3
+    - CHART-4
+  ROW-3:
+    id: ROW-3
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-5
+    - CHART-6
+  ROW-4:
+    id: ROW-4
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-7
+    - CHART-8
+  ROW-5:
+    id: ROW-5
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-9
+    - CHART-10
+  ROW-6:
+    id: ROW-6
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-11
+    - CHART-12
+  CHART-1:
+    id: CHART-1
+    meta:
+      width: 6
+      height: 35
+      chartId: 43
+      sliceName: Active Assessments
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-2:
+    id: CHART-2
+    meta:
+      width: 6
+      height: 35
+      chartId: 44
+      sliceName: Average Quality Score
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-3:
+    id: CHART-3
+    meta:
+      width: 6
+      height: 50
+      chartId: 45
+      sliceName: Quality Improvement Timeline
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-4:
+    id: CHART-4
+    meta:
+      width: 6
+      height: 50
+      chartId: 46
+      sliceName: Common Failed Checks
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-5:
+    id: CHART-5
+    meta:
+      width: 6
+      height: 50
+      chartId: 47
+      sliceName: Competency Heatmap
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-6:
+    id: CHART-6
+    meta:
+      width: 6
+      height: 50
+      chartId: 48
+      sliceName: Activity by Topic Treemap
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-7:
+    id: CHART-7
+    meta:
+      width: 6
+      height: 50
+      chartId: 49
+      sliceName: Software Categories Pie
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-8:
+    id: CHART-8
+    meta:
+      width: 6
+      height: 50
+      chartId: 50
+      sliceName: Training Effectiveness
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-9:
+    id: CHART-9
+    meta:
+      width: 6
+      height: 50
+      chartId: 51
+      sliceName: Progress Tracking Table
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  GRID_ID:
+    id: GRID_ID
+    type: GRID
+    parents:
+    - ROOT_ID
+    children:
+    - ROW-1
+    - ROW-2
+    - ROW-3
+    - ROW-4
+    - ROW-5
+    - ROW-6
+    - ROW-N-S6PTP4O8
+  ROOT_ID:
+    id: ROOT_ID
+    type: ROOT
+    children:
+    - GRID_ID
+  CHART-10:
+    id: CHART-10
+    meta:
+      width: 6
+      height: 50
+      chartId: 52
+      sliceName: Knowledge Gaps Sunburst
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  CHART-11:
+    id: CHART-11
+    meta:
+      width: 6
+      height: 50
+      chartId: 53
+      sliceName: Topics Covered Bar
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6
+    children: []
+  CHART-12:
+    id: CHART-12
+    meta:
+      width: 6
+      height: 50
+      chartId: 54
+      sliceName: High Achievers Table
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6
+    children: []
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Dashboard
+    type: HEADER
+  ROW-N-S6PTP4O8:
+    children:
+    - CHART-6CWY2DX4
+    - CHART-9HCX1OIZ
+    - CHART-HTQX9WA3
+    - CHART-M6XH7CPM
+    - CHART-HB5BA5LW
+    - CHART-KKGVJUL1
+    - CHART-UA8OX6WT
+    - CHART-EDFM8HJF
+    - CHART-HR4QOL3P
+    - CHART-BU2OAGC4
+    - CHART-WHIJ4OJG
+    - CHART-BODSIAFR
+    id: ROW-N-S6PTP4O8
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+  CHART-6CWY2DX4:
+    children: []
+    id: CHART-6CWY2DX4
+    meta:
+      chartId: 47
+      height: 50
+      sliceName: Competency Heatmap
+      uuid: 42308477-ec2d-4536-ba45-16db55cddd1e
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-9HCX1OIZ:
+    children: []
+    id: CHART-9HCX1OIZ
+    meta:
+      chartId: 45
+      height: 50
+      sliceName: Quality Improvement Timeline
+      uuid: b7e8af19-62f9-4a3f-8e76-4b42cd2d9c69
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-HTQX9WA3:
+    children: []
+    id: CHART-HTQX9WA3
+    meta:
+      chartId: 49
+      height: 50
+      sliceName: Software Categories Pie
+      uuid: d50a768a-57d3-4968-828a-fa914632e0d4
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-M6XH7CPM:
+    children: []
+    id: CHART-M6XH7CPM
+    meta:
+      chartId: 52
+      height: 50
+      sliceName: Knowledge Gaps Sunburst
+      uuid: c1e5aef6-9233-4a1d-880b-fd6bef4bec96
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-HB5BA5LW:
+    children: []
+    id: CHART-HB5BA5LW
+    meta:
+      chartId: 44
+      height: 50
+      sliceName: Average Quality Score
+      uuid: 9940ea96-c99d-4f4c-8854-2c83d30df63d
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-KKGVJUL1:
+    children: []
+    id: CHART-KKGVJUL1
+    meta:
+      chartId: 51
+      height: 50
+      sliceName: Progress Tracking Table
+      uuid: 5a82da6b-5a7e-46e0-a53d-4e0ef2dec992
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-UA8OX6WT:
+    children: []
+    id: CHART-UA8OX6WT
+    meta:
+      chartId: 43
+      height: 50
+      sliceName: Active Assessments
+      uuid: 20272595-5f9c-45df-a3e4-38a8c8cf8905
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-EDFM8HJF:
+    children: []
+    id: CHART-EDFM8HJF
+    meta:
+      chartId: 54
+      height: 50
+      sliceName: High Achievers Table
+      uuid: 2c4d0d10-0f9c-4c37-bb03-398dba2088b4
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-HR4QOL3P:
+    children: []
+    id: CHART-HR4QOL3P
+    meta:
+      chartId: 48
+      height: 50
+      sliceName: Activity by Topic Treemap
+      uuid: 1fd1f185-c40f-4385-96d0-bd7fe0ac630d
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-BU2OAGC4:
+    children: []
+    id: CHART-BU2OAGC4
+    meta:
+      chartId: 53
+      height: 50
+      sliceName: Topics Covered Bar
+      uuid: bb46a203-c3b9-4dc4-9877-7bfcdbfa03b4
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-WHIJ4OJG:
+    children: []
+    id: CHART-WHIJ4OJG
+    meta:
+      chartId: 46
+      height: 50
+      sliceName: Common Failed Checks
+      uuid: 363080d9-ac57-4ebc-8851-b061fa56263d
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+  CHART-BODSIAFR:
+    children: []
+    id: CHART-BODSIAFR
+    meta:
+      chartId: 50
+      height: 50
+      sliceName: Training Effectiveness
+      uuid: 49f0c2eb-7b5b-4631-bd81-d67c319d5ffb
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-S6PTP4O8
+metadata:
+  color_scheme: supersetColors
+  label_colors: {}
+  default_filters: '{}'
+  expanded_slices:
+    '43': true
+    '44': true
+    '45': true
+    '46': true
+    '47': true
+    '48': true
+    '49': true
+    '50': true
+    '51': true
+    '52': true
+    '53': true
+    '54': true
+  refresh_frequency: 0
+  chart_configuration:
+    '43':
+      id: 43
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '44':
+      id: 44
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '45':
+      id: 45
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '46':
+      id: 46
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '47':
+      id: 47
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '48':
+      id: 48
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '49':
+      id: 49
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+    '50':
+      id: 50
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 51
+        - 52
+        - 53
+        - 54
+    '51':
+      id: 51
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 52
+        - 53
+        - 54
+    '52':
+      id: 52
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 53
+        - 54
+    '53':
+      id: 53
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 54
+    '54':
+      id: 54
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+  shared_label_colors: {}
+  cross_filters_enabled: true
+  native_filter_configuration:
+  - id: NATIVE_FILTER-software
+    name: Software
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: software_name
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 43
+    - 44
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 52
+    - 53
+    - 54
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-creator
+    name: Creator
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: creator_name
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 43
+    - 44
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 52
+    - 53
+    - 54
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-dimension
+    name: Dimension
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: dimension_name
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope:
+    - 43
+    - 44
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 52
+    - 53
+    - 54
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-indicator
+    name: Indicator
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: indicator_name
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope:
+    - 43
+    - 44
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 52
+    - 53
+    - 54
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-status
+    name: Status
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: outcome
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope:
+    - 43
+    - 44
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 52
+    - 53
+    - 54
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+version: 1.0.0

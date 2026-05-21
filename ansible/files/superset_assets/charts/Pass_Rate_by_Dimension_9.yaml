@@ -1,0 +1,23 @@
+slice_name: Pass Rate by Dimension
+description: Average pass-rate percentage for each quality dimension across all software.
+  Bars below 50% point to organization-wide gaps to address with policy or funding.
+certified_by: null
+certification_details: null
+viz_type: dist_bar
+params:
+  groupby:
+  - dimension_name
+  metrics:
+  - label: pass_rate
+    expressionType: SIMPLE
+    column:
+      column_name: pass_rate
+    aggregate: AVG
+  color_scheme: supersetColors
+  show_bar_value: true
+  y_axis_format: .1f
+query_context: null
+cache_timeout: null
+uuid: 91889633-b07c-44d5-8406-a0ea56abacfc
+version: 1.0.0
+dataset_uuid: c57303cb-cad4-42f6-9f01-6c7438a03ce3

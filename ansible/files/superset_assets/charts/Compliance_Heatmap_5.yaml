@@ -1,0 +1,21 @@
+slice_name: Compliance Heatmap
+description: Cross-tab of check counts per software-by-dimension. Empty cells flag
+  dimensions a software has never been assessed against; use to prioritize coverage
+  gaps.
+certified_by: null
+certification_details: null
+viz_type: heatmap
+params:
+  all_columns_x: dimension_name
+  all_columns_y: software_name
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  linear_color_scheme: greenOrange
+  show_values: false
+query_context: null
+cache_timeout: null
+uuid: 473de026-f3b0-4b95-824d-f45eef9fb677
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

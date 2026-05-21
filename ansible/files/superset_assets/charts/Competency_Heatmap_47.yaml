@@ -1,0 +1,22 @@
+slice_name: Competency Heatmap
+description: Score per software-by-dimension. Cooler colours mark dimensions where
+  many learners need help; use as a syllabus prioritisation tool.
+certified_by: null
+certification_details: null
+viz_type: heatmap
+params:
+  all_columns_x: software_name
+  all_columns_y: dimension_name
+  metric:
+    label: score
+    expressionType: SIMPLE
+    column:
+      column_name: score
+    aggregate: AVG
+  linear_color_scheme: greenOrange
+  show_values: true
+query_context: null
+cache_timeout: null
+uuid: 42308477-ec2d-4536-ba45-16db55cddd1e
+version: 1.0.0
+dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad

@@ -1,0 +1,21 @@
+slice_name: Check Pass Rate Gauge
+description: The same overall pass rate displayed as a gauge for at-a-glance reading.
+  Use during stand-ups or progress reports to show project health quickly.
+certified_by: null
+certification_details: null
+viz_type: gauge_chart
+params:
+  metric:
+    label: pass_rate
+    expressionType: SIMPLE
+    column:
+      column_name: pass_rate
+    aggregate: AVG
+  min_val: 0
+  max_val: 100
+  color_scheme: supersetColors
+query_context: null
+cache_timeout: null
+uuid: c1f9098b-edee-4907-9a65-3a6c2518ce26
+version: 1.0.0
+dataset_uuid: c57303cb-cad4-42f6-9f01-6c7438a03ce3

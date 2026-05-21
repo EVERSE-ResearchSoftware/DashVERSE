@@ -1,0 +1,22 @@
+slice_name: Assessment Timeline
+description: Number of assessments per month across your projects. Gaps may indicate
+  paused work; spikes typically correspond to release-time review pushes.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_line
+params:
+  x_axis: month
+  metrics:
+  - label: assessments
+    expressionType: SIMPLE
+    column:
+      column_name: assessments
+    aggregate: SUM
+  color_scheme: supersetColors
+  show_legend: true
+  rich_tooltip: true
+query_context: null
+cache_timeout: null
+uuid: 82388bab-316b-42b1-9755-8b921a6e84a9
+version: 1.0.0
+dataset_uuid: 80662b12-f989-4498-be68-1afe226d00a2

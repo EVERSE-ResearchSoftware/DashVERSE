@@ -1,0 +1,23 @@
+slice_name: Software Categories Pie
+description: Donut of check counts grouped by quality dimension. Identifies topic
+  balance across the assessed corpus and surfaces under-represented areas.
+certified_by: null
+certification_details: null
+viz_type: pie
+params:
+  groupby:
+  - dimension_name
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  show_labels: true
+  show_legend: true
+  donut: true
+  innerRadius: 40
+query_context: null
+cache_timeout: null
+uuid: d50a768a-57d3-4968-828a-fa914632e0d4
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

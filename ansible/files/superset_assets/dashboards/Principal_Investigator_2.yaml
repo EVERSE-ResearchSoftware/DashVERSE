@@ -1,0 +1,692 @@
+dashboard_title: Principal Investigator
+description: null
+css: null
+slug: principal-investigator
+certified_by: null
+certification_details: null
+published: true
+uuid: cb81fa60-463f-4b7b-ad30-cf5b4761c67d
+position:
+  ROW-1:
+    id: ROW-1
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-1
+    - CHART-2
+  ROW-2:
+    id: ROW-2
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-3
+    - CHART-4
+  ROW-3:
+    id: ROW-3
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-5
+    - CHART-6
+  ROW-4:
+    id: ROW-4
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-7
+    - CHART-8
+  ROW-5:
+    id: ROW-5
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-9
+    - CHART-10
+  CHART-1:
+    id: CHART-1
+    meta:
+      width: 6
+      height: 35
+      chartId: 11
+      sliceName: Projects Overview
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-2:
+    id: CHART-2
+    meta:
+      width: 6
+      height: 35
+      chartId: 16
+      sliceName: Project Health Gauge
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-3:
+    id: CHART-3
+    meta:
+      width: 6
+      height: 50
+      chartId: 12
+      sliceName: Quality Across Projects
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-4:
+    id: CHART-4
+    meta:
+      width: 6
+      height: 50
+      chartId: 13
+      sliceName: Assessment Timeline
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-5:
+    id: CHART-5
+    meta:
+      width: 6
+      height: 50
+      chartId: 14
+      sliceName: Dimensions by Project
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-6:
+    id: CHART-6
+    meta:
+      width: 6
+      height: 50
+      chartId: 15
+      sliceName: Failed Checks Requiring Action
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-7:
+    id: CHART-7
+    meta:
+      width: 6
+      height: 50
+      chartId: 17
+      sliceName: Check Status Distribution
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-8:
+    id: CHART-8
+    meta:
+      width: 6
+      height: 50
+      chartId: 18
+      sliceName: Recent Assessments
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-9:
+    id: CHART-9
+    meta:
+      width: 6
+      height: 50
+      chartId: 19
+      sliceName: Quality Improvement Tracking
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  GRID_ID:
+    id: GRID_ID
+    type: GRID
+    parents:
+    - ROOT_ID
+    children:
+    - ROW-1
+    - ROW-2
+    - ROW-3
+    - ROW-4
+    - ROW-5
+    - ROW-N-ZMBFIU6D
+  ROOT_ID:
+    id: ROOT_ID
+    type: ROOT
+    children:
+    - GRID_ID
+  CHART-10:
+    id: CHART-10
+    meta:
+      width: 6
+      height: 50
+      chartId: 20
+      sliceName: Check Distribution Treemap
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Dashboard
+    type: HEADER
+  ROW-N-ZMBFIU6D:
+    children:
+    - CHART-GYRPNPSJ
+    - CHART-1GEZ6KJ2
+    - CHART-AHT5G294
+    - CHART-8GZDRP14
+    - CHART-84NJJ0HO
+    - CHART-01D6CWK4
+    - CHART-1P677JFZ
+    - CHART-WK5DFGP2
+    - CHART-R8P6HYQ3
+    - CHART-K3T2OMXF
+    id: ROW-N-ZMBFIU6D
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+  CHART-GYRPNPSJ:
+    children: []
+    id: CHART-GYRPNPSJ
+    meta:
+      chartId: 17
+      height: 50
+      sliceName: Check Status Distribution
+      uuid: 1e5dc66a-53fe-4d19-b6d8-f16c75b42047
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-1GEZ6KJ2:
+    children: []
+    id: CHART-1GEZ6KJ2
+    meta:
+      chartId: 14
+      height: 50
+      sliceName: Dimensions by Project
+      uuid: 934a9a06-6da7-454d-bde1-86edaf3e9501
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-AHT5G294:
+    children: []
+    id: CHART-AHT5G294
+    meta:
+      chartId: 16
+      height: 50
+      sliceName: Project Health Gauge
+      uuid: c678515d-d10a-4840-af64-ee42c8f68b0e
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-8GZDRP14:
+    children: []
+    id: CHART-8GZDRP14
+    meta:
+      chartId: 12
+      height: 50
+      sliceName: Quality Across Projects
+      uuid: 310ec87c-c999-4001-a628-bc7489f0f52c
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-84NJJ0HO:
+    children: []
+    id: CHART-84NJJ0HO
+    meta:
+      chartId: 18
+      height: 50
+      sliceName: Recent Assessments
+      uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-01D6CWK4:
+    children: []
+    id: CHART-01D6CWK4
+    meta:
+      chartId: 20
+      height: 50
+      sliceName: Check Distribution Treemap
+      uuid: 1b68fe5d-5ffc-4f14-95b2-397c9a4f03c1
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-1P677JFZ:
+    children: []
+    id: CHART-1P677JFZ
+    meta:
+      chartId: 19
+      height: 50
+      sliceName: Quality Improvement Tracking
+      uuid: 853d8f72-8607-496b-ac31-1220b33b0adf
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-WK5DFGP2:
+    children: []
+    id: CHART-WK5DFGP2
+    meta:
+      chartId: 15
+      height: 50
+      sliceName: Failed Checks Requiring Action
+      uuid: 969fd25a-b48c-4467-b0ee-d6a75aa74a1f
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-R8P6HYQ3:
+    children: []
+    id: CHART-R8P6HYQ3
+    meta:
+      chartId: 13
+      height: 50
+      sliceName: Assessment Timeline
+      uuid: 82388bab-316b-42b1-9755-8b921a6e84a9
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+  CHART-K3T2OMXF:
+    children: []
+    id: CHART-K3T2OMXF
+    meta:
+      chartId: 11
+      height: 50
+      sliceName: Projects Overview
+      uuid: c3bfbfe4-6b75-48f6-a02d-cb2f4ba5b1ad
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-ZMBFIU6D
+metadata:
+  color_scheme: supersetColors
+  label_colors: {}
+  default_filters: '{}'
+  expanded_slices:
+    '11': true
+    '12': true
+    '13': true
+    '14': true
+    '15': true
+    '16': true
+    '17': true
+    '18': true
+    '19': true
+    '20': true
+  refresh_frequency: 0
+  chart_configuration:
+    '11':
+      id: 11
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+    '12':
+      id: 12
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+    '13':
+      id: 13
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+    '14':
+      id: 14
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+    '15':
+      id: 15
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 14
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+    '16':
+      id: 16
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 17
+        - 18
+        - 19
+        - 20
+    '17':
+      id: 17
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 18
+        - 19
+        - 20
+    '18':
+      id: 18
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 19
+        - 20
+    '19':
+      id: 19
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 20
+    '20':
+      id: 20
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+  shared_label_colors: {}
+  cross_filters_enabled: true
+  native_filter_configuration:
+  - id: NATIVE_FILTER-software
+    name: Software
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: software_name
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-creator
+    name: Creator
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: creator_name
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-dimension
+    name: Dimension
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: dimension_name
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-daterange
+    name: Date
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: date_created
+      datasetUuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+    filterType: filter_select
+    chartsInScope:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-status
+    name: Status
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: outcome
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+version: 1.0.0

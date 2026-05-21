@@ -88,13 +88,17 @@ setup-dashboards:
 
 export-superset-assets:
     @OUT_DIR=ansible/files/superset_assets && \
+    TMP_ZIP=/tmp/dashverse-assets.zip && \
+    TMP_EXTRACT=/tmp/dashverse-assets-extract && \
     echo "Exporting from deploy/superset" && \
-    rm -rf $OUT_DIR && \
-    mkdir -p $OUT_DIR && \
-    kubectl exec -n {{ns}} deploy/superset -- bash -c "superset export-dashboards -f /tmp/dashverse-assets.zip 2>/dev/null && base64 /tmp/dashverse-assets.zip" \
-        | base64 -d > /tmp/dashverse-assets.zip && \
-    unzip -q /tmp/dashverse-assets.zip -d $OUT_DIR && \
-    rm /tmp/dashverse-assets.zip && \
+    rm -rf $OUT_DIR/charts $OUT_DIR/dashboards $OUT_DIR/datasets $OUT_DIR/databases $OUT_DIR/metadata.yaml $TMP_EXTRACT && \
+    mkdir -p $OUT_DIR $TMP_EXTRACT && \
+    kubectl exec -n {{ns}} -c superset deploy/superset -- bash -c "superset export-dashboards -f $TMP_ZIP >/dev/null 2>&1" && \
+    kubectl exec -n {{ns}} -c superset deploy/superset -- base64 -w0 $TMP_ZIP 2>/dev/null | base64 -d > $TMP_ZIP && \
+    kubectl exec -n {{ns}} -c superset deploy/superset -- rm -f $TMP_ZIP 2>/dev/null && \
+    unzip -q $TMP_ZIP -d $TMP_EXTRACT && \
+    mv $TMP_EXTRACT/*/* $OUT_DIR/ && \
+    rm -rf $TMP_ZIP $TMP_EXTRACT && \
     echo "Exported $(find $OUT_DIR -name '*.yaml' | wc -l) YAML files to $OUT_DIR"
 
 seed-data:

@@ -1,0 +1,20 @@
+slice_name: High Achievers Table
+description: Software with the highest quality scores across dimensions. Use as case-study
+  material to demonstrate good practice in training sessions.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - software_name
+  - dimension_name
+  - score
+  order_by_cols:
+  - - score
+    - false
+  row_limit: 20
+query_context: null
+cache_timeout: null
+uuid: 2c4d0d10-0f9c-4c37-bb03-398dba2088b4
+version: 1.0.0
+dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad

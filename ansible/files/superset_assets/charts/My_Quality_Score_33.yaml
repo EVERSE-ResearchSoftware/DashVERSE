@@ -1,0 +1,22 @@
+slice_name: My Quality Score
+description: Average percentage of checks that passed across all dimensions for the
+  assessed software. Aim above 75% for a healthy project; below 50% indicates significant
+  gaps to address.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: pass_rate
+    expressionType: SIMPLE
+    column:
+      column_name: pass_rate
+    aggregate: AVG
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Average Quality Score
+query_context: null
+cache_timeout: null
+uuid: 4ee2731c-75e4-4643-b6ef-0d8d106ef81f
+version: 1.0.0
+dataset_uuid: c57303cb-cad4-42f6-9f01-6c7438a03ce3

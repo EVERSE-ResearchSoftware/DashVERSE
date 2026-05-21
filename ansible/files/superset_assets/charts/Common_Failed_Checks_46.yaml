@@ -1,0 +1,23 @@
+slice_name: Common Failed Checks
+description: Top 15 indicators that fail most often across all assessed software.
+  Use to prioritise training topics where they will have the most impact on quality.
+certified_by: null
+certification_details: null
+viz_type: dist_bar
+params:
+  groupby:
+  - indicator_name
+  metrics:
+  - label: failure_count
+    expressionType: SIMPLE
+    column:
+      column_name: failure_count
+    aggregate: SUM
+  color_scheme: supersetColors
+  row_limit: 15
+  show_bar_value: true
+query_context: null
+cache_timeout: null
+uuid: 363080d9-ac57-4ebc-8851-b061fa56263d
+version: 1.0.0
+dataset_uuid: 4bcfa543-1597-476f-a4a9-ea7dc1c437d2

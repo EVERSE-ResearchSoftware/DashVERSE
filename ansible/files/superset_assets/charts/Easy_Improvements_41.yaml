@@ -1,0 +1,18 @@
+slice_name: Easy Improvements
+description: Detailed list of check evidence text. Scan the evidence column for one-line
+  fixes (e.g. 'add a CITATION.cff') you can act on quickly.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - indicator_name
+  - dimension_name
+  - evidence
+  row_limit: 15
+  table_filter: true
+query_context: null
+cache_timeout: null
+uuid: 6012ce5e-12b5-4338-aba0-f88017bfdc79
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
