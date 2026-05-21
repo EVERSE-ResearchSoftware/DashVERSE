@@ -16,6 +16,10 @@
   include_tasks: import_assets.yml
   when: superset_asset_files.matched | int > 0
 
+- name: Normalize chart params after import
+  include_tasks: normalize_chart_params.yml
+  when: superset_asset_files.matched | int > 0
+
 - name: Configure charts (legacy path)
   include_tasks: charts.yml
   when: superset_asset_files.matched | int == 0

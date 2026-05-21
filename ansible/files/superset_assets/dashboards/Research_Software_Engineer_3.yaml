@@ -80,6 +80,7 @@ position:
       height: 35
       chartId: 21
       sliceName: Total Checks
+      uuid: 659bb956-250c-4d2b-86c3-aa95ad8add7c
     type: CHART
     parents:
     - ROOT_ID
@@ -93,6 +94,7 @@ position:
       height: 35
       chartId: 22
       sliceName: Pass Rate KPI
+      uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
     type: CHART
     parents:
     - ROOT_ID
@@ -106,6 +108,7 @@ position:
       height: 50
       chartId: 23
       sliceName: Technical Debt Heatmap
+      uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed
     type: CHART
     parents:
     - ROOT_ID
@@ -119,6 +122,7 @@ position:
       height: 50
       chartId: 24
       sliceName: Check Results Pie
+      uuid: fe8445ba-3fe9-4298-9673-bbf0949658b8
     type: CHART
     parents:
     - ROOT_ID
@@ -132,6 +136,7 @@ position:
       height: 50
       chartId: 25
       sliceName: Coverage by Dimension
+      uuid: 0c84d7be-b9f9-454d-9e81-bf84d4ce3274
     type: CHART
     parents:
     - ROOT_ID
@@ -145,6 +150,7 @@ position:
       height: 50
       chartId: 26
       sliceName: Checking Tools Usage
+      uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db
     type: CHART
     parents:
     - ROOT_ID
@@ -158,6 +164,7 @@ position:
       height: 50
       chartId: 27
       sliceName: Failed Checks Detail
+      uuid: 6e6cb154-cb9b-42c9-a508-dd6d6d122e2a
     type: CHART
     parents:
     - ROOT_ID
@@ -171,6 +178,7 @@ position:
       height: 50
       chartId: 28
       sliceName: Pass Rate Trend
+      uuid: 485d09aa-8afa-4ae2-a6c1-dab22ded0aa7
     type: CHART
     parents:
     - ROOT_ID
@@ -184,6 +192,7 @@ position:
       height: 50
       chartId: 29
       sliceName: Software by Language
+      uuid: 61d9bd4f-660c-463b-8d84-28245372667f
     type: CHART
     parents:
     - ROOT_ID
@@ -202,7 +211,6 @@ position:
     - ROW-4
     - ROW-5
     - ROW-6
-    - ROW-N-FFR4W0BD
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -215,6 +223,7 @@ position:
       height: 50
       chartId: 30
       sliceName: Common Issues Bar
+      uuid: 3df8ccd7-afe1-4365-8e27-d846ed34c8a7
     type: CHART
     parents:
     - ROOT_ID
@@ -228,6 +237,7 @@ position:
       height: 50
       chartId: 31
       sliceName: Quality Dimensions Table
+      uuid: c6602616-045f-4a50-8c0a-bcee2fafed1a
     type: CHART
     parents:
     - ROOT_ID
@@ -241,6 +251,7 @@ position:
       height: 50
       chartId: 32
       sliceName: Quality Indicators Table
+      uuid: fc1036e5-c147-4647-8d74-015373141bda
     type: CHART
     parents:
     - ROOT_ID
@@ -252,196 +263,6 @@ position:
     meta:
       text: Dashboard
     type: HEADER
-  ROW-N-FFR4W0BD:
-    children:
-    - CHART-UE9A77GC
-    - CHART-G99E7LYZ
-    - CHART-S5UWHW7C
-    - CHART-39JBD5O7
-    - CHART-28UICEO8
-    - CHART-TU43XPFI
-    - CHART-VFDYQWMT
-    - CHART-O09ILET4
-    - CHART-5ZXY16SB
-    - CHART-TYZVTQGO
-    - CHART-QFO8E6O3
-    - CHART-M28AWIGS
-    id: ROW-N-FFR4W0BD
-    meta:
-      '0': ROOT_ID
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-  CHART-UE9A77GC:
-    children: []
-    id: CHART-UE9A77GC
-    meta:
-      chartId: 24
-      height: 50
-      sliceName: Check Results Pie
-      uuid: fe8445ba-3fe9-4298-9673-bbf0949658b8
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-G99E7LYZ:
-    children: []
-    id: CHART-G99E7LYZ
-    meta:
-      chartId: 23
-      height: 50
-      sliceName: Technical Debt Heatmap
-      uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-S5UWHW7C:
-    children: []
-    id: CHART-S5UWHW7C
-    meta:
-      chartId: 26
-      height: 50
-      sliceName: Checking Tools Usage
-      uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-39JBD5O7:
-    children: []
-    id: CHART-39JBD5O7
-    meta:
-      chartId: 27
-      height: 50
-      sliceName: Failed Checks Detail
-      uuid: 6e6cb154-cb9b-42c9-a508-dd6d6d122e2a
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-28UICEO8:
-    children: []
-    id: CHART-28UICEO8
-    meta:
-      chartId: 31
-      height: 50
-      sliceName: Quality Dimensions Table
-      uuid: c6602616-045f-4a50-8c0a-bcee2fafed1a
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-TU43XPFI:
-    children: []
-    id: CHART-TU43XPFI
-    meta:
-      chartId: 21
-      height: 50
-      sliceName: Total Checks
-      uuid: 659bb956-250c-4d2b-86c3-aa95ad8add7c
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-VFDYQWMT:
-    children: []
-    id: CHART-VFDYQWMT
-    meta:
-      chartId: 29
-      height: 50
-      sliceName: Software by Language
-      uuid: 61d9bd4f-660c-463b-8d84-28245372667f
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-O09ILET4:
-    children: []
-    id: CHART-O09ILET4
-    meta:
-      chartId: 30
-      height: 50
-      sliceName: Common Issues Bar
-      uuid: 3df8ccd7-afe1-4365-8e27-d846ed34c8a7
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-5ZXY16SB:
-    children: []
-    id: CHART-5ZXY16SB
-    meta:
-      chartId: 32
-      height: 50
-      sliceName: Quality Indicators Table
-      uuid: fc1036e5-c147-4647-8d74-015373141bda
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-TYZVTQGO:
-    children: []
-    id: CHART-TYZVTQGO
-    meta:
-      chartId: 22
-      height: 50
-      sliceName: Pass Rate KPI
-      uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-QFO8E6O3:
-    children: []
-    id: CHART-QFO8E6O3
-    meta:
-      chartId: 28
-      height: 50
-      sliceName: Pass Rate Trend
-      uuid: 485d09aa-8afa-4ae2-a6c1-dab22ded0aa7
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
-  CHART-M28AWIGS:
-    children: []
-    id: CHART-M28AWIGS
-    meta:
-      chartId: 25
-      height: 50
-      sliceName: Coverage by Dimension
-      uuid: 0c84d7be-b9f9-454d-9e81-bf84d4ce3274
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-FFR4W0BD
 metadata:
   color_scheme: supersetColors
   label_colors: {}

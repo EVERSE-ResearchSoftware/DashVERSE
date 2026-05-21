@@ -1,0 +1,33 @@
+---
+
+- name: Convert nested-array order_by_cols to JSON-string form
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -v ON_ERROR_STOP=1 -c "
+    UPDATE slices
+    SET params = (
+      params::jsonb || jsonb_build_object(
+        'order_by_cols',
+        (
+          SELECT jsonb_agg(
+            CASE
+              WHEN jsonb_typeof(elem) = 'array' THEN to_jsonb(elem::text)
+              ELSE elem
+            END
+          )
+          FROM jsonb_array_elements(params::jsonb -> 'order_by_cols') AS elem
+        )
+      )
+    )::text
+    WHERE params IS NOT NULL
+      AND jsonb_typeof(params::jsonb -> 'order_by_cols') = 'array'
+      AND EXISTS (
+        SELECT 1 FROM jsonb_array_elements(params::jsonb -> 'order_by_cols') e
+        WHERE jsonb_typeof(e) = 'array'
+      );
+    "
+  register: normalize_result
+  changed_when: "'UPDATE 0' not in normalize_result.stdout"
+
+- name: Show normalized slice count
+  debug:
+    msg: "{{ normalize_result.stdout_lines }}"

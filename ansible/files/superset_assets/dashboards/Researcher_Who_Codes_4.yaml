@@ -69,6 +69,7 @@ position:
       height: 35
       chartId: 33
       sliceName: My Quality Score
+      uuid: 4ee2731c-75e4-4643-b6ef-0d8d106ef81f
     type: CHART
     parents:
     - ROOT_ID
@@ -82,6 +83,7 @@ position:
       height: 35
       chartId: 34
       sliceName: Check Pass Rate Gauge
+      uuid: c1f9098b-edee-4907-9a65-3a6c2518ce26
     type: CHART
     parents:
     - ROOT_ID
@@ -95,6 +97,7 @@ position:
       height: 50
       chartId: 35
       sliceName: Quality Over Time
+      uuid: 1ea774fe-89b0-4dd3-a0df-4a32f2624c16
     type: CHART
     parents:
     - ROOT_ID
@@ -108,6 +111,7 @@ position:
       height: 50
       chartId: 36
       sliceName: My Quality Profile
+      uuid: 1fc6d93f-76db-4c47-bd5f-c8536bd7574a
     type: CHART
     parents:
     - ROOT_ID
@@ -121,6 +125,7 @@ position:
       height: 50
       chartId: 37
       sliceName: Action Items
+      uuid: 0859dfdf-aef8-4ef0-b380-57ac6b809f64
     type: CHART
     parents:
     - ROOT_ID
@@ -134,6 +139,7 @@ position:
       height: 50
       chartId: 38
       sliceName: Indicator Results
+      uuid: aede4e99-8724-43e5-aa20-bf9f40caa7d5
     type: CHART
     parents:
     - ROOT_ID
@@ -147,6 +153,7 @@ position:
       height: 50
       chartId: 39
       sliceName: Focus Areas
+      uuid: 2acea96e-6880-42a9-9a88-818e847a9333
     type: CHART
     parents:
     - ROOT_ID
@@ -160,6 +167,7 @@ position:
       height: 50
       chartId: 40
       sliceName: Top Performing Projects
+      uuid: 1ee3445c-ea32-4b26-8048-58611dc841fb
     type: CHART
     parents:
     - ROOT_ID
@@ -173,6 +181,7 @@ position:
       height: 50
       chartId: 41
       sliceName: Easy Improvements
+      uuid: 6012ce5e-12b5-4338-aba0-f88017bfdc79
     type: CHART
     parents:
     - ROOT_ID
@@ -190,7 +199,6 @@ position:
     - ROW-3
     - ROW-4
     - ROW-5
-    - ROW-N-R5SOI02D
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -203,6 +211,7 @@ position:
       height: 50
       chartId: 42
       sliceName: Checks by Status
+      uuid: 2e989805-a542-490d-ba7d-35ebd34db576
     type: CHART
     parents:
     - ROOT_ID
@@ -214,166 +223,6 @@ position:
     meta:
       text: Dashboard
     type: HEADER
-  ROW-N-R5SOI02D:
-    children:
-    - CHART-6MTP81WE
-    - CHART-612K46NU
-    - CHART-JOSH0ISK
-    - CHART-FWORSFBP
-    - CHART-VRKBJ4J6
-    - CHART-ZPXIZ1IK
-    - CHART-DSZG12YP
-    - CHART-IY3G9WHQ
-    - CHART-YI781WNZ
-    - CHART-2BRZXBJB
-    id: ROW-N-R5SOI02D
-    meta:
-      '0': ROOT_ID
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-  CHART-6MTP81WE:
-    children: []
-    id: CHART-6MTP81WE
-    meta:
-      chartId: 37
-      height: 50
-      sliceName: Action Items
-      uuid: 0859dfdf-aef8-4ef0-b380-57ac6b809f64
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-612K46NU:
-    children: []
-    id: CHART-612K46NU
-    meta:
-      chartId: 40
-      height: 50
-      sliceName: Top Performing Projects
-      uuid: 1ee3445c-ea32-4b26-8048-58611dc841fb
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-JOSH0ISK:
-    children: []
-    id: CHART-JOSH0ISK
-    meta:
-      chartId: 38
-      height: 50
-      sliceName: Indicator Results
-      uuid: aede4e99-8724-43e5-aa20-bf9f40caa7d5
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-FWORSFBP:
-    children: []
-    id: CHART-FWORSFBP
-    meta:
-      chartId: 36
-      height: 50
-      sliceName: My Quality Profile
-      uuid: 1fc6d93f-76db-4c47-bd5f-c8536bd7574a
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-VRKBJ4J6:
-    children: []
-    id: CHART-VRKBJ4J6
-    meta:
-      chartId: 34
-      height: 50
-      sliceName: Check Pass Rate Gauge
-      uuid: c1f9098b-edee-4907-9a65-3a6c2518ce26
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-ZPXIZ1IK:
-    children: []
-    id: CHART-ZPXIZ1IK
-    meta:
-      chartId: 35
-      height: 50
-      sliceName: Quality Over Time
-      uuid: 1ea774fe-89b0-4dd3-a0df-4a32f2624c16
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-DSZG12YP:
-    children: []
-    id: CHART-DSZG12YP
-    meta:
-      chartId: 41
-      height: 50
-      sliceName: Easy Improvements
-      uuid: 6012ce5e-12b5-4338-aba0-f88017bfdc79
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-IY3G9WHQ:
-    children: []
-    id: CHART-IY3G9WHQ
-    meta:
-      chartId: 42
-      height: 50
-      sliceName: Checks by Status
-      uuid: 2e989805-a542-490d-ba7d-35ebd34db576
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-YI781WNZ:
-    children: []
-    id: CHART-YI781WNZ
-    meta:
-      chartId: 39
-      height: 50
-      sliceName: Focus Areas
-      uuid: 2acea96e-6880-42a9-9a88-818e847a9333
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
-  CHART-2BRZXBJB:
-    children: []
-    id: CHART-2BRZXBJB
-    meta:
-      chartId: 33
-      height: 50
-      sliceName: My Quality Score
-      uuid: 4ee2731c-75e4-4643-b6ef-0d8d106ef81f
-      width: 4
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-N-R5SOI02D
 metadata:
   color_scheme: supersetColors
   label_colors: {}
