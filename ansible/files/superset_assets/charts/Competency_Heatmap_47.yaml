@@ -3,18 +3,17 @@ description: Score per software-by-dimension. Cooler colours mark dimensions whe
   many learners need help; use as a syllabus prioritisation tool.
 certified_by: null
 certification_details: null
-viz_type: heatmap
+viz_type: heatmap_v2
 params:
-  all_columns_x: software_name
-  all_columns_y: dimension_name
+  x_axis: software_name
+  groupby:
+  - dimension_name
   metric:
     label: score
-    expressionType: SIMPLE
-    column:
-      column_name: score
-    aggregate: AVG
-  linear_color_scheme: greenOrange
+    expressionType: SQL
+    sqlExpression: AVG(score)::float
   show_values: true
+  legend_type: continuous
 query_context: null
 cache_timeout: null
 uuid: 42308477-ec2d-4536-ba45-16db55cddd1e
