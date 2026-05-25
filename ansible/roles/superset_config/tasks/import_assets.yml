@@ -17,7 +17,7 @@
         -H "Cookie: {{ session_cookie }}" \
         -H "X-CSRFToken: {{ csrf_token }}" \
         -F "formData=@/tmp/dashverse-superset-assets.zip" \
-        -F 'passwords={"dashverse_assets/databases/{{ database_name }}.yaml":"{{ database_password }}"}' \
+        -F 'passwords={"databases/{{ database_name }}.yaml":"{{ database_password }}"}' \
         -F "overwrite=true" \
         -w "\nHTTP_STATUS:%{http_code}\n"
   register: superset_assets_import

@@ -1,12 +1,11 @@
 SET search_path TO api, public;
 
-DROP VIEW IF EXISTS assessments_detailed;
-CREATE VIEW assessments_detailed AS
+CREATE OR REPLACE VIEW assessments_detailed AS
 SELECT
   a.id,
   a.payload->>'@context' AS context,
   a.payload->>'@type' AS type,
-  (a.payload->>'dateCreated')::timestamp AS date_created,
+  a.payload->>'dateCreated' AS date_created,
   a.payload->'assessedSoftware'->>'name' AS software_name,
   a.payload->'assessedSoftware'->>'softwareVersion' AS software_version,
   a.payload->'assessedSoftware'->>'url' AS software_url,
@@ -18,13 +17,11 @@ SELECT
   a.payload->'license'->>'@id' AS license_id
 FROM assessment_raw a;
 
-DROP VIEW IF EXISTS checks_detailed;
-CREATE VIEW checks_detailed AS
+CREATE OR REPLACE VIEW checks_detailed AS
 SELECT
   a.id AS assessment_id,
   a.payload->'assessedSoftware'->>'name' AS software_name,
-  (a.payload->>'dateCreated')::timestamp AS date_created,
-  a.payload->'license'->>'@id' AS license_id,
+  a.payload->>'dateCreated' AS assessment_date,
   check_item->>'@type' AS check_type,
   check_item->'assessesIndicator'->>'@id' AS indicator_id,
   check_item->'checkingSoftware'->>'name' AS checking_software,

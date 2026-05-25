@@ -1,5 +1,5 @@
 table_name: assessments_detailed
-main_dttm_col: date_created
+main_dttm_col: created_at
 description: null
 default_endpoint: null
 offset: 0
@@ -76,9 +76,9 @@ columns:
   extra: null
 - column_name: date_created
   verbose_name: null
-  is_dttm: true
+  is_dttm: false
   is_active: true
-  type: TIMESTAMP WITHOUT TIME ZONE
+  type: TEXT
   advanced_data_type: null
   groupby: true
   filterable: true
