@@ -3,17 +3,16 @@ description: Number of checks contributed by each checking tool, e.g. howfairis 
   cffconvert. Use to plan tool-suite changes and to track adoption of new tools.
 certified_by: null
 certification_details: null
-viz_type: dist_bar
+viz_type: echarts_timeseries_bar
 params:
-  groupby:
-  - checking_software
+  x_axis: checking_software
   metrics:
   - label: count
     expressionType: SQL
     sqlExpression: COUNT(*)
   color_scheme: supersetColors
   row_limit: 15
-  show_bar_value: true
+  show_value: true
 query_context: null
 cache_timeout: null
 uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db

@@ -3,10 +3,9 @@ description: Top 15 indicators with the highest failure counts across all assess
   software. Tackle the largest bars first for the highest-impact fixes.
 certified_by: null
 certification_details: null
-viz_type: dist_bar
+viz_type: echarts_timeseries_bar
 params:
-  groupby:
-  - indicator_name
+  x_axis: indicator_name
   metrics:
   - label: failure_count
     expressionType: SIMPLE
@@ -15,7 +14,7 @@ params:
     aggregate: SUM
   color_scheme: supersetColors
   row_limit: 15
-  show_bar_value: true
+  show_value: true
 query_context: null
 cache_timeout: null
 uuid: 3df8ccd7-afe1-4365-8e27-d846ed34c8a7

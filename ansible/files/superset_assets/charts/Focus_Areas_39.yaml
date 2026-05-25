@@ -3,10 +3,9 @@ description: Top 10 indicators with the most failures across the portfolio. Tack
   these first for the biggest quality gains.
 certified_by: null
 certification_details: null
-viz_type: dist_bar
+viz_type: echarts_timeseries_bar
 params:
-  groupby:
-  - indicator_name
+  x_axis: indicator_name
   metrics:
   - label: failure_count
     expressionType: SIMPLE
@@ -15,7 +14,7 @@ params:
     aggregate: SUM
   color_scheme: supersetColors
   row_limit: 10
-  show_bar_value: true
+  show_value: true
 query_context: null
 cache_timeout: null
 uuid: 2acea96e-6880-42a9-9a88-818e847a9333

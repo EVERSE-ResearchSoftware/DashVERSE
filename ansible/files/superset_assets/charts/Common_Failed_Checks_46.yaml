@@ -3,10 +3,9 @@ description: Top 15 indicators that fail most often across all assessed software
   Use to prioritise training topics where they will have the most impact on quality.
 certified_by: null
 certification_details: null
-viz_type: dist_bar
+viz_type: echarts_timeseries_bar
 params:
-  groupby:
-  - indicator_name
+  x_axis: indicator_name
   metrics:
   - label: failure_count
     expressionType: SIMPLE
@@ -15,7 +14,7 @@ params:
     aggregate: SUM
   color_scheme: supersetColors
   row_limit: 15
-  show_bar_value: true
+  show_value: true
 query_context: null
 cache_timeout: null
 uuid: 363080d9-ac57-4ebc-8851-b061fa56263d
