@@ -1,6 +1,6 @@
 table_name: dimensions
 main_dttm_col: created_at
-description: null
+description: EVERSE quality dimensions (Reproducibility, Documentation, etc.) — curated reference data synced from the EVERSE indicators repo.
 default_endpoint: null
 offset: 0
 cache_timeout: null

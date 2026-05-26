@@ -1,6 +1,6 @@
 table_name: software
 main_dttm_col: last_seen
-description: null
+description: Distinct software entries derived from assessment payloads, joined with software_metadata for non-rsqa fields (programming_language, description, homepage_url).
 default_endpoint: null
 offset: 0
 cache_timeout: null

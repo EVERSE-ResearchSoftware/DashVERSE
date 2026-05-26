@@ -1,6 +1,6 @@
 table_name: checks_detailed
-main_dttm_col: null
-description: null
+main_dttm_col: assessment_dttm
+description: Canonical exploded view -- one row per individual check across all assessments.
 default_endpoint: null
 offset: 0
 cache_timeout: null
@@ -26,6 +26,102 @@ metrics:
   extra: null
   warning_text: null
 columns:
+- column_name: assessment_id
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: BIGINT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: software_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: software_id
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: assessment_dttm
+  verbose_name: Assessment Time
+  is_dttm: true
+  is_active: true
+  type: TIMESTAMP WITHOUT TIME ZONE
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: checking_software
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: status
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: output
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: TEXT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: evidence
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: TEXT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
 - column_name: indicator_name
   verbose_name: null
   is_dttm: false
@@ -50,7 +146,7 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: quality_dimension
+- column_name: dimension_id
   verbose_name: null
   is_dttm: false
   is_active: true
@@ -62,119 +158,11 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: assessment_id
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: INTEGER
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
 - column_name: creator_name
   verbose_name: null
   is_dttm: false
   is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: assessment_date
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: software_name
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: checking_software
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: indicator_id
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: software_url
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: check_type
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: status
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: evidence
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
+  type: VARCHAR
   advanced_data_type: null
   groupby: true
   filterable: true
@@ -183,31 +171,7 @@ columns:
   python_date_format: null
   extra: null
 - column_name: outcome
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: process
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: output
-  verbose_name: null
+  verbose_name: Check Outcome
   is_dttm: false
   is_active: true
   type: TEXT

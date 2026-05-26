@@ -1,6 +1,6 @@
 table_name: software_quality_scores
-main_dttm_col: null
-description: null
+main_dttm_col: last_assessed_date
+description: Per-(software, dimension) pass-rate score. Sourced from checks_detailed.
 default_endpoint: null
 offset: 0
 cache_timeout: null
@@ -26,7 +26,7 @@ metrics:
   extra: null
   warning_text: null
 columns:
-- column_name: dimension_name
+- column_name: software_name
   verbose_name: null
   is_dttm: false
   is_active: true
@@ -38,11 +38,11 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: total_checks
+- column_name: software_id
   verbose_name: null
   is_dttm: false
   is_active: true
-  type: BIGINT
+  type: VARCHAR
   advanced_data_type: null
   groupby: true
   filterable: true
@@ -50,11 +50,11 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: passed
+- column_name: dimension_name
   verbose_name: null
   is_dttm: false
   is_active: true
-  type: BIGINT
+  type: VARCHAR
   advanced_data_type: null
   groupby: true
   filterable: true
@@ -74,11 +74,11 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: software_name
-  verbose_name: null
-  is_dttm: false
+- column_name: last_assessed_date
+  verbose_name: Last Assessment
+  is_dttm: true
   is_active: true
-  type: TEXT
+  type: TIMESTAMP WITHOUT TIME ZONE
   advanced_data_type: null
   groupby: true
   filterable: true

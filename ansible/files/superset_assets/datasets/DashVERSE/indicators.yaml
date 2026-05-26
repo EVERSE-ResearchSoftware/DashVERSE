@@ -1,6 +1,6 @@
 table_name: indicators
 main_dttm_col: created_at
-description: null
+description: EVERSE quality indicators — individual checks within each dimension. Curated reference data synced from the EVERSE indicators repo.
 default_endpoint: null
 offset: 0
 cache_timeout: null

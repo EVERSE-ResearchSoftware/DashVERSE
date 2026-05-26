@@ -1,6 +1,6 @@
 table_name: software_languages
 main_dttm_col: null
-description: null
+description: Software identifiers expanded by programming language. One row per (software, language) pair.
 default_endpoint: null
 offset: 0
 cache_timeout: null
