@@ -1,6 +1,6 @@
-table_name: indicator_results
-main_dttm_col: null
-description: null
+table_name: software_history
+main_dttm_col: month
+description: Per-(software, month) quality state. Powers per-project trend lines, alert lists, and delta calculations.
 default_endpoint: null
 offset: 0
 cache_timeout: null
@@ -14,7 +14,7 @@ fetch_values_predicate: null
 extra: null
 normalize_columns: false
 always_filter_main_dttm: false
-uuid: 596fa4e1-48bb-44c3-b664-f0586e1c7b0e
+uuid: a272ab14-6e6a-4b02-86e1-17eb77a6d37c
 metrics:
 - metric_name: count
   verbose_name: COUNT(*)
@@ -26,7 +26,7 @@ metrics:
   extra: null
   warning_text: null
 columns:
-- column_name: indicator_name
+- column_name: software_name
   verbose_name: null
   is_dttm: false
   is_active: true
@@ -38,7 +38,7 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: indicator_id
+- column_name: software_id
   verbose_name: null
   is_dttm: false
   is_active: true
@@ -50,11 +50,11 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: dimension_name
+- column_name: month
   verbose_name: null
-  is_dttm: false
+  is_dttm: true
   is_active: true
-  type: VARCHAR
+  type: TIMESTAMP WITHOUT TIME ZONE
   advanced_data_type: null
   groupby: true
   filterable: true
@@ -62,19 +62,7 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: quality_dimension
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: VARCHAR
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: occurrences
+- column_name: assessments_in_month
   verbose_name: null
   is_dttm: false
   is_active: true
@@ -86,35 +74,47 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: percentage
+- column_name: total_checks
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: BIGINT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: passed
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: BIGINT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: dimensions_covered
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: BIGINT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: pass_rate
   verbose_name: null
   is_dttm: false
   is_active: true
   type: NUMERIC
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: status
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: outcome
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: TEXT
   advanced_data_type: null
   groupby: true
   filterable: true

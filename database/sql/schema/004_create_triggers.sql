@@ -47,6 +47,27 @@ CREATE TRIGGER assessment_insert_trigger
 INSTEAD OF INSERT ON assessment
 FOR EACH ROW EXECUTE FUNCTION assessment_insert_fn();
 
+CREATE OR REPLACE FUNCTION resolve_dimension_id(quality_dim VARCHAR) RETURNS VARCHAR AS $$
+DECLARE
+  qd_jsonb jsonb;
+  raw_ref  TEXT;
+BEGIN
+  IF quality_dim IS NULL THEN
+    RETURN NULL;
+  END IF;
+  qd_jsonb := quality_dim::jsonb;
+  raw_ref := CASE jsonb_typeof(qd_jsonb)
+    WHEN 'string' THEN qd_jsonb #>> '{}'
+    WHEN 'array'  THEN qd_jsonb->0->>'@id'
+    WHEN 'object' THEN qd_jsonb->>'@id'
+    ELSE NULL
+  END;
+  RETURN split_part(raw_ref, '/', -1);
+EXCEPTION WHEN OTHERS THEN
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 CREATE OR REPLACE FUNCTION check_outcome(check_item jsonb) RETURNS TEXT AS $$
 DECLARE
   out_val   TEXT := check_item->>'output';
