@@ -7,6 +7,7 @@ GRANT ALL ON ALL TABLES IN SCHEMA api TO web_user;
 GRANT INSERT, SELECT ON assessment TO web_user;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA api TO web_user;
 
+GRANT SELECT ON software TO web_anon, web_user;
 GRANT SELECT ON assessments_detailed TO web_anon, web_user;
 GRANT SELECT ON checks_detailed TO web_anon, web_user;
 GRANT SELECT ON assessment_summary TO web_anon, web_user;

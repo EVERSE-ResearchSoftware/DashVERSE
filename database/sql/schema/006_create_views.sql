@@ -1,5 +1,29 @@
 SET search_path TO api, public;
 
+CREATE OR REPLACE VIEW software AS
+SELECT
+  COALESCE(
+    a.payload->'assessedSoftware'->'schema:identifier'->>'@id',
+    a.payload->'assessedSoftware'->>'name'
+  ) AS identifier,
+  a.payload->'assessedSoftware'->>'name' AS name,
+  MAX(a.payload->'assessedSoftware'->>'softwareVersion') AS latest_version,
+  MAX(a.payload->'assessedSoftware'->>'url') AS url,
+  a.payload->'assessedSoftware'->'schema:identifier'->>'@id' AS doi,
+  MIN(a.created_at) AS first_seen,
+  MAX(a.created_at) AS last_seen,
+  COUNT(DISTINCT a.id) AS assessment_count,
+  m.programming_language,
+  m.description,
+  m.homepage_url
+FROM assessment_raw a
+LEFT JOIN software_metadata m
+  ON m.identifier = COALESCE(
+       a.payload->'assessedSoftware'->'schema:identifier'->>'@id',
+       a.payload->'assessedSoftware'->>'name'
+     )
+GROUP BY 1, 2, 5, m.programming_language, m.description, m.homepage_url;
+
 CREATE OR REPLACE VIEW assessments_detailed AS
 SELECT
   a.id,
@@ -144,11 +168,10 @@ ORDER BY month;
 DROP VIEW IF EXISTS software_languages;
 CREATE VIEW software_languages AS
 SELECT
-  s.id AS software_id,
-  s.name AS software_name,
+  sm.identifier AS software_identifier,
   lang AS language
-FROM software s, UNNEST(s.programming_language) AS lang
-WHERE s.programming_language IS NOT NULL;
+FROM software_metadata sm, UNNEST(sm.programming_language) AS lang
+WHERE sm.programming_language IS NOT NULL;
 
 CREATE OR REPLACE VIEW common_issues AS
 SELECT

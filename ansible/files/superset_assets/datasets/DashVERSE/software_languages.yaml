@@ -26,7 +26,7 @@ metrics:
   extra: null
   warning_text: null
 columns:
-- column_name: software_name
+- column_name: software_identifier
   verbose_name: null
   is_dttm: false
   is_active: true
@@ -43,18 +43,6 @@ columns:
   is_dttm: false
   is_active: true
   type: VARCHAR
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: software_id
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: INTEGER
   advanced_data_type: null
   groupby: true
   filterable: true

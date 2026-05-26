@@ -1,18 +1,5 @@
 SET search_path TO api, public;
 
-CREATE TABLE IF NOT EXISTS software (
-  id SERIAL PRIMARY KEY,
-  identifier VARCHAR NOT NULL UNIQUE,
-  name VARCHAR NOT NULL,
-  description TEXT,
-  version VARCHAR,
-  license VARCHAR,
-  repository_url VARCHAR,
-  homepage_url VARCHAR,
-  programming_language VARCHAR[],
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE IF NOT EXISTS dimensions (
   id SERIAL PRIMARY KEY,
