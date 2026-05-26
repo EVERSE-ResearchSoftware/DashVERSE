@@ -1,7 +1,5 @@
 SET search_path TO api, public;
 
-CREATE INDEX IF NOT EXISTS idx_software_identifier ON software(identifier);
-CREATE INDEX IF NOT EXISTS idx_software_name ON software(name);
 
 CREATE INDEX IF NOT EXISTS idx_dimensions_identifier ON dimensions(identifier);
 

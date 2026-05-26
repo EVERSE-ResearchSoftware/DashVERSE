@@ -16,13 +16,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
-ALTER TABLE software ENABLE ROW LEVEL SECURITY;
+ALTER TABLE software_metadata ENABLE ROW LEVEL SECURITY;
 ALTER TABLE dimensions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE indicators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assessment_raw ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS read_software ON software;
-CREATE POLICY read_software ON software FOR SELECT TO web_anon, web_user USING (true);
+DROP POLICY IF EXISTS read_software_metadata ON software_metadata;
+CREATE POLICY read_software_metadata ON software_metadata FOR SELECT TO web_anon, web_user USING (true);
 
 DROP POLICY IF EXISTS read_dimensions ON dimensions;
 CREATE POLICY read_dimensions ON dimensions FOR SELECT TO web_anon, web_user USING (true);
@@ -33,8 +33,8 @@ CREATE POLICY read_indicators ON indicators FOR SELECT TO web_anon, web_user USI
 DROP POLICY IF EXISTS read_assessment ON assessment_raw;
 CREATE POLICY read_assessment ON assessment_raw FOR SELECT TO web_anon, web_user USING (true);
 
-DROP POLICY IF EXISTS write_software ON software;
-CREATE POLICY write_software ON software FOR ALL TO web_user
+DROP POLICY IF EXISTS write_software_metadata ON software_metadata;
+CREATE POLICY write_software_metadata ON software_metadata FOR ALL TO web_user
   USING (is_authenticated()) WITH CHECK (is_authenticated());
 
 DROP POLICY IF EXISTS write_dimensions ON dimensions;
