@@ -44,6 +44,15 @@ CREATE TABLE IF NOT EXISTS assessment_raw (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS software_metadata (
+  identifier VARCHAR PRIMARY KEY,
+  programming_language VARCHAR[],
+  description TEXT,
+  homepage_url VARCHAR,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE OR REPLACE VIEW assessment AS
 SELECT
   id,

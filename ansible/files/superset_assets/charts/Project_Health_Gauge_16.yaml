@@ -1,9 +1,9 @@
-slice_name: Project Health Gauge
-description: Average pass rate across your portfolio shown as a gauge. Use as an at-a-glance
-  health indicator at PI status meetings.
+slice_name: Project Health
+description: Average pass rate across your portfolio. Use as an at-a-glance health
+  indicator at PI status meetings.
 certified_by: null
 certification_details: null
-viz_type: gauge_chart
+viz_type: big_number_total
 params:
   metric:
     label: pass_rate
@@ -11,9 +11,9 @@ params:
     column:
       column_name: pass_rate
     aggregate: AVG
-  min_val: 0
-  max_val: 100
-  color_scheme: supersetColors
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Portfolio Health %
 query_context: null
 cache_timeout: null
 uuid: c678515d-d10a-4840-af64-ee42c8f68b0e
