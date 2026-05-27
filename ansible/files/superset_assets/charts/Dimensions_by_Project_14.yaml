@@ -1,17 +1,20 @@
 slice_name: Dimensions by Project
-description: Sunburst showing per-project distribution of checks across dimensions.
-  Click a project segment to drill into how its quality is split across dimensions.
+description: Per-project distribution of checks across dimensions. Cell shade shows
+  check volume; empty cells highlight uncovered dimensions for that project.
 certified_by: null
 certification_details: null
-viz_type: sunburst_v2
+viz_type: heatmap_v2
 params:
-  columns:
+  x_axis: dimension_name
+  groupby:
   - software_name
-  - dimension_name
   metric:
     label: count
     expressionType: SQL
     sqlExpression: COUNT(*)
+  show_values: true
+  value_format: ',d'
+  legend_type: continuous
   color_scheme: supersetColors
 query_context: null
 cache_timeout: null

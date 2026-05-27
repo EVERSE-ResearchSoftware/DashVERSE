@@ -675,4 +675,25 @@ metadata:
     defaultDataMask:
       filterState:
         value: null
+  - id: NATIVE_FILTER-month
+    name: Month
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: month
+      datasetUuid: ba5963a1-5b48-41f8-bb4c-f95a10449996
+    filterType: filter_select
+    chartsInScope: []
+    controlValues:
+      multiSelect: false
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
 version: 1.0.0

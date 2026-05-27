@@ -13,7 +13,8 @@ params:
     label: count
     expressionType: SQL
     sqlExpression: COUNT(*)
-  show_values: false
+  show_values: true
+  value_format: ',d'
   legend_type: continuous
 query_context: null
 cache_timeout: null

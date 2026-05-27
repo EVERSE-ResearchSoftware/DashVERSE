@@ -13,6 +13,10 @@ params:
     expressionType: SQL
     sqlExpression: COUNT(*)
   color_scheme: supersetColors
+  show_labels: true
+  label_type: key_value
+  number_format: ',d'
+  show_legend: true
 query_context: null
 cache_timeout: null
 uuid: 1b68fe5d-5ffc-4f14-95b2-397c9a4f03c1

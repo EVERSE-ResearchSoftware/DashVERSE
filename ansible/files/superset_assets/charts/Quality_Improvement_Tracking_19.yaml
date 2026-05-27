@@ -1,21 +1,24 @@
 slice_name: Quality Improvement Tracking
-description: Trend of assessment volume over time. A rising line means quality engagement
-  is growing; a flat line suggests improvement work has stalled.
+description: Average pass rate across dimensions, by month. A rising line means quality
+  is improving; a flat line means improvement work has stalled. Pairs with Assessment
+  Timeline (which tracks assessment volume).
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_line
 params:
   x_axis: month
   metrics:
-  - label: assessments
+  - label: pass_rate
     expressionType: SIMPLE
     column:
-      column_name: assessments
-    aggregate: SUM
+      column_name: pass_rate
+    aggregate: AVG
   color_scheme: supersetColors
   show_legend: true
+  rich_tooltip: true
+  y_axis_format: '.1f'
 query_context: null
 cache_timeout: null
 uuid: 853d8f72-8607-496b-ac31-1220b33b0adf
 version: 1.0.0
-dataset_uuid: 80662b12-f989-4498-be68-1afe226d00a2
+dataset_uuid: ba5963a1-5b48-41f8-bb4c-f95a10449996
