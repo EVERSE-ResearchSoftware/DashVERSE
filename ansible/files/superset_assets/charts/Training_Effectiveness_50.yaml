@@ -13,7 +13,7 @@ params:
       column_name: assessments
     aggregate: SUM
   color_scheme: supersetColors
-  show_legend: true
+  show_legend: false
   y_axis_format: .0f
 query_context: null
 cache_timeout: null

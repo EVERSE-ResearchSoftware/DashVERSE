@@ -9,7 +9,7 @@ params:
   - software_name
   - dimension_name
   - indicator_name
-  - status
+  - outcome
   - output
   row_limit: 50
   table_filter: true

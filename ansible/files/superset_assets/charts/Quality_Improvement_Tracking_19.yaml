@@ -14,7 +14,7 @@ params:
       column_name: pass_rate
     aggregate: AVG
   color_scheme: supersetColors
-  show_legend: true
+  show_legend: false
   rich_tooltip: true
   y_axis_format: '.1f'
 query_context: null

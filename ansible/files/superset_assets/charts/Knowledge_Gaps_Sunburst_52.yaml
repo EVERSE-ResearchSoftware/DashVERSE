@@ -8,7 +8,7 @@ params:
   columns:
   - dimension_name
   - indicator_name
-  - status
+  - outcome
   metric:
     label: count
     expressionType: SQL

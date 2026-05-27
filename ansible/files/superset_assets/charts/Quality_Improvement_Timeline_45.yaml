@@ -13,7 +13,7 @@ params:
       column_name: assessments
     aggregate: SUM
   color_scheme: supersetColors
-  show_legend: true
+  show_legend: false
 query_context: null
 cache_timeout: null
 uuid: b7e8af19-62f9-4a3f-8e76-4b42cd2d9c69
