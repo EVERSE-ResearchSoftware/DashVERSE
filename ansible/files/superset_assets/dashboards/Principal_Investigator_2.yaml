@@ -49,7 +49,6 @@ position:
     - ROOT_ID
     - GRID_ID
     children:
-    - CHART-7
     - CHART-8
   ROW-5:
     id: ROW-5
@@ -66,7 +65,7 @@ position:
     id: CHART-1
     meta:
       width: 6
-      height: 35
+      height: 50
       chartId: 11
       sliceName: Projects Overview
       uuid: c3bfbfe4-6b75-48f6-a02d-cb2f4ba5b1ad
@@ -80,7 +79,7 @@ position:
     id: CHART-2
     meta:
       width: 6
-      height: 35
+      height: 50
       chartId: 16
       sliceName: Project Health Gauge
       uuid: c678515d-d10a-4840-af64-ee42c8f68b0e
@@ -94,7 +93,7 @@ position:
     id: CHART-3
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 12
       sliceName: Quality Across Projects
       uuid: 310ec87c-c999-4001-a628-bc7489f0f52c
@@ -108,7 +107,7 @@ position:
     id: CHART-4
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 13
       sliceName: Assessment Timeline
       uuid: 82388bab-316b-42b1-9755-8b921a6e84a9
@@ -122,7 +121,7 @@ position:
     id: CHART-5
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 14
       sliceName: Dimensions by Project
       uuid: 934a9a06-6da7-454d-bde1-86edaf3e9501
@@ -136,7 +135,7 @@ position:
     id: CHART-6
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 15
       sliceName: Failed Checks Requiring Action
       uuid: 969fd25a-b48c-4467-b0ee-d6a75aa74a1f
@@ -146,25 +145,11 @@ position:
     - GRID_ID
     - ROW-3
     children: []
-  CHART-7:
-    id: CHART-7
-    meta:
-      width: 6
-      height: 50
-      chartId: 17
-      sliceName: Check Status Distribution
-      uuid: 1e5dc66a-53fe-4d19-b6d8-f16c75b42047
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-4
-    children: []
   CHART-8:
     id: CHART-8
     meta:
-      width: 6
-      height: 50
+      width: 12
+      height: 65
       chartId: 18
       sliceName: Recent Assessments
       uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd
@@ -178,7 +163,7 @@ position:
     id: CHART-9
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 19
       sliceName: Quality Improvement Tracking
       uuid: 853d8f72-8607-496b-ac31-1220b33b0adf
@@ -208,7 +193,7 @@ position:
     id: CHART-10
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 20
       sliceName: Check Distribution Treemap
       uuid: 1b68fe5d-5ffc-4f14-95b2-397c9a4f03c1
@@ -234,7 +219,6 @@ metadata:
     '14': true
     '15': true
     '16': true
-    '17': true
     '18': true
     '19': true
     '20': true
@@ -250,7 +234,6 @@ metadata:
         - 14
         - 15
         - 16
-        - 17
         - 18
         - 19
         - 20
@@ -264,7 +247,6 @@ metadata:
         - 14
         - 15
         - 16
-        - 17
         - 18
         - 19
         - 20
@@ -278,7 +260,6 @@ metadata:
         - 14
         - 15
         - 16
-        - 17
         - 18
         - 19
         - 20
@@ -292,7 +273,6 @@ metadata:
         - 13
         - 15
         - 16
-        - 17
         - 18
         - 19
         - 20
@@ -306,7 +286,6 @@ metadata:
         - 13
         - 14
         - 16
-        - 17
         - 18
         - 19
         - 20
@@ -320,21 +299,6 @@ metadata:
         - 13
         - 14
         - 15
-        - 17
-        - 18
-        - 19
-        - 20
-    '17':
-      id: 17
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 11
-        - 12
-        - 13
-        - 14
-        - 15
-        - 16
         - 18
         - 19
         - 20
@@ -349,7 +313,6 @@ metadata:
         - 14
         - 15
         - 16
-        - 17
         - 19
         - 20
     '19':
@@ -363,7 +326,6 @@ metadata:
         - 14
         - 15
         - 16
-        - 17
         - 18
         - 20
     '20':
@@ -377,7 +339,6 @@ metadata:
         - 14
         - 15
         - 16
-        - 17
         - 18
         - 19
   shared_label_colors: {}
@@ -390,7 +351,6 @@ metadata:
       excluded:
       - 13
       - 16
-      - 17
       - 19
       rootPath:
       - ROOT_ID
@@ -422,7 +382,6 @@ metadata:
       - 12
       - 13
       - 16
-      - 17
       - 19
       rootPath:
       - ROOT_ID
@@ -466,7 +425,6 @@ metadata:
     - 14
     - 15
     - 16
-    - 17
     - 20
     controlValues:
       multiSelect: true
@@ -486,7 +444,6 @@ metadata:
       - 14
       - 15
       - 16
-      - 17
       - 19
       - 20
       rootPath:
@@ -528,7 +485,6 @@ metadata:
     chartsInScope:
     - 14
     - 15
-    - 17
     - 20
     controlValues:
       multiSelect: true

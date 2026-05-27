@@ -39,7 +39,6 @@ position:
     - GRID_ID
     children:
     - CHART-5
-    - CHART-6
   ROW-4:
     id: ROW-4
     meta:
@@ -61,12 +60,11 @@ position:
     - GRID_ID
     children:
     - CHART-9
-    - CHART-10
   CHART-1:
     id: CHART-1
     meta:
       width: 6
-      height: 35
+      height: 50
       chartId: 33
       sliceName: My Quality Score
       uuid: 4ee2731c-75e4-4643-b6ef-0d8d106ef81f
@@ -80,7 +78,7 @@ position:
     id: CHART-2
     meta:
       width: 6
-      height: 35
+      height: 50
       chartId: 34
       sliceName: Check Pass Rate Gauge
       uuid: c1f9098b-edee-4907-9a65-3a6c2518ce26
@@ -94,7 +92,7 @@ position:
     id: CHART-3
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 35
       sliceName: Quality Over Time
       uuid: 1ea774fe-89b0-4dd3-a0df-4a32f2624c16
@@ -108,7 +106,7 @@ position:
     id: CHART-4
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 36
       sliceName: My Quality Profile
       uuid: 1fc6d93f-76db-4c47-bd5f-c8536bd7574a
@@ -121,25 +119,11 @@ position:
   CHART-5:
     id: CHART-5
     meta:
-      width: 6
-      height: 50
+      width: 12
+      height: 65
       chartId: 37
       sliceName: Action Items
       uuid: 0859dfdf-aef8-4ef0-b380-57ac6b809f64
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-3
-    children: []
-  CHART-6:
-    id: CHART-6
-    meta:
-      width: 6
-      height: 50
-      chartId: 38
-      sliceName: Indicator Results
-      uuid: aede4e99-8724-43e5-aa20-bf9f40caa7d5
     type: CHART
     parents:
     - ROOT_ID
@@ -150,7 +134,7 @@ position:
     id: CHART-7
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 39
       sliceName: Focus Areas
       uuid: 2acea96e-6880-42a9-9a88-818e847a9333
@@ -164,7 +148,7 @@ position:
     id: CHART-8
     meta:
       width: 6
-      height: 50
+      height: 65
       chartId: 40
       sliceName: Top Performing Projects
       uuid: 1ee3445c-ea32-4b26-8048-58611dc841fb
@@ -177,8 +161,8 @@ position:
   CHART-9:
     id: CHART-9
     meta:
-      width: 6
-      height: 50
+      width: 12
+      height: 65
       chartId: 41
       sliceName: Easy Improvements
       uuid: 6012ce5e-12b5-4338-aba0-f88017bfdc79
@@ -204,20 +188,6 @@ position:
     type: ROOT
     children:
     - GRID_ID
-  CHART-10:
-    id: CHART-10
-    meta:
-      width: 6
-      height: 50
-      chartId: 42
-      sliceName: Checks by Status
-      uuid: 2e989805-a542-490d-ba7d-35ebd34db576
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-5
-    children: []
   HEADER_ID:
     id: HEADER_ID
     meta:
@@ -233,11 +203,9 @@ metadata:
     '35': true
     '36': true
     '37': true
-    '38': true
     '39': true
     '40': true
     '41': true
-    '42': true
   refresh_frequency: 0
   chart_configuration:
     '33':
@@ -249,11 +217,9 @@ metadata:
         - 35
         - 36
         - 37
-        - 38
         - 39
         - 40
         - 41
-        - 42
     '34':
       id: 34
       crossFilters:
@@ -263,11 +229,9 @@ metadata:
         - 35
         - 36
         - 37
-        - 38
         - 39
         - 40
         - 41
-        - 42
     '35':
       id: 35
       crossFilters:
@@ -277,11 +241,9 @@ metadata:
         - 34
         - 36
         - 37
-        - 38
         - 39
         - 40
         - 41
-        - 42
     '36':
       id: 36
       crossFilters:
@@ -291,11 +253,9 @@ metadata:
         - 34
         - 35
         - 37
-        - 38
         - 39
         - 40
         - 41
-        - 42
     '37':
       id: 37
       crossFilters:
@@ -305,25 +265,9 @@ metadata:
         - 34
         - 35
         - 36
-        - 38
         - 39
         - 40
         - 41
-        - 42
-    '38':
-      id: 38
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 33
-        - 34
-        - 35
-        - 36
-        - 37
-        - 39
-        - 40
-        - 41
-        - 42
     '39':
       id: 39
       crossFilters:
@@ -334,10 +278,8 @@ metadata:
         - 35
         - 36
         - 37
-        - 38
         - 40
         - 41
-        - 42
     '40':
       id: 40
       crossFilters:
@@ -348,10 +290,8 @@ metadata:
         - 35
         - 36
         - 37
-        - 38
         - 39
         - 41
-        - 42
     '41':
       id: 41
       crossFilters:
@@ -362,24 +302,8 @@ metadata:
         - 35
         - 36
         - 37
-        - 38
         - 39
         - 40
-        - 42
-    '42':
-      id: 42
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 33
-        - 34
-        - 35
-        - 36
-        - 37
-        - 38
-        - 39
-        - 40
-        - 41
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -392,9 +316,7 @@ metadata:
       - 34
       - 35
       - 36
-      - 38
       - 39
-      - 42
       rootPath:
       - ROOT_ID
     targets:
@@ -423,10 +345,8 @@ metadata:
       - 34
       - 35
       - 36
-      - 38
       - 39
       - 40
-      - 42
       rootPath:
       - ROOT_ID
     targets:
@@ -463,11 +383,9 @@ metadata:
     - 34
     - 36
     - 37
-    - 38
     - 39
     - 40
     - 41
-    - 42
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -496,9 +414,7 @@ metadata:
     filterType: filter_select
     chartsInScope:
     - 37
-    - 38
     - 41
-    - 42
     controlValues:
       multiSelect: true
       inverseSelection: false
