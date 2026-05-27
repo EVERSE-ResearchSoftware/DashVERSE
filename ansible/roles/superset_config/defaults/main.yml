@@ -16,14 +16,8 @@ datasets:
   - name: assessments
     table: assessment_raw
     schema: "{{ database_schema }}"
-  - name: assessment_summary
-    table: assessment_summary
-    schema: "{{ database_schema }}"
   - name: dimension_coverage
     table: dimension_coverage
-    schema: "{{ database_schema }}"
-  - name: indicator_results
-    table: indicator_results
     schema: "{{ database_schema }}"
   - name: software_quality_scores
     table: software_quality_scores
@@ -42,6 +36,18 @@ datasets:
     schema: "{{ database_schema }}"
   - name: software_languages
     table: software_languages
+    schema: "{{ database_schema }}"
+  - name: dimension_trend
+    table: dimension_trend
+    schema: "{{ database_schema }}"
+  - name: software_history
+    table: software_history
+    schema: "{{ database_schema }}"
+  - name: tool_reliability
+    table: tool_reliability
+    schema: "{{ database_schema }}"
+  - name: compliance_status
+    table: compliance_status
     schema: "{{ database_schema }}"
 
 dashboards:

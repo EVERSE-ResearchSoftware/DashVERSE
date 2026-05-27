@@ -6,16 +6,18 @@ certification_details: null
 viz_type: pie
 params:
   groupby:
-  - status
+  - outcome
   metric:
     label: count
     expressionType: SQL
     sqlExpression: COUNT(*)
   color_scheme: supersetColors
   show_labels: true
+  label_type: key_percent
   show_legend: true
   donut: true
   innerRadius: 40
+  number_format: ',d'
 query_context: null
 cache_timeout: null
 uuid: fe8445ba-3fe9-4298-9673-bbf0949658b8
