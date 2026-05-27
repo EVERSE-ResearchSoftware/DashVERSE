@@ -62,5 +62,41 @@ columns:
   description: null
   python_date_format: null
   extra: null
+- column_name: what_to_improve
+  verbose_name: What to improve
+  is_dttm: false
+  is_active: true
+  type: TEXT
+  advanced_data_type: null
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: indicator_url
+  verbose_name: Indicator docs
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: url
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: rsqkit_url
+  verbose_name: RSQKit topic
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: url
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
 version: 1.0.0
 database_uuid: 0cdaf196-2614-43ec-a6d7-95be2590ce54

@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import os
 import json
+import urllib.parse
 
 from app.core.config import settings
 
@@ -45,8 +46,46 @@ DASHBOARDS = {
 }
 
 
+def _software_detail_response(request: Request, name: str):
+    superset_base = settings.superset_external_url or ""
+
+    rison_filter = (
+        "(NATIVE_FILTER-software:(filterState:(value:!('"
+        + name.replace("'", "\\'")
+        + "'))))"
+    )
+    encoded_filter = urllib.parse.quote(rison_filter, safe="")
+
+    embed_url = (
+        f"{superset_base}/superset/dashboard/researcher-who-codes/"
+        f"?standalone=2&native_filters={encoded_filter}"
+    ) if superset_base else ""
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "slug": "researcher-who-codes",
+            "dashboard": {
+                "title": f"Software: {name}",
+                "description": f"Quality assessment results for {name}.",
+                "audience": "Per-software view",
+                "rsqkit_url": "https://everse.software/RSQKit/researcher_who_codes",
+            },
+            "embed_url": embed_url,
+            "encoded_software_filter": encoded_filter,
+            "superset_external_url": superset_base,
+            "dashboards": DASHBOARDS,
+            "current_dashboard": "researcher-who-codes",
+            "software_name": name,
+        }
+    )
+
+
 @router.get("/", response_class=HTMLResponse)
-async def home(request: Request):
+async def home(request: Request, software: str | None = Query(default=None)):
+    if software:
+        return _software_detail_response(request, software)
     return templates.TemplateResponse(
         "home.html",
         {
@@ -56,6 +95,11 @@ async def home(request: Request):
             "current_dashboard": None
         }
     )
+
+
+@router.get("/software/{name}", response_class=HTMLResponse)
+async def software_detail(request: Request, name: str):
+    return _software_detail_response(request, name)
 
 
 @router.get("/concepts", response_class=HTMLResponse)

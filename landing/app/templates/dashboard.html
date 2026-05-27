@@ -11,6 +11,7 @@
         data-slug="{{ slug }}"
         data-superset-port="8088"
         data-superset-url="{{ superset_external_url }}"
+        {% if encoded_software_filter %}data-native-filters="{{ encoded_software_filter }}"{% endif %}
         frameborder="0"
         allowfullscreen
         title="{{ dashboard.title }} Dashboard"
@@ -22,6 +23,7 @@
     var iframe = document.getElementById('dashboard-frame');
     var slug = iframe.getAttribute('data-slug');
     var supersetUrl = iframe.getAttribute('data-superset-url');
+    var nativeFilters = iframe.getAttribute('data-native-filters');
 
     if (!supersetUrl) {
         // fallback for local development
@@ -31,7 +33,11 @@
         supersetUrl = protocol + '//' + host + ':' + supersetPort;
     }
 
-    iframe.src = supersetUrl + '/superset/dashboard/' + slug + '/?standalone=2';
+    var url = supersetUrl + '/superset/dashboard/' + slug + '/?standalone=2';
+    if (nativeFilters) {
+        url += '&native_filters=' + nativeFilters;
+    }
+    iframe.src = url;
 })();
 </script>
 {% endblock %}

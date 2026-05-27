@@ -159,9 +159,14 @@ CREATE OR REPLACE VIEW common_issues AS
 SELECT
   cd.indicator_name,
   cd.dimension_name,
-  COUNT(*) AS failure_count
+  COUNT(*) AS failure_count,
+  i.description AS what_to_improve,
+  i.source->>'@id' AS indicator_url,
+  'https://everse.software/RSQKit/' || COALESCE(d.identifier, '') AS rsqkit_url
 FROM checks_detailed cd
+LEFT JOIN indicators i ON i.name = cd.indicator_name
+LEFT JOIN dimensions d ON d.name = cd.dimension_name
 WHERE cd.outcome = 'fail'
   AND cd.indicator_name IS NOT NULL
-GROUP BY cd.indicator_name, cd.dimension_name
+GROUP BY cd.indicator_name, cd.dimension_name, i.description, i.source, d.identifier
 ORDER BY failure_count DESC;

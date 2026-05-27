@@ -60,6 +60,16 @@ position:
     - GRID_ID
     children:
     - CHART-9
+  ROW-6:
+    id: ROW-6
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-10
   CHART-1:
     id: CHART-1
     meta:
@@ -172,6 +182,20 @@ position:
     - GRID_ID
     - ROW-5
     children: []
+  CHART-10:
+    id: CHART-10
+    meta:
+      width: 12
+      height: 65
+      chartId: 55
+      sliceName: Improvement Targets
+      uuid: f2826f04-9e34-47fd-b3b7-96f8cf09fa80
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6
+    children: []
   GRID_ID:
     id: GRID_ID
     type: GRID
@@ -183,6 +207,7 @@ position:
     - ROW-3
     - ROW-4
     - ROW-5
+    - ROW-6
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
