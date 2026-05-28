@@ -16,6 +16,8 @@ params:
   show_value: true
   show_legend: false
   y_axis_format: .1f
+  orientation: horizontal
+  only_total: false
 query_context: null
 cache_timeout: null
 uuid: 91889633-b07c-44d5-8406-a0ea56abacfc

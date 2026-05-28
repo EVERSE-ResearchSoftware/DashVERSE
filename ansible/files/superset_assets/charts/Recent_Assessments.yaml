@@ -13,6 +13,15 @@ params:
   - - date_created
     - false
   row_limit: 20
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    total_checks:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+  conditional_formatting: []
 query_context: null
 cache_timeout: null
 uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd

@@ -1,7 +1,6 @@
-slice_name: My Quality Profile
-description: Distribution of passed checks across quality dimensions. Large slices
-  identify your strengths; small slices show neglected dimensions worth investing
-  in.
+slice_name: Quality Dimension Profile
+description: Number of passing checks per dimension. The largest slices show where
+  the portfolio scores best; smallest slices flag systemic weaknesses to address.
 certified_by: null
 certification_details: null
 viz_type: pie
@@ -17,8 +16,12 @@ params:
   color_scheme: supersetColors
   show_labels: true
   show_legend: true
+  labels_outside: true
+  show_labels_threshold: 5
+  label_type: key_percent
+  number_format: .0%
 query_context: null
 cache_timeout: null
-uuid: 1fc6d93f-76db-4c47-bd5f-c8536bd7574a
+uuid: 458c8c47-b59f-4480-844a-fecc49c67fa1
 version: 1.0.0
 dataset_uuid: c57303cb-cad4-42f6-9f01-6c7438a03ce3

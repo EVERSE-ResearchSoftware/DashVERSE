@@ -1,0 +1,42 @@
+slice_name: Improvement Targets
+description: Failing indicators ranked by frequency, with links to RSQKit topic guides
+  and to each indicator's definition. Use to plan remediation work.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - dimension_name
+  - indicator_name
+  - failure_count
+  - what_to_improve
+  - rsqkit_url
+  - indicator_url
+  row_limit: 50
+  table_filter: true
+  order_by_cols:
+  - '["failure_count", false]'
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    failure_count:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+    what_to_improve:
+      columnWidth: 400
+    rsqkit_url:
+      columnWidth: 240
+    indicator_url:
+      columnWidth: 240
+  conditional_formatting:
+  - column: failure_count
+    colorScheme: '#e35454'
+    operator: '>'
+    targetValue: 0
+query_context: null
+cache_timeout: null
+uuid: f2826f04-9e34-47fd-b3b7-96f8cf09fa80
+version: 1.0.0
+dataset_uuid: 4bcfa543-1597-476f-a4a9-ea7dc1c437d2

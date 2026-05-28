@@ -1,0 +1,32 @@
+slice_name: Check Distribution
+description: How many checks each indicator accumulated, coloured by quality
+  dimension. Long bars are indicators that drive most of the testing effort;
+  the colour mix shows which dimension that indicator belongs to.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_bar
+params:
+  x_axis: indicator_name
+  metrics:
+  - label: checks
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  groupby:
+  - dimension_name
+  orientation: horizontal
+  stack: true
+  show_value: true
+  only_total: false
+  show_legend: true
+  color_scheme: supersetColors
+  row_limit: 100
+  orderby:
+  - - label: checks
+      expressionType: SQL
+      sqlExpression: COUNT(*)
+    - false
+query_context: null
+cache_timeout: null
+uuid: 1b68fe5d-5ffc-4f14-95b2-397c9a4f03c1
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

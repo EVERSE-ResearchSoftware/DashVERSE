@@ -14,6 +14,8 @@ params:
   row_limit: 15
   show_value: true
   show_legend: false
+  orientation: horizontal
+  only_total: false
 query_context: null
 cache_timeout: null
 uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db

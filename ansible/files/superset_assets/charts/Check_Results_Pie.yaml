@@ -18,6 +18,8 @@ params:
   donut: true
   innerRadius: 40
   number_format: ',d'
+  labels_outside: true
+  show_labels_threshold: 5
 query_context: null
 cache_timeout: null
 uuid: fe8445ba-3fe9-4298-9673-bbf0949658b8

@@ -11,6 +11,14 @@ params:
   - description
   - status
   row_limit: 50
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    description:
+      columnWidth: 400
+  conditional_formatting: []
 query_context: null
 cache_timeout: null
 uuid: fc1036e5-c147-4647-8d74-015373141bda

@@ -13,6 +13,19 @@ params:
   - - score
     - false
   row_limit: 20
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    score:
+      d3NumberFormat: .1f
+      horizontalAlign: right
+  conditional_formatting:
+  - column: score
+    colorScheme: '#5fb56a'
+    operator: '>'
+    targetValue: 0
 query_context: null
 cache_timeout: null
 uuid: 2c4d0d10-0f9c-4c37-bb03-398dba2088b4

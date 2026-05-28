@@ -1,6 +1,6 @@
-slice_name: Common Issues Bar
-description: Top 15 indicators with the highest failure counts across all assessed
-  software. Tackle the largest bars first for the highest-impact fixes.
+slice_name: Focus Areas
+description: Top 10 indicators with the most failures across the portfolio. Tackle
+  these first for the biggest quality gains.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar
@@ -13,10 +13,12 @@ params:
       column_name: failure_count
     aggregate: SUM
   color_scheme: supersetColors
-  row_limit: 15
+  row_limit: 10
   show_value: true
+  orientation: horizontal
+  only_total: false
 query_context: null
 cache_timeout: null
-uuid: 3df8ccd7-afe1-4365-8e27-d846ed34c8a7
+uuid: 2acea96e-6880-42a9-9a88-818e847a9333
 version: 1.0.0
 dataset_uuid: 4bcfa543-1597-476f-a4a9-ea7dc1c437d2

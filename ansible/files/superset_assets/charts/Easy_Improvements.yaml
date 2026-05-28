@@ -11,6 +11,14 @@ params:
   - evidence
   row_limit: 15
   table_filter: true
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    evidence:
+      columnWidth: 400
+  conditional_formatting: []
 query_context: null
 cache_timeout: null
 uuid: 6012ce5e-12b5-4338-aba0-f88017bfdc79

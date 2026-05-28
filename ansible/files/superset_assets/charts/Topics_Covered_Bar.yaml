@@ -13,6 +13,8 @@ params:
   color_scheme: supersetColors
   row_limit: 15
   show_value: true
+  orientation: horizontal
+  only_total: false
 query_context: null
 cache_timeout: null
 uuid: bb46a203-c3b9-4dc4-9877-7bfcdbfa03b4

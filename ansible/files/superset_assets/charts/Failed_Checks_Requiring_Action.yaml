@@ -13,6 +13,14 @@ params:
   - output
   row_limit: 50
   table_filter: true
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    output:
+      columnWidth: 400
+  conditional_formatting: []
 query_context: null
 cache_timeout: null
 uuid: 969fd25a-b48c-4467-b0ee-d6a75aa74a1f

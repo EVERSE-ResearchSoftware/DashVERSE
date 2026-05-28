@@ -16,6 +16,8 @@ params:
   row_limit: 20
   show_value: true
   y_axis_format: .1f
+  orientation: horizontal
+  only_total: false
 query_context: null
 cache_timeout: null
 uuid: 310ec87c-c999-4001-a628-bc7489f0f52c

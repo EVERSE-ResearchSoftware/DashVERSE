@@ -16,6 +16,10 @@ params:
   show_legend: true
   donut: true
   innerRadius: 40
+  labels_outside: true
+  show_labels_threshold: 5
+  label_type: key_percent
+  number_format: .0%
 query_context: null
 cache_timeout: null
 uuid: d50a768a-57d3-4968-828a-fa914632e0d4
