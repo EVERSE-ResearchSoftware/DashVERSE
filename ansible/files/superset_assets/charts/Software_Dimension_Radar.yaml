@@ -1,0 +1,28 @@
+slice_name: Dimension Profile
+description: Pass rate per quality dimension. With no software selected this is the
+  portfolio profile; pick a project to see its profile. Larger slices are stronger
+  dimensions; small slices are the gaps to address next.
+certified_by: null
+certification_details: null
+viz_type: pie
+params:
+  groupby:
+  - dimension_name
+  metric:
+    label: pass_rate
+    expressionType: SIMPLE
+    column:
+      column_name: score
+    aggregate: AVG
+  color_scheme: supersetColors
+  show_labels: true
+  show_legend: true
+  number_format: .1f
+  labels_outside: true
+  show_labels_threshold: 5
+  label_type: key_percent
+query_context: null
+cache_timeout: null
+uuid: 7f71f69e-f937-4297-9f31-018d9d756442
+version: 1.0.0
+dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad

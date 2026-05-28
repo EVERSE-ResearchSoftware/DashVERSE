@@ -1,0 +1,36 @@
+slice_name: Dimensions Coverage
+description: How many of the EVERSE catalog dimensions have been exercised by an assessment
+  vs how many are still untouched.
+certified_by: null
+certification_details: null
+viz_type: pie
+params:
+  groupby:
+  - status
+  metric:
+    label: items
+    expressionType: SIMPLE
+    column:
+      column_name: items
+    aggregate: SUM
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: category
+    operator: ==
+    comparator: Dimensions
+  color_scheme: supersetColors
+  show_labels: true
+  show_labels_threshold: 5
+  labels_outside: true
+  show_legend: true
+  donut: true
+  innerRadius: 45
+  outerRadius: 80
+  label_type: key_percent
+  number_format: .0%
+query_context: null
+cache_timeout: null
+uuid: eb441787-b2e3-4232-8deb-c6f29ad3ac6a
+version: 1.0.0
+dataset_uuid: 3a34e152-6e74-46ce-8f6c-14189a402411

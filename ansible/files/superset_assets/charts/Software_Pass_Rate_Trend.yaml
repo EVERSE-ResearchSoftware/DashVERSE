@@ -1,0 +1,23 @@
+slice_name: Software Pass Rate Trend
+description: Monthly pass rate for the selected software. Use to spot improvement
+  or regression as new assessments arrive.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_line
+params:
+  x_axis: month
+  metrics:
+  - label: pass_rate
+    expressionType: SIMPLE
+    column:
+      column_name: pass_rate
+    aggregate: AVG
+  color_scheme: supersetColors
+  show_legend: false
+  rich_tooltip: true
+  y_axis_format: '.1f'
+query_context: null
+cache_timeout: null
+uuid: b5cf65e0-46fb-450c-9f8a-ed9c0289f19a
+version: 1.0.0
+dataset_uuid: a272ab14-6e6a-4b02-86e1-17eb77a6d37c

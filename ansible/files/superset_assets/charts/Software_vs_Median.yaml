@@ -1,0 +1,37 @@
+slice_name: vs Portfolio Median
+description: How this software's per-dimension pass rate compares to the
+  portfolio median. The chart only renders once you pick a single project from
+  the Software filter -- without a filter, multiple softwares are in scope and
+  the comparison is meaningless, so the chart shows empty.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_bar
+params:
+  x_axis: dimension_name
+  metrics:
+  - label: This software
+    expressionType: SIMPLE
+    column:
+      column_name: sw_score
+    aggregate: AVG
+  - label: Portfolio median
+    expressionType: SIMPLE
+    column:
+      column_name: median_score
+    aggregate: AVG
+  adhoc_filters:
+  - clause: HAVING
+    expressionType: SQL
+    sqlExpression: COUNT(DISTINCT software_name) = 1
+  color_scheme: supersetColors
+  show_value: true
+  show_legend: true
+  y_axis_format: .1f
+  orientation: horizontal
+  only_total: false
+  stack: false
+query_context: null
+cache_timeout: null
+uuid: a4956807-1aa2-4086-9cb1-f212f9d90d08
+version: 1.0.0
+dataset_uuid: 0df3b836-158c-4563-af46-d1b909dca733

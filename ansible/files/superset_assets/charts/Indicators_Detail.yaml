@@ -1,0 +1,31 @@
+slice_name: Indicators Detail
+description: All quality indicators in the EVERSE catalog with the quality
+  dimension they belong to and a link to the indicator's documentation. An
+  indicator that spans multiple dimensions appears once per dimension. Filter
+  by Quality Dimension to focus on a specific area.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - dimension_name
+  - indicator_name
+  - indicator_identifier
+  - indicator_description
+  - indicator_url
+  row_limit: 200
+  table_filter: true
+  page_length: 25
+  column_config:
+    indicator_description:
+      columnWidth: 420
+    indicator_url:
+      columnWidth: 260
+  order_by_cols:
+  - '["dimension_name", true]'
+  - '["indicator_name", true]'
+query_context: null
+cache_timeout: null
+uuid: bc6bc504-575e-44a2-b421-82e8d46bb57a
+version: 1.0.0
+dataset_uuid: 6ac66a0a-6568-4438-83cf-9ff9e634dab1

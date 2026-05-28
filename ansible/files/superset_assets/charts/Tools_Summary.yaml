@@ -1,0 +1,53 @@
+slice_name: Tools Summary
+description: Checking tools currently in use, with how many dimensions and
+  indicators each tool exercises, the share of the catalog covered, total checks
+  run, and pass rate.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  query_mode: raw
+  all_columns:
+  - tool
+  - dimensions_covered
+  - indicators_covered
+  - indicator_coverage_pct
+  - total_checks
+  - success_rate
+  row_limit: 50
+  table_filter: false
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  column_config:
+    indicator_coverage_pct:
+      d3NumberFormat: '.1f'
+      horizontalAlign: right
+    success_rate:
+      d3NumberFormat: '.1f'
+      horizontalAlign: right
+    dimensions_covered:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+    indicators_covered:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+    total_checks:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+  conditional_formatting:
+  - column: indicator_coverage_pct
+    colorScheme: '#5fb56a'
+    operator: '>'
+    targetValue: 0
+  - column: success_rate
+    colorScheme: '#5fb56a'
+    operator: '>'
+    targetValue: 0
+  order_by_cols:
+  - '["indicators_covered", false]'
+query_context: null
+cache_timeout: null
+uuid: fd828b78-816e-4484-8a39-9823236b55f5
+version: 1.0.0
+dataset_uuid: afa52222-59cf-4344-8094-73943f3dcde9

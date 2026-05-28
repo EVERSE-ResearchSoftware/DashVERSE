@@ -1,0 +1,21 @@
+slice_name: Dimensions Tested
+description: Distinct catalog dimensions exercised by at least one check across
+  all assessments.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: dimensions_tested
+    expressionType: SIMPLE
+    column:
+      column_name: dimension_id
+    aggregate: COUNT_DISTINCT
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Tested Dimensions
+query_context: null
+cache_timeout: null
+uuid: 62ed109e-b16b-4219-9eb0-58465b16422b
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

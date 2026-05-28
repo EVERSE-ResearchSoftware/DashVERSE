@@ -1,0 +1,19 @@
+slice_name: Assessments
+description: Number of submitted assessments. Across the portfolio it shows total
+  activity; for a single software it shows how often that project has been assessed.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Assessments
+query_context: null
+cache_timeout: null
+uuid: 4d2eaf0a-1a0a-4d44-90c2-e2b13d2c6c9c
+version: 1.0.0
+dataset_uuid: 2e5838cf-b850-4a74-997c-a709e7c36808

@@ -1,6 +1,8 @@
-table_name: software
-main_dttm_col: last_seen
-description: Distinct software entries derived from assessment payloads, joined with software_metadata for non-rsqa fields (programming_language, description, homepage_url).
+table_name: dimensions_with_links
+main_dttm_col: created_at
+description: Wrapper view over dimensions that materialises a clickable RSQKit
+  topic URL per dimension. Used by the Dimensions Detail table on the Catalog
+  dashboard.
 default_endpoint: null
 offset: 0
 cache_timeout: null
@@ -14,7 +16,7 @@ fetch_values_predicate: null
 extra: null
 normalize_columns: false
 always_filter_main_dttm: false
-uuid: 9c2d2e46-92de-4bd1-be23-c3081acd89b5
+uuid: 354c08ce-1f0c-447f-b414-7c8d1885a022
 metrics:
 - metric_name: count
   verbose_name: COUNT(*)
@@ -26,8 +28,20 @@ metrics:
   extra: null
   warning_text: null
 columns:
-- column_name: identifier
+- column_name: id
   verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INTEGER
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: identifier
+  verbose_name: Identifier
   is_dttm: false
   is_active: true
   type: VARCHAR
@@ -39,94 +53,10 @@ columns:
   python_date_format: null
   extra: null
 - column_name: name
-  verbose_name: null
+  verbose_name: Name
   is_dttm: false
   is_active: true
   type: VARCHAR
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: latest_version
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: VARCHAR
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: url
-  verbose_name: Repository
-  is_dttm: false
-  is_active: true
-  type: VARCHAR
-  advanced_data_type: url
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: doi
-  verbose_name: DOI
-  is_dttm: false
-  is_active: true
-  type: VARCHAR
-  advanced_data_type: url
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: first_seen
-  verbose_name: null
-  is_dttm: true
-  is_active: true
-  type: TIMESTAMP WITHOUT TIME ZONE
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: last_seen
-  verbose_name: null
-  is_dttm: true
-  is_active: true
-  type: TIMESTAMP WITHOUT TIME ZONE
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: assessment_count
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: BIGINT
-  advanced_data_type: null
-  groupby: true
-  filterable: true
-  expression: null
-  description: null
-  python_date_format: null
-  extra: null
-- column_name: programming_language
-  verbose_name: null
-  is_dttm: false
-  is_active: true
-  type: VARCHAR[]
   advanced_data_type: null
   groupby: true
   filterable: true
@@ -135,10 +65,22 @@ columns:
   python_date_format: null
   extra: null
 - column_name: description
-  verbose_name: null
+  verbose_name: Description
   is_dttm: false
   is_active: true
   type: TEXT
+  advanced_data_type: null
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: status
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
   advanced_data_type: null
   groupby: true
   filterable: true
@@ -146,12 +88,48 @@ columns:
   description: null
   python_date_format: null
   extra: null
-- column_name: homepage_url
-  verbose_name: Homepage
+- column_name: source
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: JSONB
+  advanced_data_type: null
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: rsqkit_url
+  verbose_name: RSQKit page
   is_dttm: false
   is_active: true
   type: VARCHAR
   advanced_data_type: url
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: created_at
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: TIMESTAMP WITHOUT TIME ZONE
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: updated_at
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: TIMESTAMP WITHOUT TIME ZONE
+  advanced_data_type: null
   groupby: true
   filterable: true
   expression: null

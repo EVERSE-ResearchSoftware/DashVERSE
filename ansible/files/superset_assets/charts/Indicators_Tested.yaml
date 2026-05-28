@@ -1,0 +1,21 @@
+slice_name: Indicators Tested
+description: Distinct catalog indicators exercised by at least one check across
+  all assessments.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: indicators_tested
+    expressionType: SIMPLE
+    column:
+      column_name: indicator_name
+    aggregate: COUNT_DISTINCT
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Tested Indicators
+query_context: null
+cache_timeout: null
+uuid: 4571f830-925a-455c-ade5-d7b36c166bb7
+version: 1.0.0
+dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab

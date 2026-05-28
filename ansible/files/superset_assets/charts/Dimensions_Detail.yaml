@@ -1,0 +1,27 @@
+slice_name: Dimensions Detail
+description: All quality dimensions in the EVERSE catalog with their names, identifiers,
+  descriptions, and a link to the matching RSQKit topic page.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  all_columns:
+  - name
+  - identifier
+  - description
+  - rsqkit_url
+  row_limit: 50
+  table_filter: true
+  page_length: 25
+  column_config:
+    description:
+      columnWidth: 480
+    rsqkit_url:
+      columnWidth: 220
+  order_by_cols:
+  - '["name", true]'
+query_context: null
+cache_timeout: null
+uuid: 720692aa-d689-4390-a160-ece0f68b34b9
+version: 1.0.0
+dataset_uuid: 354c08ce-1f0c-447f-b414-7c8d1885a022

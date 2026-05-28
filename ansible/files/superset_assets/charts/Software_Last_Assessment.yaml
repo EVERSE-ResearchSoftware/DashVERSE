@@ -1,0 +1,22 @@
+slice_name: Last Assessment
+description: Date of the most recent assessment for the selected software. A stale
+  value suggests the project has stopped tracking quality.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: last_assessment
+    expressionType: SIMPLE
+    column:
+      column_name: created_at
+    aggregate: MAX
+  header_font_size: 0.3
+  subheader_font_size: 0.15
+  subheader: Last Assessment
+  y_axis_format: smart_date
+query_context: null
+cache_timeout: null
+uuid: 810b31f2-2e24-4976-adcb-94575dbdca12
+version: 1.0.0
+dataset_uuid: 2e5838cf-b850-4a74-997c-a709e7c36808

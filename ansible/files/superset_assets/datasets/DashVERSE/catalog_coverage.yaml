@@ -1,0 +1,107 @@
+table_name: catalog_coverage
+main_dttm_col: null
+description: Tracks which catalog dimensions and indicators have actually been
+  exercised by a check, per software. Used by the Catalog Coverage table on the
+  Software Detail dashboard.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: dashverse
+schema: api
+sql: null
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+uuid: 4372e3b3-6fa2-4369-b068-74204fa4d16f
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+- metric_name: tested
+  verbose_name: Tested
+  metric_type: count_distinct
+  expression: COUNT(DISTINCT item_id)
+  description: Distinct catalog items touched by a check.
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+- metric_name: catalog
+  verbose_name: Catalog
+  metric_type: max
+  expression: MAX(catalog_total)
+  description: Catalog size for the category (constant per row).
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+- metric_name: coverage_pct
+  verbose_name: Coverage %
+  metric_type: count_distinct
+  expression: ROUND(100.0 * COUNT(DISTINCT item_id) / NULLIF(MAX(catalog_total), 0), 1)
+  description: Percentage of catalog items touched.
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+columns:
+- column_name: software_name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: category
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: item_id
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: catalog_total
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: BIGINT
+  advanced_data_type: null
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+version: 1.0.0
+database_uuid: 0cdaf196-2614-43ec-a6d7-95be2590ce54

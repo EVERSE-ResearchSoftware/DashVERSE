@@ -1,0 +1,569 @@
+dashboard_title: Catalog
+description: null
+css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names\
+  \ because the empty-state DOM has\n   drifted between versions; one of these selectors\
+  \ will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n\
+  .chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n\
+  \    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n\
+  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
+  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
+  \ #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n\
+  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
+  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
+  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
+  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
+  \ italic;\n    font-weight: normal;\n}\n"
+slug: catalog
+certified_by: null
+certification_details: null
+published: true
+uuid: 03b92f18-8a88-46e4-a844-00ff077d57b8
+position:
+  ROW-1:
+    id: ROW-1
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-1
+    - CHART-2
+    - CHART-3
+    - CHART-4
+  ROW-2:
+    id: ROW-2
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-5
+    - CHART-6
+  ROW-2B:
+    id: ROW-2B
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-7
+  ROW-3:
+    id: ROW-3
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-8
+  ROW-4:
+    id: ROW-4
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-9
+  CHART-1:
+    id: CHART-1
+    meta:
+      width: 3
+      height: 50
+      chartId: 64
+      sliceName: Total Dimensions
+      uuid: 41b48712-d3e7-49ba-8a4e-f442f9d32d06
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-2:
+    id: CHART-2
+    meta:
+      width: 3
+      height: 50
+      chartId: 65
+      sliceName: Total Indicators
+      uuid: b4ecc26c-934d-4db7-87fb-be0573af76e4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-3:
+    id: CHART-3
+    meta:
+      width: 3
+      height: 50
+      chartId: 66
+      sliceName: Dimensions Tested
+      uuid: 62ed109e-b16b-4219-9eb0-58465b16422b
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-4:
+    id: CHART-4
+    meta:
+      width: 3
+      height: 50
+      chartId: 67
+      sliceName: Indicators Tested
+      uuid: 4571f830-925a-455c-ade5-d7b36c166bb7
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-5:
+    id: CHART-5
+    meta:
+      width: 6
+      height: 65
+      chartId: 71
+      sliceName: Dimensions Coverage
+      uuid: eb441787-b2e3-4232-8deb-c6f29ad3ac6a
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-6:
+    id: CHART-6
+    meta:
+      width: 6
+      height: 65
+      chartId: 72
+      sliceName: Indicators Coverage
+      uuid: c4cfc5ac-edb1-4f1a-aed2-84a92aa12fc1
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  CHART-7:
+    id: CHART-7
+    meta:
+      width: 12
+      height: 65
+      chartId: 68
+      sliceName: Indicators per Dimension
+      uuid: 8e07caa5-dcf6-4ea4-b44b-ae44ebbc71fe
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2B
+    children: []
+  CHART-8:
+    id: CHART-8
+    meta:
+      width: 12
+      height: 60
+      chartId: 69
+      sliceName: Dimensions Detail
+      uuid: 720692aa-d689-4390-a160-ece0f68b34b9
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-9:
+    id: CHART-9
+    meta:
+      width: 12
+      height: 70
+      chartId: 70
+      sliceName: Indicators Detail
+      uuid: bc6bc504-575e-44a2-b421-82e8d46bb57a
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  GRID_ID:
+    id: GRID_ID
+    type: GRID
+    parents:
+    - ROOT_ID
+    children:
+    - ROW-INTRO
+    - ROW-1
+    - ROW-2
+    - ROW-2B
+    - ROW-3
+    - ROW-4
+    - ROW-5
+    - ROW-6
+  ROOT_ID:
+    id: ROOT_ID
+    type: ROOT
+    children:
+    - GRID_ID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Dashboard
+    type: HEADER
+  ROW-5:
+    id: ROW-5
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-10
+  ROW-6:
+    id: ROW-6
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-11
+  CHART-10:
+    id: CHART-10
+    meta:
+      width: 12
+      height: 50
+      chartId: 73
+      sliceName: Tools Summary
+      uuid: fd828b78-816e-4484-8a39-9823236b55f5
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  CHART-11:
+    id: CHART-11
+    meta:
+      width: 12
+      height: 70
+      chartId: 74
+      sliceName: Tools Coverage
+      uuid: 78464b78-070b-4344-982f-e4266715edc7
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6
+    children: []
+  ROW-INTRO:
+    id: ROW-INTRO
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MARKDOWN-INTRO
+  MARKDOWN-INTRO:
+    id: MARKDOWN-INTRO
+    meta:
+      width: 12
+      height: 8
+      code: '**Catalog overview.** Reference view of the EVERSE quality model itself:
+        catalog size, how much of it has been exercised by assessments, which tools
+        are in use, and the full list of dimensions and indicators with definitions.'
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-INTRO
+    children: []
+metadata:
+  color_scheme: supersetColors
+  label_colors: {}
+  default_filters: '{}'
+  expanded_slices:
+    '64': true
+    '65': true
+    '66': true
+    '67': true
+    '68': true
+    '69': true
+    '70': true
+    '71': true
+    '72': true
+    '73': true
+    '74': true
+  refresh_frequency: 0
+  chart_configuration:
+    '64':
+      id: 64
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+    '65':
+      id: 65
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+    '66':
+      id: 66
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+    '67':
+      id: 67
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+    '68':
+      id: 68
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+    '69':
+      id: 69
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+    '70':
+      id: 70
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 71
+        - 72
+        - 73
+        - 74
+    '71':
+      id: 71
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 72
+        - 73
+        - 74
+    '72':
+      id: 72
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 73
+        - 74
+    '73':
+      id: 73
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 74
+    '74':
+      id: 74
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+  shared_label_colors: {}
+  cross_filters_enabled: true
+  native_filter_configuration:
+  - id: NATIVE_FILTER-quality_dimension
+    name: Quality Dimension
+    type: NATIVE_FILTER
+    scope:
+      excluded:
+      - 64
+      - 65
+      - 66
+      - 67
+      - 69
+      - 71
+      - 72
+      - 73
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: dimension_name
+      datasetUuid: 6ac66a0a-6568-4438-83cf-9ff9e634dab1
+    filterType: filter_select
+    chartsInScope:
+    - 68
+    - 70
+    - 74
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-cat-indicator-status
+    name: Indicator status
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: status
+      datasetUuid: eacc0b0c-6e6c-4c75-84c2-115ef1ffc527
+    filterType: filter_select
+    chartsInScope: &id001
+    - 64
+    - 65
+    - 66
+    - 67
+    - 68
+    - 69
+    - 70
+    - 71
+    - 72
+    - 73
+    - 74
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-cat-tool
+    name: Checking tool
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: tool
+      datasetUuid: 0c1c12cb-19f1-49b5-867c-99327a0ab8e9
+    filterType: filter_select
+    chartsInScope: *id001
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+version: 1.0.0

@@ -1,0 +1,18 @@
+slice_name: Total Dimensions
+description: Number of quality dimensions in the EVERSE catalog.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: count
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  subheader: Catalog Dimensions
+query_context: null
+cache_timeout: null
+uuid: 41b48712-d3e7-49ba-8a4e-f442f9d32d06
+version: 1.0.0
+dataset_uuid: 164f117c-f8f7-42df-88d4-445b1159d457

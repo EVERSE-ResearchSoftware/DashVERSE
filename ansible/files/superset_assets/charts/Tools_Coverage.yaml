@@ -1,0 +1,49 @@
+slice_name: Tools Coverage
+description: Which quality dimensions and indicators each tool checks. Sorted by
+  tool name; filter the table to focus on one tool or one dimension.
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  query_mode: raw
+  all_columns:
+  - tool
+  - dimension_name
+  - indicator_name
+  - checks
+  - passed
+  - failed
+  row_limit: 200
+  table_filter: true
+  show_cell_bars: true
+  align_pn: true
+  color_pn: false
+  page_length: 25
+  column_config:
+    checks:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+    passed:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+    failed:
+      d3NumberFormat: ',d'
+      horizontalAlign: right
+  conditional_formatting:
+  - column: passed
+    colorScheme: '#5fb56a'
+    operator: '>'
+    targetValue: 0
+  - column: failed
+    colorScheme: '#e35454'
+    operator: '>'
+    targetValue: 0
+  order_by_cols:
+  - '["tool", true]'
+  - '["dimension_name", true]'
+  - '["indicator_name", true]'
+query_context: null
+cache_timeout: null
+uuid: 78464b78-070b-4344-982f-e4266715edc7
+version: 1.0.0
+dataset_uuid: 0c1c12cb-19f1-49b5-867c-99327a0ab8e9

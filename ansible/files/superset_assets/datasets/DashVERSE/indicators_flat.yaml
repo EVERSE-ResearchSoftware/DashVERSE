@@ -1,0 +1,104 @@
+table_name: indicators_flat
+main_dttm_col: null
+description: One row per (indicator, dimension). Unnests indicators.quality_dimension
+  (text-encoded JSON) and resolves the slug to a human-readable dimension name via
+  the dimensions table.
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: dashverse
+schema: api
+sql: null
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+uuid: 6ac66a0a-6568-4438-83cf-9ff9e634dab1
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+columns:
+- column_name: indicator_identifier
+  verbose_name: Identifier
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: indicator_name
+  verbose_name: Indicator
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: indicator_description
+  verbose_name: Description
+  is_dttm: false
+  is_active: true
+  type: TEXT
+  advanced_data_type: null
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: indicator_url
+  verbose_name: Indicator docs
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: url
+  groupby: false
+  filterable: false
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: dimension_slug
+  verbose_name: Dimension slug
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: dimension_name
+  verbose_name: Quality dimension
+  is_dttm: false
+  is_active: true
+  type: VARCHAR
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  extra: null
+version: 1.0.0
+database_uuid: 0cdaf196-2614-43ec-a6d7-95be2590ce54
