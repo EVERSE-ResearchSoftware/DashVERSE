@@ -49,8 +49,45 @@ datasets:
   - name: compliance_status
     table: compliance_status
     schema: "{{ database_schema }}"
+  - name: per_software_issues
+    table: per_software_issues
+    schema: "{{ database_schema }}"
+  - name: software_vs_median
+    table: software_vs_median
+    schema: "{{ database_schema }}"
+  - name: catalog_coverage
+    table: catalog_coverage
+    schema: "{{ database_schema }}"
+  - name: catalog_coverage_breakdown
+    table: catalog_coverage_breakdown
+    schema: "{{ database_schema }}"
+  - name: indicators_flat
+    table: indicators_flat
+    schema: "{{ database_schema }}"
+  - name: tools_coverage
+    table: tools_coverage
+    schema: "{{ database_schema }}"
+  - name: tools_summary
+    table: tools_summary
+    schema: "{{ database_schema }}"
+  - name: dimensions_with_links
+    table: dimensions_with_links
+    schema: "{{ database_schema }}"
 
 dashboards:
+  - name: "Software Detail"
+    slug: "software-detail"
+    description: |
+      Per-software view: KPIs, quality trend, dimension profile, comparison to
+      portfolio median, failed checks, improvement targets with RSQKit links,
+      and assessment history. Pre-filters via the Software native filter
+      (set from the URL or the dropdown).
+  - name: "Catalog"
+    slug: "catalog"
+    description: |
+      Reference view of the EVERSE quality model itself: catalog size, how much
+      of it has been exercised by assessments, and the full list of dimensions
+      and indicators with their definitions.
   - name: "Policy Maker"
     slug: "policy-maker"
     description: |

@@ -1,0 +1,19 @@
+---
+
+- name: Remap dashboard filter scopes to live chart IDs
+  command:
+    cmd: >
+      kubectl exec -i -n dashverse -c superset deploy/superset --
+      env
+      PGHOST=postgresql PGPORT=5432
+      PGDATABASE={{ database_db }}
+      PGUSER={{ database_user }}
+      PGPASSWORD={{ lookup('env', 'DATABASE_PASSWORD') }}
+      python3 -
+    stdin: "{{ lookup('file', role_path + '/files/remap_filter_scopes.py') }}"
+  register: remap_result
+  changed_when: "'remapped 0 dashboards' not in remap_result.stdout"
+
+- name: Show filter remap result
+  debug:
+    var: remap_result.stdout_lines

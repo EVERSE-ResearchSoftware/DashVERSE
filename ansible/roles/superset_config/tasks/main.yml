@@ -11,5 +11,8 @@
 - name: Normalize chart params after import
   include_tasks: normalize_chart_params.yml
 
+- name: Remap dashboard filter scopes to live chart IDs
+  include_tasks: remap_filter_scopes.yml
+
 - name: Configure permissions
   include_tasks: permissions.yml
