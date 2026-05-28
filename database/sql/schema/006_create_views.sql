@@ -170,3 +170,146 @@ WHERE cd.outcome = 'fail'
   AND cd.indicator_name IS NOT NULL
 GROUP BY cd.indicator_name, cd.dimension_name, i.description, i.source, d.identifier
 ORDER BY failure_count DESC;
+
+CREATE OR REPLACE VIEW per_software_issues AS
+SELECT
+  cd.software_name,
+  cd.indicator_name,
+  cd.dimension_name,
+  COUNT(*) AS failure_count,
+  i.description AS what_to_improve,
+  i.source->>'@id' AS indicator_url,
+  'https://everse.software/RSQKit/' || COALESCE(d.identifier, '') AS rsqkit_url
+FROM checks_detailed cd
+LEFT JOIN indicators i ON i.name = cd.indicator_name
+LEFT JOIN dimensions d ON d.name = cd.dimension_name
+WHERE cd.outcome = 'fail'
+  AND cd.indicator_name IS NOT NULL
+GROUP BY cd.software_name, cd.indicator_name, cd.dimension_name,
+         i.description, i.source, d.identifier;
+
+CREATE OR REPLACE VIEW indicators_flat AS
+WITH unnested AS (
+  SELECT
+    i.identifier AS indicator_identifier,
+    i.name AS indicator_name,
+    i.description AS indicator_description,
+    i.source->>'@id' AS indicator_url,
+    TRIM(split_part((i.quality_dimension::jsonb)->>'@id', '/', -1)) AS dimension_slug
+  FROM indicators i
+  WHERE jsonb_typeof(i.quality_dimension::jsonb) = 'object'
+  UNION ALL
+  SELECT
+    i.identifier,
+    i.name,
+    i.description,
+    i.source->>'@id',
+    TRIM(split_part(elem->>'@id', '/', -1))
+  FROM indicators i
+  CROSS JOIN LATERAL jsonb_array_elements(i.quality_dimension::jsonb) AS elem
+  WHERE jsonb_typeof(i.quality_dimension::jsonb) = 'array'
+)
+SELECT
+  u.indicator_identifier,
+  u.indicator_name,
+  u.indicator_description,
+  u.indicator_url,
+  u.dimension_slug,
+  COALESCE(d.name, INITCAP(REPLACE(u.dimension_slug, '_', ' '))) AS dimension_name
+FROM unnested u
+LEFT JOIN dimensions d ON d.identifier = u.dimension_slug
+WHERE u.dimension_slug IS NOT NULL AND u.dimension_slug <> '';
+
+CREATE OR REPLACE VIEW dimensions_with_links AS
+SELECT
+  d.*,
+  'https://everse.software/RSQKit/' || d.identifier AS rsqkit_url
+FROM dimensions d;
+
+CREATE OR REPLACE VIEW tools_summary AS
+SELECT
+  cd.checking_software AS tool,
+  COUNT(DISTINCT cd.dimension_name) AS dimensions_covered,
+  COUNT(DISTINCT cd.indicator_name) AS indicators_covered,
+  (SELECT COUNT(*) FROM indicators) AS catalog_indicators_total,
+  ROUND(100.0 * COUNT(DISTINCT cd.indicator_name)
+                / NULLIF((SELECT COUNT(*) FROM indicators), 0), 1) AS indicator_coverage_pct,
+  COUNT(*) AS total_checks,
+  COUNT(*) FILTER (WHERE cd.outcome = 'pass') AS passed,
+  COUNT(*) FILTER (WHERE cd.outcome = 'fail') AS failed,
+  ROUND(100.0 * COUNT(*) FILTER (WHERE cd.outcome = 'pass')
+                / NULLIF(COUNT(*), 0), 1) AS success_rate
+FROM checks_detailed cd
+WHERE cd.checking_software IS NOT NULL
+GROUP BY 1;
+
+CREATE OR REPLACE VIEW tools_coverage AS
+SELECT
+  cd.checking_software AS tool,
+  cd.dimension_name,
+  cd.indicator_name,
+  COUNT(*) AS checks,
+  COUNT(*) FILTER (WHERE cd.outcome = 'pass') AS passed,
+  COUNT(*) FILTER (WHERE cd.outcome = 'fail') AS failed
+FROM checks_detailed cd
+WHERE cd.checking_software IS NOT NULL
+  AND cd.dimension_name IS NOT NULL
+  AND cd.indicator_name IS NOT NULL
+GROUP BY 1, 2, 3;
+
+CREATE OR REPLACE VIEW catalog_coverage_breakdown AS
+WITH dim_tested AS (
+  SELECT DISTINCT cd.dimension_id AS item_id
+  FROM checks_detailed cd WHERE cd.dimension_id IS NOT NULL
+),
+ind_tested AS (
+  SELECT DISTINCT cd.indicator_name AS item_id
+  FROM checks_detailed cd WHERE cd.indicator_name IS NOT NULL
+)
+SELECT
+  'Dimensions' AS category,
+  CASE WHEN t.item_id IS NOT NULL THEN 'Tested' ELSE 'Untested' END AS status,
+  COUNT(*) AS items
+FROM dimensions d
+LEFT JOIN dim_tested t ON t.item_id = d.identifier
+GROUP BY 1, 2
+UNION ALL
+SELECT
+  'Indicators',
+  CASE WHEN t.item_id IS NOT NULL THEN 'Tested' ELSE 'Untested' END,
+  COUNT(*)
+FROM indicators i
+LEFT JOIN ind_tested t ON t.item_id = i.name
+GROUP BY 1, 2;
+
+CREATE OR REPLACE VIEW catalog_coverage AS
+SELECT
+  cd.software_name,
+  'Dimensions' AS category,
+  cd.dimension_id AS item_id,
+  (SELECT COUNT(*) FROM dimensions) AS catalog_total
+FROM checks_detailed cd
+WHERE cd.dimension_id IS NOT NULL
+UNION ALL
+SELECT
+  cd.software_name,
+  'Indicators',
+  cd.indicator_name,
+  (SELECT COUNT(*) FROM indicators)
+FROM checks_detailed cd
+WHERE cd.indicator_name IS NOT NULL;
+
+CREATE OR REPLACE VIEW software_vs_median AS
+WITH med AS (
+  SELECT dimension_name,
+         percentile_cont(0.5) WITHIN GROUP (ORDER BY score) AS median_score
+  FROM software_quality_scores
+  GROUP BY dimension_name
+)
+SELECT
+  sqs.software_name,
+  sqs.dimension_name,
+  sqs.score AS sw_score,
+  med.median_score
+FROM software_quality_scores sqs
+JOIN med USING (dimension_name);

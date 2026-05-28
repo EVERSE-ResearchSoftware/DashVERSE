@@ -19,6 +19,14 @@ GRANT SELECT ON dimension_trend TO web_anon, web_user;
 GRANT SELECT ON software_history TO web_anon, web_user;
 GRANT SELECT ON tool_reliability TO web_anon, web_user;
 GRANT SELECT ON compliance_status TO web_anon, web_user;
+GRANT SELECT ON per_software_issues TO web_anon, web_user;
+GRANT SELECT ON software_vs_median TO web_anon, web_user;
+GRANT SELECT ON catalog_coverage TO web_anon, web_user;
+GRANT SELECT ON catalog_coverage_breakdown TO web_anon, web_user;
+GRANT SELECT ON indicators_flat TO web_anon, web_user;
+GRANT SELECT ON tools_coverage TO web_anon, web_user;
+GRANT SELECT ON tools_summary TO web_anon, web_user;
+GRANT SELECT ON dimensions_with_links TO web_anon, web_user;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT SELECT ON TABLES TO web_anon;
 ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT ALL ON TABLES TO web_user;

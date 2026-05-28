@@ -64,11 +64,25 @@ Quality indicators that belong to dimensions, representing specific measurable c
 | name | VARCHAR | Display name |
 | description | TEXT | What this indicator measures |
 | status | VARCHAR | Status (published, draft) |
-| quality_dimension | VARCHAR | Reference to parent dimension |
+| quality_dimension | VARCHAR | Reference to parent dimension (JSON-encoded; one or many `{"@id": ".../slug"}`) |
 | contact | JSONB | Contact information for the indicator |
 | source | JSONB | Source metadata |
 | created_at | TIMESTAMP | Record creation time |
 | updated_at | TIMESTAMP | Last update time |
+
+#### How dimensions and indicators are populated
+
+Both tables are filled at runtime by the `sync_everse` ansible role
+(`just sync-apply`) or the in-cluster `everse-sync` cronjob
+(`just sync-trigger`). The role fetches the JSON-LD definitions from
+<https://github.com/EVERSE-ResearchSoftware/indicators> and upserts them
+via PostgREST. There is no SQL seed file -- the catalog stays in sync
+with the upstream repo.
+
+The view `api.indicators_flat` normalises `indicators.quality_dimension`
+(stored as text-encoded JSON, sometimes a single object and sometimes an
+array) into one row per (indicator, dimension) with a clean
+`dimension_name` resolved from the dimensions table.
 
 ### assessment_raw
 
