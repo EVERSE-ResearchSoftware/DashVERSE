@@ -1,6 +1,18 @@
 dashboard_title: Policy Maker
 description: null
-css: null
+css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names\
+  \ because the empty-state DOM has\n   drifted between versions; one of these selectors\
+  \ will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n\
+  .chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n\
+  \    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n\
+  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
+  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
+  \ #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n\
+  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
+  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
+  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
+  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
+  \ italic;\n    font-weight: normal;\n}\n"
 slug: policy-maker
 certified_by: null
 certification_details: null
@@ -178,6 +190,7 @@ position:
     parents:
     - ROOT_ID
     children:
+    - ROW-INTRO
     - ROW-1
     - ROW-2
     - ROW-3
@@ -193,6 +206,31 @@ position:
     meta:
       text: Dashboard
     type: HEADER
+  ROW-INTRO:
+    id: ROW-INTRO
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MARKDOWN-INTRO
+  MARKDOWN-INTRO:
+    id: MARKDOWN-INTRO
+    meta:
+      width: 12
+      height: 8
+      code: "**Policy Maker overview.** High-level metrics on research-software quality\
+        \ adoption and FAIR-compliance across the portfolio. Use the filters above\
+        \ to narrow by software, creator, dimension, or assessment date. See [RSQKit\
+        \ \xB7 Policy Maker](https://everse.software/RSQKit/policy_maker) for context."
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-INTRO
+    children: []
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -469,6 +507,32 @@ metadata:
       multiSelect: false
       inverseSelection: false
       searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-assessment-date
+    name: Assessment date
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: assessment_dttm
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_time
+    chartsInScope:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 7
+    - 8
+    - 9
+    controlValues:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:

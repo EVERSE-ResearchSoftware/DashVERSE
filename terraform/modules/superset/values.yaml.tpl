@@ -64,7 +64,9 @@ configOverrides:
     FAB_ADD_SECURITY_API = True
     FEATURE_FLAGS = {
         "EMBEDDED_SUPERSET": True,
-        "DASHBOARD_RBAC": True
+        "DASHBOARD_RBAC": True,
+        # render advanced_data_type: url columns as clickable links in tables
+        "ENABLE_ADVANCED_DATA_TYPES": True
     }
 
 extraEnv:

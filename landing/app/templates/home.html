@@ -23,7 +23,9 @@
             <p class="audience"><strong>For:</strong> {{ dash.audience }}</p>
             <div class="card-links">
                 <a href="/dashboard/{{ slug }}" class="btn-primary">View Dashboard</a>
+                {% if dash.rsqkit_url %}
                 <a href="{{ dash.rsqkit_url }}" target="_blank" class="btn-secondary">RSQKit Guide</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

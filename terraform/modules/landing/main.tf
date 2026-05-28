@@ -53,6 +53,21 @@ resource "kubernetes_deployment" "landing" {
             value = var.log_level
           }
 
+          env {
+            name  = "SUPERSET_ADMIN_USER"
+            value = "admin"
+          }
+
+          env {
+            name = "SUPERSET_ADMIN_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = "dashverse-secrets"
+                key  = "superset-admin-password"
+              }
+            }
+          }
+
           resources {
             limits = {
               cpu    = var.cpu_limit

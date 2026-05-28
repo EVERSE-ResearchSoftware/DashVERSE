@@ -1,6 +1,18 @@
 dashboard_title: Principal Investigator
 description: null
-css: null
+css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names\
+  \ because the empty-state DOM has\n   drifted between versions; one of these selectors\
+  \ will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n\
+  .chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n\
+  \    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n\
+  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
+  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
+  \ #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n\
+  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
+  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
+  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
+  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
+  \ italic;\n    font-weight: normal;\n}\n"
 slug: principal-investigator
 certified_by: null
 certification_details: null
@@ -179,6 +191,7 @@ position:
     parents:
     - ROOT_ID
     children:
+    - ROW-INTRO
     - ROW-1
     - ROW-2
     - ROW-3
@@ -195,7 +208,7 @@ position:
       width: 6
       height: 65
       chartId: 20
-      sliceName: Check Distribution Treemap
+      sliceName: Check Distribution
       uuid: 1b68fe5d-5ffc-4f14-95b2-397c9a4f03c1
     type: CHART
     parents:
@@ -208,6 +221,30 @@ position:
     meta:
       text: Dashboard
     type: HEADER
+  ROW-INTRO:
+    id: ROW-INTRO
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MARKDOWN-INTRO
+  MARKDOWN-INTRO:
+    id: MARKDOWN-INTRO
+    meta:
+      width: 12
+      height: 8
+      code: "**Principal Investigator overview.** Project-level metrics and software-management\
+        \ insights for the projects you lead. Spot which software needs attention\
+        \ and what kind of attention it needs. See [RSQKit \xB7 Principal Investigator](https://everse.software/RSQKit/principal_investigator)."
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-INTRO
+    children: []
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -511,6 +548,33 @@ metadata:
       multiSelect: false
       inverseSelection: false
       searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-assessment-date
+    name: Assessment date
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: assessment_dttm
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_time
+    chartsInScope:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 18
+    - 19
+    - 20
+    controlValues:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:

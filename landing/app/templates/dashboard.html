@@ -11,6 +11,7 @@
         data-slug="{{ slug }}"
         data-superset-port="8088"
         data-superset-url="{{ superset_external_url }}"
+        {% if native_filters_key %}data-native-filters-key="{{ native_filters_key }}"{% endif %}
         {% if encoded_software_filter %}data-native-filters="{{ encoded_software_filter }}"{% endif %}
         frameborder="0"
         allowfullscreen
@@ -23,6 +24,7 @@
     var iframe = document.getElementById('dashboard-frame');
     var slug = iframe.getAttribute('data-slug');
     var supersetUrl = iframe.getAttribute('data-superset-url');
+    var nativeFiltersKey = iframe.getAttribute('data-native-filters-key');
     var nativeFilters = iframe.getAttribute('data-native-filters');
 
     if (!supersetUrl) {
@@ -34,7 +36,13 @@
     }
 
     var url = supersetUrl + '/superset/dashboard/' + slug + '/?standalone=2';
-    if (nativeFilters) {
+    if (nativeFiltersKey) {
+        // permalink-style key: Superset treats it as an APPLIED filter so the
+        // dashboard renders pre-filtered without a manual "Apply" click.
+        url += '&native_filters_key=' + nativeFiltersKey;
+    } else if (nativeFilters) {
+        // fallback when the permalink couldn't be created: filter is loaded
+        // but pending; user must click "Apply Filters".
         url += '&native_filters=' + nativeFilters;
     }
     iframe.src = url;
