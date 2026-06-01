@@ -19,6 +19,16 @@ The deployment settings for both local (testing) and production environments can
 
 ## Deployment
 
+TLDR:
+  just destroy-all          # tear down everything including minikube
+  minikube start            # if needed
+  just deploy               # build images + tofu apply
+  just sync-apply           # download EVERSE indicators/dimensions + import
+  just seed-data            # import sample assessment data
+  just port-forward         # in another terminal -- keep it running
+  just setup-dashboards     # configure Superset (dataset -> chart ->
+  dashboard imports + normalize)
+
 ### Quick Start
 
 1. Start minikube

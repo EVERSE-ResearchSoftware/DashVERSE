@@ -2,6 +2,8 @@
 env := "local"
 ns := "dashverse"
 
+forward_address := "127.0.0.1"
+
 default:
     @just --list
 
@@ -18,14 +20,43 @@ status:
     kubectl get all -n {{ns}}
 
 port-forward:
-    @trap 'kill 0' INT TERM; \
-    kubectl port-forward -n {{ns}} svc/postgresql 5432:5432 & \
-    kubectl port-forward -n {{ns}} svc/postgrest 3000:3000 & \
-    kubectl port-forward -n {{ns}} svc/superset 8088:8088 & \
-    kubectl port-forward -n {{ns}} svc/auth-service 8000:8000 & \
-    kubectl port-forward -n {{ns}} svc/landing 8080:8080 & \
-    kubectl port-forward -n {{ns}} svc/postgrest-docs 3001:3001 & \
-    kubectl port-forward -n {{ns}} svc/auth-docs 8001:8001 & \
+    #!/usr/bin/env bash
+    set -uo pipefail
+    declare -A SERVICES=(
+        [postgresql]=5432
+        [postgrest]=3000
+        [superset]=8088
+        [auth-service]=8000
+        [landing]=8080
+        [postgrest-docs]=3001
+        [auth-docs]=8001
+    )
+    pids=()
+    cleanup() {
+        echo
+        echo "stopping port-forwards..."
+        for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null || true; done
+        wait 2>/dev/null || true
+        exit 0
+    }
+    trap cleanup INT TERM
+    pf() {
+        local svc=$1 port=$2
+        while true; do
+            kubectl port-forward --address {{forward_address}} -n {{ns}} \
+                "svc/$svc" "$port:$port" 2>&1 \
+                | sed -u "s/^/[$svc] /" || true
+            echo "[$svc] disconnected -- retrying in 2s"
+            sleep 2
+        done
+    }
+    for svc in "${!SERVICES[@]}"; do
+        pf "$svc" "${SERVICES[$svc]}" &
+        pids+=($!)
+        echo "  $svc -> {{forward_address}}:${SERVICES[$svc]}  (pid $!)"
+    done
+    echo
+    echo "forwarding ${#pids[@]} services on {{forward_address}}. Ctrl+C to stop."
     wait
 
 logs:
