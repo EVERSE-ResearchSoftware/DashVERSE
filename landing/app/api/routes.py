@@ -105,6 +105,12 @@ DASHBOARDS = {
         "audience": "Anyone — open to anonymous visitors",
         "rsqkit_url": "",
     },
+    "assessments": {
+        "title": "Assessments Explorer",
+        "description": "Filter-driven view of every assessment you can see. Per-software KPIs, trend, dimension radar, vs-median, compliance heatmap, improvement targets, failed checks, recent activity, and checking-tool usage.",
+        "audience": "Anyone — narrows automatically to the scope you're allowed to see",
+        "rsqkit_url": "",
+    },
     "policy-maker": {
         "title": "Policy Maker",
         "description": "High-level metrics on software quality adoption and FAIR compliance across organizations.",

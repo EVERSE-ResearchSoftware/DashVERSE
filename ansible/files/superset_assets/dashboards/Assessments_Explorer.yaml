@@ -1,0 +1,657 @@
+dashboard_title: Assessments Explorer
+description: null
+css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container\
+  \ .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container\
+  \ .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n\
+  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
+  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
+  \ #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n\
+  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
+  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
+  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
+  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
+  \ italic;\n    font-weight: normal;\n}\n"
+slug: assessments
+certified_by: null
+certification_details: null
+published: true
+uuid: 1820539b-3d1e-4eb6-ae9a-ce9b7ac2be64
+position:
+  ROW-INTRO:
+    id: ROW-INTRO
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MARKDOWN-INTRO
+  MARKDOWN-INTRO:
+    id: MARKDOWN-INTRO
+    meta:
+      width: 12
+      height: 8
+      code: "**Assessments Explorer.** Single filter-driven dashboard for exploring\
+        \ assessment data at any scope. With no filters set you see everything you\
+        \ can access; pick a Software to drill into one project, a Dimension to focus\
+        \ on one quality area, an Outcome to narrow to passes or failures, or a Date\
+        \ range to scope by time. Some charts (vs Portfolio Median, Compliance Heatmap)\
+        \ only render under specific filter combinations \u2014 that's intentional."
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-INTRO
+    children: []
+  GRID_ID:
+    id: GRID_ID
+    type: GRID
+    parents:
+    - ROOT_ID
+    children:
+    - ROW-INTRO
+    - ROW-1
+    - ROW-2
+    - ROW-3
+    - ROW-4
+    - ROW-5
+    - ROW-6
+  ROOT_ID:
+    id: ROOT_ID
+    type: ROOT
+    children:
+    - GRID_ID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Dashboard
+    type: HEADER
+  CHART-1:
+    id: CHART-1
+    meta:
+      width: 3
+      height: 50
+      chartId: 200
+      sliceName: Pass Rate
+      uuid: db67d53f-a80b-43fb-890a-e9d4f9bcabf2
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-2:
+    id: CHART-2
+    meta:
+      width: 3
+      height: 50
+      chartId: 201
+      sliceName: Assessments
+      uuid: 4d2eaf0a-1a0a-4d44-90c2-e2b13d2c6c9c
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-3:
+    id: CHART-3
+    meta:
+      width: 3
+      height: 50
+      chartId: 202
+      sliceName: Software in scope
+      uuid: 00896a2d-ac2a-4800-a361-dd9838896222
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  CHART-4:
+    id: CHART-4
+    meta:
+      width: 3
+      height: 50
+      chartId: 203
+      sliceName: Last activity
+      uuid: 810b31f2-2e24-4976-adcb-94575dbdca12
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-1
+    children: []
+  ROW-1:
+    id: ROW-1
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-1
+    - CHART-2
+    - CHART-3
+    - CHART-4
+  CHART-5:
+    id: CHART-5
+    meta:
+      width: 12
+      height: 60
+      chartId: 204
+      sliceName: Pass Rate Trend
+      uuid: b5cf65e0-46fb-450c-9f8a-ed9c0289f19a
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-2
+    children: []
+  ROW-2:
+    id: ROW-2
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-5
+  CHART-6:
+    id: CHART-6
+    meta:
+      width: 6
+      height: 65
+      chartId: 205
+      sliceName: Dimension Profile
+      uuid: 7f71f69e-f937-4297-9f31-018d9d756442
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-7:
+    id: CHART-7
+    meta:
+      width: 6
+      height: 65
+      chartId: 206
+      sliceName: vs Portfolio Median
+      uuid: a4956807-1aa2-4086-9cb1-f212f9d90d08
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  ROW-3:
+    id: ROW-3
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-6
+    - CHART-7
+  CHART-8:
+    id: CHART-8
+    meta:
+      width: 6
+      height: 65
+      chartId: 207
+      sliceName: Compliance Heatmap
+      uuid: 473de026-f3b0-4b95-824d-f45eef9fb677
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  CHART-9:
+    id: CHART-9
+    meta:
+      width: 6
+      height: 65
+      chartId: 208
+      sliceName: Top Performing Software
+      uuid: b3b748b4-45c1-4427-b847-46b57599a6d8
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-4
+    children: []
+  ROW-4:
+    id: ROW-4
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-8
+    - CHART-9
+  CHART-10:
+    id: CHART-10
+    meta:
+      width: 6
+      height: 65
+      chartId: 209
+      sliceName: Improvement Targets
+      uuid: f2826f04-9e34-47fd-b3b7-96f8cf09fa80
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  CHART-11:
+    id: CHART-11
+    meta:
+      width: 6
+      height: 65
+      chartId: 210
+      sliceName: Failed Checks Detail
+      uuid: 6e6cb154-cb9b-42c9-a508-dd6d6d122e2a
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-5
+    children: []
+  ROW-5:
+    id: ROW-5
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-10
+    - CHART-11
+  CHART-12:
+    id: CHART-12
+    meta:
+      width: 6
+      height: 65
+      chartId: 211
+      sliceName: Recent Assessments
+      uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6
+    children: []
+  CHART-13:
+    id: CHART-13
+    meta:
+      width: 6
+      height: 65
+      chartId: 212
+      sliceName: Checking Tools Usage
+      uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-6
+    children: []
+  ROW-6:
+    id: ROW-6
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-12
+    - CHART-13
+metadata:
+  color_scheme: supersetColors
+  label_colors: {}
+  default_filters: '{}'
+  expanded_slices:
+    '200': true
+    '201': true
+    '202': true
+    '203': true
+    '204': true
+    '205': true
+    '206': true
+    '207': true
+    '208': true
+    '209': true
+    '210': true
+    '211': true
+    '212': true
+  refresh_frequency: 0
+  chart_configuration:
+    '200':
+      id: 200
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '201':
+      id: 201
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '202':
+      id: 202
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '203':
+      id: 203
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '204':
+      id: 204
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '205':
+      id: 205
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '206':
+      id: 206
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '207':
+      id: 207
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 208
+        - 209
+        - 210
+        - 211
+        - 212
+    '208':
+      id: 208
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 209
+        - 210
+        - 211
+        - 212
+    '209':
+      id: 209
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 210
+        - 211
+        - 212
+    '210':
+      id: 210
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 211
+        - 212
+    '211':
+      id: 211
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 212
+    '212':
+      id: 212
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+  shared_label_colors: {}
+  cross_filters_enabled: true
+  native_filter_configuration:
+  - id: NATIVE_FILTER-software
+    name: Software
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: name
+      datasetUuid: 9c2d2e46-92de-4bd1-be23-c3081acd89b5
+    filterType: filter_select
+    chartsInScope: &id001
+    - 200
+    - 201
+    - 202
+    - 203
+    - 204
+    - 205
+    - 206
+    - 207
+    - 208
+    - 209
+    - 210
+    - 211
+    - 212
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-dimension
+    name: Dimension
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: name
+      datasetUuid: 164f117c-f8f7-42df-88d4-445b1159d457
+    filterType: filter_select
+    chartsInScope: *id001
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-outcome
+    name: Outcome
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: outcome
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_select
+    chartsInScope: *id001
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+  - id: NATIVE_FILTER-date
+    name: Assessment date
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: assessment_dttm
+      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+    filterType: filter_time
+    chartsInScope: *id001
+    controlValues:
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
+version: 1.0.0

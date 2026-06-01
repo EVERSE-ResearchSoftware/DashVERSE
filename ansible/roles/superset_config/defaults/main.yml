@@ -83,6 +83,15 @@ dashboards:
       (dimensions, indicators, tools). Replaces the standalone Catalog
       dashboard and the anonymous-safe portions of the role dashboards.
       Filterable by dimension, date range, and checking tool.
+  - name: "Assessments Explorer"
+    slug: "assessments"
+    description: |
+      Filter-driven view over every assessment the viewer is allowed to see.
+      Picks up Software Detail's per-software KPIs/trend/radar/vs-median and
+      adds compliance heatmap, top performers, improvement targets, failed
+      checks, recent assessments, and checking-tool usage. Filterable by
+      software, dimension, outcome, and date range. Subsumes the Mine,
+      role-specific, and Software Detail dashboards.
   - name: "Software Detail"
     slug: "software-detail"
     description: |
