@@ -112,48 +112,6 @@ DASHBOARDS = {
         "audience": "Anyone. The view narrows automatically to the scope you're allowed to see.",
         "rsqkit_url": "",
     },
-    "policy-maker": {
-        "title": "Policy Maker",
-        "description": "High-level metrics on software quality adoption and FAIR compliance across organizations.",
-        "audience": "Funding agencies, research institutions, governmental bodies",
-        "rsqkit_url": "https://everse.software/RSQKit/policy_maker"
-    },
-    "principal-investigator": {
-        "title": "Principal Investigator",
-        "description": "Project-level metrics, software management insights, and areas requiring attention.",
-        "audience": "Research project leaders managing software development",
-        "rsqkit_url": "https://everse.software/RSQKit/principal_investigator"
-    },
-    "research-software-engineer": {
-        "title": "Research Software Engineer",
-        "description": "Technical metrics, code quality indicators, and detailed assessment results.",
-        "audience": "Professionals specializing in research software development",
-        "rsqkit_url": "https://everse.software/RSQKit/research_software_engineer"
-    },
-    "researcher-who-codes": {
-        "title": "Researcher Who Codes",
-        "description": "Practical guidance on quality improvements without requiring deep engineering expertise.",
-        "audience": "Scientists developing software as part of their research",
-        "rsqkit_url": "https://everse.software/RSQKit/researcher_who_codes"
-    },
-    "trainer": {
-        "title": "Trainer",
-        "description": "Common issues, skill gaps, and areas where training can have the most impact.",
-        "audience": "Educators teaching research software development and quality",
-        "rsqkit_url": "https://everse.software/RSQKit/trainer"
-    },
-    "software-detail": {
-        "title": "Software Detail",
-        "description": "Per-software view: KPIs, quality trend, dimension profile, comparison to portfolio median, failed checks, improvement targets, and assessment history. Pick a project from the Software dropdown.",
-        "audience": "Anyone reviewing a single software project",
-        "rsqkit_url": ""
-    },
-    "catalog": {
-        "title": "Catalog",
-        "description": "EVERSE quality model reference: catalog size, coverage by assessments, and the full list of dimensions and indicators with their definitions.",
-        "audience": "Anyone learning the quality model or planning what to assess next",
-        "rsqkit_url": ""
-    }
 }
 
 
@@ -169,7 +127,7 @@ def _software_detail_response(request: Request, name: str):
             "filterState": {"value": [name]},
         }
     }
-    permalink_key = _filter_state_key("software-detail", filter_state)
+    permalink_key = _filter_state_key("assessments", filter_state)
 
     val = name.replace("'", "\\'")
     rison_filter = (
@@ -181,23 +139,17 @@ def _software_detail_response(request: Request, name: str):
     )
     encoded_filter = urllib.parse.quote(rison_filter, safe="")
 
-    if permalink_key:
-        embed_url = (
-            f"{superset_base}/superset/dashboard/software-detail/"
-            f"?standalone=2&native_filters_key={permalink_key}"
-        ) if superset_base else ""
-    else:
-        embed_url = (
-            f"{superset_base}/superset/dashboard/software-detail/"
-            f"?standalone=2&native_filters={encoded_filter}"
-        ) if superset_base else ""
+    embed_url = (
+        f"{superset_base}/superset/dashboard/assessments/?standalone=2"
+        if superset_base else ""
+    )
 
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
             "user": current_user(request),
-            "slug": "software-detail",
+            "slug": "assessments",
             "dashboard": {
                 "title": f"Software: {name}",
                 "description": f"Quality assessment results for {name}.",
@@ -209,7 +161,7 @@ def _software_detail_response(request: Request, name: str):
             "native_filters_key": permalink_key,
             "superset_external_url": superset_base,
             "dashboards": DASHBOARDS,
-            "current_dashboard": "software-detail",
+            "current_dashboard": "assessments",
             "software_name": name,
         }
     )

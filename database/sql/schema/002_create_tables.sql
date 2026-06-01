@@ -29,8 +29,12 @@ CREATE TABLE IF NOT EXISTS assessment_raw (
   id SERIAL PRIMARY KEY,
   payload JSONB NOT NULL,
   created_by BIGINT,
+  project_id BIGINT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE assessment_raw ADD COLUMN IF NOT EXISTS project_id BIGINT;
+CREATE INDEX IF NOT EXISTS idx_assessment_raw_project_id ON assessment_raw(project_id);
 
 CREATE TABLE IF NOT EXISTS software_metadata (
   identifier VARCHAR PRIMARY KEY,

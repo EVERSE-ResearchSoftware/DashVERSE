@@ -30,8 +30,22 @@ CREATE POLICY read_dimensions ON dimensions FOR SELECT TO web_anon, web_user USI
 DROP POLICY IF EXISTS read_indicators ON indicators;
 CREATE POLICY read_indicators ON indicators FOR SELECT TO web_anon, web_user USING (true);
 
+CREATE OR REPLACE FUNCTION is_project_public(pid BIGINT)
+RETURNS BOOLEAN AS $$
+  SELECT COALESCE(
+    (SELECT is_public FROM auth.projects WHERE id = pid),
+    false
+  );
+$$ LANGUAGE sql STABLE SECURITY DEFINER;
+
 DROP POLICY IF EXISTS read_assessment ON assessment_raw;
-CREATE POLICY read_assessment ON assessment_raw FOR SELECT TO web_anon, web_user USING (true);
+DROP POLICY IF EXISTS read_assessment_public ON assessment_raw;
+CREATE POLICY read_assessment_public ON assessment_raw FOR SELECT TO web_anon, web_user
+  USING (project_id IS NULL OR is_project_public(project_id));
+
+DROP POLICY IF EXISTS read_assessment_own ON assessment_raw;
+CREATE POLICY read_assessment_own ON assessment_raw FOR SELECT TO web_user
+  USING (created_by IS NOT NULL AND created_by = current_user_id());
 
 DROP POLICY IF EXISTS write_software_metadata ON software_metadata;
 CREATE POLICY write_software_metadata ON software_metadata FOR ALL TO web_user
@@ -46,5 +60,6 @@ CREATE POLICY write_indicators ON indicators FOR ALL TO web_user
   USING (is_authenticated()) WITH CHECK (is_authenticated());
 
 DROP POLICY IF EXISTS write_assessment ON assessment_raw;
-CREATE POLICY write_assessment ON assessment_raw FOR ALL TO web_user
-  USING (is_authenticated()) WITH CHECK (is_authenticated());
+DROP POLICY IF EXISTS insert_assessment ON assessment_raw;
+CREATE POLICY insert_assessment ON assessment_raw FOR INSERT TO web_user
+  WITH CHECK (is_authenticated());

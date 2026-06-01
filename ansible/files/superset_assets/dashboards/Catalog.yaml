@@ -16,7 +16,7 @@ css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class nam
 slug: catalog
 certified_by: null
 certification_details: null
-published: true
+published: false
 uuid: 03b92f18-8a88-46e4-a844-00ff077d57b8
 position:
   ROW-1:

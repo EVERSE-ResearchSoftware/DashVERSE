@@ -12,6 +12,7 @@ from app.core.lockout import (
 from app.api.dependencies import get_client_ip
 from app.models.user import User
 from app.models.token import Token
+from app.models.project import Project
 from app.schemas.user import UserCreate, UserLogin, UserResponse
 from app.schemas.token import TokenWithJWT
 
@@ -46,6 +47,13 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)) -> UserR
 
     try:
         db.add(new_user)
+        db.flush()
+        default_project = Project(
+            name=f"{new_user.username}'s project",
+            owner_user_id=new_user.id,
+            is_public=False,
+        )
+        db.add(default_project)
         db.commit()
         db.refresh(new_user)
     except IntegrityError:

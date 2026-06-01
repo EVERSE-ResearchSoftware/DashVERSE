@@ -153,13 +153,23 @@ CREATE TRIGGER tr_validate_assessment_payload
   FOR EACH ROW EXECUTE FUNCTION validate_assessment_payload();
 
 CREATE OR REPLACE FUNCTION capture_assessment_identity() RETURNS TRIGGER AS $$
+DECLARE
+  uid BIGINT;
 BEGIN
-  NEW.created_by := (current_setting('request.jwt.claims', true)::json->>'sub')::bigint;
+  uid := (current_setting('request.jwt.claims', true)::json->>'sub')::bigint;
+  NEW.created_by := uid;
+  IF NEW.project_id IS NULL AND uid IS NOT NULL THEN
+    SELECT id INTO NEW.project_id
+    FROM auth.projects
+    WHERE owner_user_id = uid
+    ORDER BY id
+    LIMIT 1;
+  END IF;
   RETURN NEW;
 EXCEPTION WHEN OTHERS THEN
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS tr_capture_assessment_identity ON assessment_raw;
 CREATE TRIGGER tr_capture_assessment_identity
