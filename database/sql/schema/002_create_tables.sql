@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS indicators (
 CREATE TABLE IF NOT EXISTS assessment_raw (
   id SERIAL PRIMARY KEY,
   payload JSONB NOT NULL,
+  created_by BIGINT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

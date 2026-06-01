@@ -151,3 +151,17 @@ DROP TRIGGER IF EXISTS tr_validate_assessment_payload ON assessment_raw;
 CREATE TRIGGER tr_validate_assessment_payload
   BEFORE INSERT ON assessment_raw
   FOR EACH ROW EXECUTE FUNCTION validate_assessment_payload();
+
+CREATE OR REPLACE FUNCTION capture_assessment_identity() RETURNS TRIGGER AS $$
+BEGIN
+  NEW.created_by := (current_setting('request.jwt.claims', true)::json->>'sub')::bigint;
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tr_capture_assessment_identity ON assessment_raw;
+CREATE TRIGGER tr_capture_assessment_identity
+  BEFORE INSERT ON assessment_raw
+  FOR EACH ROW EXECUTE FUNCTION capture_assessment_identity();

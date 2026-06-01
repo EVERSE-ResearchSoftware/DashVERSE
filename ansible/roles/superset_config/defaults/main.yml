@@ -75,6 +75,14 @@ datasets:
     schema: "{{ database_schema }}"
 
 dashboards:
+  - name: "Global Overview"
+    slug: "global"
+    description: |
+      Portfolio-wide overview, anonymous-safe. Aggregate counts and rates
+      (no software or project names) plus the EVERSE quality model catalog
+      (dimensions, indicators, tools). Replaces the standalone Catalog
+      dashboard and the anonymous-safe portions of the role dashboards.
+      Filterable by dimension, date range, and checking tool.
   - name: "Software Detail"
     slug: "software-detail"
     description: |

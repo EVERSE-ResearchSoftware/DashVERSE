@@ -99,6 +99,12 @@ templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templa
 templates = Jinja2Templates(directory=templates_dir)
 
 DASHBOARDS = {
+    "global": {
+        "title": "Global Overview",
+        "description": "Portfolio-wide quality assessment activity plus the EVERSE quality model catalog. Aggregate counts and rates; no software or project names are exposed.",
+        "audience": "Anyone — open to anonymous visitors",
+        "rsqkit_url": "",
+    },
     "policy-maker": {
         "title": "Policy Maker",
         "description": "High-level metrics on software quality adoption and FAIR compliance across organizations.",
