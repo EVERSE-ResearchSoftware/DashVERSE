@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Account - DashVERSE{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Account</h1>
+    <p>Manage your account and API tokens.</p>
+</section>
+
+{% if error %}
+<section class="about" style="border-left: 4px solid #c0392b; text-align: left;">
+    <p style="color: #c0392b; margin: 0;">{{ error }}</p>
+</section>
+{% endif %}
+
+{% if new_token %}
+<section class="about" style="border-left: 4px solid var(--color-purple); text-align: left; margin-bottom: 1rem;">
+    <h2 style="color: var(--color-purple); margin-bottom: 0.5rem;">Your new API token</h2>
+    <p style="margin-bottom: 0.75rem;">Copy this now. It will not be shown again.</p>
+    <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+        <pre id="new-token-value" style="flex: 1; background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; word-break: break-all; white-space: pre-wrap; font-family: 'Fira Code', monospace; font-size: 0.85rem; margin-bottom: 0;">{{ new_token }}</pre>
+        <button type="button" id="copy-new-token" class="btn-primary" style="border: 0; cursor: pointer; align-self: flex-start; white-space: nowrap;">Copy</button>
+    </div>
+</section>
+<script>
+(function() {
+    var btn = document.getElementById('copy-new-token');
+    var pre = document.getElementById('new-token-value');
+    if (!btn || !pre) return;
+    btn.addEventListener('click', function() {
+        var text = pre.textContent.trim();
+        var done = function() {
+            var prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(function() { btn.textContent = prev; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function() {
+                btn.textContent = 'Copy failed';
+            });
+        } else {
+            var range = document.createRange();
+            range.selectNodeContents(pre);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Copy failed'; }
+            sel.removeAllRanges();
+        }
+    });
+})();
+</script>
+{% endif %}
+
+<section class="dashboards" style="margin-bottom: 1.5rem;">
+    <h2>Profile</h2>
+    <div class="dashboard-card" style="text-align: left; max-width: 720px;">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        {% if user.is_superuser %}<p><strong>Role:</strong> superuser</p>{% endif %}
+    </div>
+</section>
+
+<section class="dashboards">
+    <h2>API tokens</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+        Long-lived bearer tokens for programmatic access (PostgREST, scripts).
+        Treat them like passwords.
+    </p>
+
+    <form method="post" action="/account/tokens" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
+        <label style="flex: 1; min-width: 200px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Token name <span style="font-weight: normal;">(optional)</span></span>
+            <input name="token_name" maxlength="100" placeholder="e.g. ci-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>
+    </form>
+
+    {% if tokens %}
+    <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        <thead style="background: var(--color-light-bg);">
+            <tr>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Name</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Created</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Expires</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Status</th>
+                <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for token in tokens %}
+            <tr style="border-top: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">{{ token.token_name or '(unnamed)' }}</td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ token.created_at[:10] if token.created_at else '' }}</td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ token.expires_at[:10] if token.expires_at else '' }}</td>
+                <td style="padding: 0.75rem;">
+                    {% if token.is_revoked %}
+                    <span style="color: #c0392b; font-size: 0.85rem;">revoked</span>
+                    {% else %}
+                    <span style="color: #2f855a; font-size: 0.85rem;">active</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem; text-align: right;">
+                    {% if not token.is_revoked %}
+                    <form method="post" action="/account/tokens/{{ token.id }}/revoke" style="display: inline;" onsubmit="return confirm('Revoke this token?');">
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Revoke</button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="/account/tokens/{{ token.id }}/delete" style="display: inline;" onsubmit="return confirm('Permanently delete this revoked token?');">
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--color-text-muted);">No tokens yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

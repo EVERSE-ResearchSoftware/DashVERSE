@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in - DashVERSE{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Sign in</h1>
+    <p>Sign in to see your assessments and contribute new ones.</p>
+</section>
+
+<section class="dashboards">
+    <form method="post" action="/login" style="max-width: 380px; margin: 0 auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        {% if error %}
+        <p style="color: #c0392b; margin-bottom: 1rem;">{{ error }}</p>
+        {% endif %}
+        <label style="display: block; margin-bottom: 0.75rem;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Username</span>
+            <input name="username" required autofocus style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <label style="display: block; margin-bottom: 1rem;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Password</span>
+            <input name="password" type="password" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Sign in</button>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">No account yet? <a href="/register" style="color: var(--color-blue);">Sign up</a></p>
+    </form>
+</section>
+{% endblock %}

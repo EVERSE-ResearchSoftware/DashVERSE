@@ -7,6 +7,15 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     root_path: str = ""
 
+    jwt_secret: str = ""
+    jwt_algorithm: str = "HS256"
+
+    postgrest_url: str = "http://postgrest:3000"
+
+    auth_service_url: str = "http://auth-service:8000"
+
+    password_min_length: int = 12
+
     model_config = SettingsConfigDict(env_file=".env")
 
 

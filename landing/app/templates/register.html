@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Sign up - DashVERSE{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Create an account</h1>
+    <p>Register to publish assessments and see your own contributions on Mine.</p>
+</section>
+
+<section class="dashboards">
+    <form method="post" action="/register" style="max-width: 380px; margin: 0 auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
+        {% if error %}
+        <p style="color: #c0392b; margin-bottom: 1rem;">{{ error }}</p>
+        {% endif %}
+        <label style="display: block; margin-bottom: 0.75rem;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Username</span>
+            <input name="username" required autofocus value="{{ username or '' }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <label style="display: block; margin-bottom: 0.75rem;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Email</span>
+            <input name="email" type="email" required value="{{ email or '' }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <label style="display: block; margin-bottom: 1rem;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Password <span style="color: var(--color-text-muted); font-weight: normal;">(at least {{ password_min_length }} characters)</span></span>
+            <input name="password" type="password" required minlength="{{ password_min_length }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Create account</button>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">Already have an account? <a href="/login" style="color: var(--color-blue);">Sign in</a></p>
+    </form>
+</section>
+{% endblock %}

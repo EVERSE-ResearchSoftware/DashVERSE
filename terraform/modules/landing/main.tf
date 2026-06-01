@@ -68,6 +68,31 @@ resource "kubernetes_deployment" "landing" {
             }
           }
 
+          env {
+            name = "JWT_SECRET"
+            value_from {
+              secret_key_ref {
+                name = var.secret_name
+                key  = var.jwt_secret_key
+              }
+            }
+          }
+
+          env {
+            name  = "JWT_ALGORITHM"
+            value = var.jwt_algorithm
+          }
+
+          env {
+            name  = "POSTGREST_URL"
+            value = var.postgrest_url
+          }
+
+          env {
+            name  = "AUTH_SERVICE_URL"
+            value = var.auth_service_url
+          }
+
           resources {
             limits = {
               cpu    = var.cpu_limit

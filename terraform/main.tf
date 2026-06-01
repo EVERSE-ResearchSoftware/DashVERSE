@@ -97,6 +97,9 @@ module "landing" {
   namespace_name = module.namespace.name
   common_labels  = var.common_labels
   superset_url   = "http://${module.superset.service_name}:${module.superset.port}"
+  secret_name    = module.secrets.secret_name
+  jwt_secret_key = "jwt-secret"
+  postgrest_url  = "http://postgrest:3000"
 }
 
 module "postgrest_docs" {

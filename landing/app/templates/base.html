@@ -589,6 +589,14 @@ footer a {
                 {% endfor %}
                 <li class="nav-separator"></li>
                 <li><a href="/concepts" {% if request.url.path == '/concepts' %}class="active"{% endif %}>Concepts</a></li>
+                <li class="nav-separator"></li>
+                {% if user %}
+                <li><a href="/me/assessments" {% if request.url.path == '/me/assessments' %}class="active"{% endif %}>Mine</a></li>
+                <li><a href="/account" {% if request.url.path == '/account' %}class="active"{% endif %}>Account</a></li>
+                <li><a href="/logout" title="Signed in as {{ user.username or user.sub }}">Logout</a></li>
+                {% else %}
+                <li><a href="/login?next={{ request.url.path|urlencode }}">Login</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>

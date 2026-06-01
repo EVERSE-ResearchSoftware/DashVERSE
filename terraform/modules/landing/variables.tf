@@ -62,3 +62,32 @@ variable "common_labels" {
   type        = map(string)
   default     = {}
 }
+
+variable "secret_name" {
+  description = "Name of the k8s secret holding the shared JWT secret"
+  type        = string
+}
+
+variable "jwt_secret_key" {
+  description = "Key within the secret pointing at the JWT signing secret"
+  type        = string
+  default     = "jwt-secret"
+}
+
+variable "jwt_algorithm" {
+  description = "JWT signing algorithm (must match auth-service)"
+  type        = string
+  default     = "HS256"
+}
+
+variable "postgrest_url" {
+  description = "Internal URL of the PostgREST service"
+  type        = string
+  default     = "http://postgrest:3000"
+}
+
+variable "auth_service_url" {
+  description = "Internal cluster URL for auth-service (used server-side for /api/auth/login proxying)"
+  type        = string
+  default     = "http://auth-service:8000"
+}
