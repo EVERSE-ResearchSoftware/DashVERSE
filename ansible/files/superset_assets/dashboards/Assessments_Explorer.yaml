@@ -1,4 +1,4 @@
-dashboard_title: Assessments Explorer
+dashboard_title: Assessments
 description: null
 css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container\
   \ .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container\

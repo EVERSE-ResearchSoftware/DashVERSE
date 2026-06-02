@@ -82,7 +82,7 @@
                 <td style="padding: 0.75rem;">{{ sw.software_name }}</td>
                 <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
                 <td colspan="2" style="padding: 0.5rem 0.75rem;">
-                    {% if projects %}
+                    {% if projects | length > 1 %}
                     <form method="post" action="/account/software/assign" style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="hidden" name="software_name" value="{{ sw.software_name }}">
                         <select name="project_id" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px;">
@@ -96,7 +96,13 @@
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Move</button>
                     </form>
                     {% else %}
-                    <span style="color: var(--color-text-muted);">{% if sw.project_id is none %}(unassigned){% else %}(no projects){% endif %}</span>
+                    <span style="color: var(--color-text-muted);">
+                        {% if sw.project_id is none %}
+                        Unassigned.{% if projects %} Create another project to move it.{% endif %}
+                        {% else %}
+                        In project {% for p in projects %}{% if p.id == sw.project_id %}{{ p.name }}{% endif %}{% endfor %}. Create another project to move it.
+                        {% endif %}
+                    </span>
                     {% endif %}
                 </td>
             </tr>
@@ -109,7 +115,7 @@
 <section class="dashboards" style="margin-bottom: 1.5rem;">
     <h2>My projects</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Assessments are grouped by project. Public projects are visible to anonymous viewers on Global Overview and Assessments Explorer. Private projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
+        Assessments are grouped by project. Public projects are visible to anonymous viewers on Overview and Assessments. Private projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
     </p>
     {% if projects %}
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">

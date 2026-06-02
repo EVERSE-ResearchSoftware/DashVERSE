@@ -78,7 +78,7 @@ datasets:
     schema: "{{ database_schema }}"
 
 dashboards:
-  - name: "Global Overview"
+  - name: "Overview"
     slug: "global"
     description: |
       Portfolio-wide overview, anonymous-safe. Aggregate counts and rates
@@ -86,7 +86,7 @@ dashboards:
       (dimensions, indicators, tools). Replaces the standalone Catalog
       dashboard and the anonymous-safe portions of the role dashboards.
       Filterable by dimension, date range, and checking tool.
-  - name: "Assessments Explorer"
+  - name: "Assessments"
     slug: "assessments"
     description: |
       Filter-driven view over every assessment the viewer is allowed to see.

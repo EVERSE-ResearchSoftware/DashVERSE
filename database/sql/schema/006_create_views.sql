@@ -371,3 +371,4 @@ ALTER VIEW tools_coverage SET (security_invoker = true);
 ALTER VIEW catalog_coverage SET (security_invoker = true);
 ALTER VIEW catalog_coverage_breakdown SET (security_invoker = true);
 ALTER VIEW software_vs_median SET (security_invoker = true);
+ALTER VIEW projects SET (security_invoker = true);

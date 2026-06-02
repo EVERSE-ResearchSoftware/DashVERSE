@@ -50,6 +50,11 @@ DROP POLICY IF EXISTS read_assessment_own ON assessment_raw;
 CREATE POLICY read_assessment_own ON assessment_raw FOR SELECT TO web_user
   USING (created_by IS NOT NULL AND created_by = current_user_id());
 
+ALTER TABLE auth.projects ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS read_projects ON auth.projects;
+CREATE POLICY read_projects ON auth.projects FOR SELECT TO web_anon, web_user
+  USING (is_public OR (owner_user_id IS NOT NULL AND owner_user_id = api.current_user_id()));
+
 DROP POLICY IF EXISTS write_software_metadata ON software_metadata;
 CREATE POLICY write_software_metadata ON software_metadata FOR ALL TO web_user
   USING (is_authenticated()) WITH CHECK (is_authenticated());

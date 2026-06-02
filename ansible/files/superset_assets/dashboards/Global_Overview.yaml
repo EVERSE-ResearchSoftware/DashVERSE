@@ -1,4 +1,4 @@
-dashboard_title: Global Overview
+dashboard_title: Overview
 description: null
 css: "/* Friendlier empty-state styling (matches other dashboards) */\n.chart-container\
   \ .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n\

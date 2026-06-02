@@ -147,13 +147,13 @@ templates = Jinja2Templates(directory=templates_dir)
 
 DASHBOARDS = {
     "global": {
-        "title": "Global Overview",
+        "title": "Overview",
         "description": "Portfolio-wide quality assessment activity plus the EVERSE quality model catalog. Aggregate counts and rates; no software or project names are exposed.",
         "audience": "Open to anonymous visitors. No login required.",
         "rsqkit_url": "",
     },
     "assessments": {
-        "title": "Assessments Explorer",
+        "title": "Assessments",
         "description": "Filter-driven view of every assessment you can see. Per-software KPIs, trend, dimension radar, vs-median, compliance heatmap, improvement targets, failed checks, recent activity, and checking-tool usage.",
         "audience": "Anyone. The view narrows automatically to the scope you're allowed to see.",
         "rsqkit_url": "",
@@ -797,7 +797,7 @@ async def my_assessments(request: Request):
             "dashboard": {
                 "title": "My Assessments",
                 "description": (
-                    f"Assessments Explorer scoped to your {len(names)} project(s). Other users' projects are hidden even when they're public."
+                    f"The Assessments dashboard scoped to your {len(names)} project(s). Other users' projects are hidden even when they're public."
                     if names else
                     "You do not own any projects yet. Showing the unscoped view."
                 ),
