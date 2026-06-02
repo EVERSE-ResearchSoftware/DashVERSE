@@ -7,7 +7,7 @@ import logging
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.core.logging_config import configure_logging
-from app.api import auth, tokens
+from app.api import auth, tokens, projects
 
 configure_logging(level=settings.LOG_LEVEL)
 
@@ -45,6 +45,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(tokens.router)
+app.include_router(projects.router)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health"])

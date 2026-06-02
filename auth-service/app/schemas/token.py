@@ -10,7 +10,10 @@ class TokenBase(BaseModel):
 
 class TokenCreate(TokenBase):
 
-    pass
+    project_id: Optional[int] = Field(
+        None,
+        description="Project to scope this token to. Assessments submitted with the token go to this project. Defaults to the caller's primary project when omitted.",
+    )
 
 
 class TokenResponse(BaseModel):
@@ -18,6 +21,7 @@ class TokenResponse(BaseModel):
     id: int
     user_id: int
     token_name: Optional[str]
+    project_id: Optional[int] = None
     jti: str
     is_revoked: bool
     created_at: datetime

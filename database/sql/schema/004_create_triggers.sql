@@ -154,10 +154,24 @@ CREATE TRIGGER tr_validate_assessment_payload
 
 CREATE OR REPLACE FUNCTION capture_assessment_identity() RETURNS TRIGGER AS $$
 DECLARE
+  claims JSON;
   uid BIGINT;
+  tok_project BIGINT;
 BEGIN
-  uid := (current_setting('request.jwt.claims', true)::json->>'sub')::bigint;
+  claims := current_setting('request.jwt.claims', true)::json;
+  uid := (claims->>'sub')::bigint;
   NEW.created_by := uid;
+
+  IF NEW.project_id IS NULL THEN
+    tok_project := (claims->>'project_id')::bigint;
+    IF tok_project IS NOT NULL THEN
+      SELECT id INTO NEW.project_id
+      FROM auth.projects
+      WHERE id = tok_project AND owner_user_id = uid
+      LIMIT 1;
+    END IF;
+  END IF;
+
   IF NEW.project_id IS NULL AND uid IS NOT NULL THEN
     SELECT id INTO NEW.project_id
     FROM auth.projects

@@ -61,6 +61,32 @@
     </div>
 </section>
 
+{% if project %}
+<section class="dashboards" style="margin-bottom: 1.5rem;">
+    <h2>My project</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+        Every assessment you submit is grouped under your project. When the project is public, anonymous visitors can see your assessments on Global Overview and Assessments Explorer. When it is private, only you can see them.
+    </p>
+    <div class="dashboard-card" style="text-align: left; max-width: 720px;">
+        <p><strong>Name:</strong> {{ project.name }}</p>
+        <p><strong>Visibility:</strong>
+            {% if project.is_public %}
+            <span style="color: #2f855a;">Public</span>
+            {% else %}
+            <span style="color: #c0392b;">Private</span>
+            {% endif %}
+        </p>
+        <form method="post" action="/account/project/visibility" style="margin-top: 0.75rem;">
+            {% if project.is_public %}
+            <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Make private</button>
+            {% else %}
+            <button type="submit" name="is_public" value="on" class="btn-primary" style="border: 0; cursor: pointer;">Make public</button>
+            {% endif %}
+        </form>
+    </div>
+</section>
+{% endif %}
+
 <section class="dashboards">
     <h2>API tokens</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">

@@ -34,7 +34,9 @@ def create_access_token(
     user_id: int,
     username: str,
     is_superuser: bool = False,
-    expires_delta: Optional[timedelta] = None
+    expires_delta: Optional[timedelta] = None,
+    default_project_id: Optional[int] = None,
+    project_id: Optional[int] = None,
 ) -> tuple[str, str, datetime]:
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -53,6 +55,10 @@ def create_access_token(
         "iat": datetime.now(timezone.utc),
         "jti": jti,
     }
+    if default_project_id is not None:
+        to_encode["default_project_id"] = default_project_id
+    if project_id is not None:
+        to_encode["project_id"] = project_id
 
     encoded_jwt = jwt.encode(
         to_encode,

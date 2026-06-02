@@ -481,6 +481,8 @@ def _stale_session_redirect(next_path: str) -> RedirectResponse:
 def _account_context(request: Request, user: dict, *, new_token: str | None = None, error: str | None = None):
     body, list_error, status = _auth_request("GET", "/api/tokens/", user["token"])
     tokens = (body or {}).get("tokens", []) if isinstance(body, dict) else []
+    project_body, _, _ = _auth_request("GET", "/api/projects/me", user["token"])
+    project = project_body if isinstance(project_body, dict) and project_body.get("id") else None
     return {
         "request": request,
         "user": user,
@@ -490,6 +492,7 @@ def _account_context(request: Request, user: dict, *, new_token: str | None = No
         "new_token": new_token,
         "error": error or list_error,
         "list_status": status,
+        "project": project,
     }
 
 
@@ -544,6 +547,28 @@ async def account_token_delete(request: Request, token_id: int):
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
     _, error, status = _auth_request("DELETE", f"/api/tokens/{token_id}", user["token"])
+    if status == 401:
+        return _stale_session_redirect("/account")
+    return templates.TemplateResponse(
+        "account.html",
+        _account_context(request, user, error=error),
+    )
+
+
+@router.post("/account/project/visibility", response_class=HTMLResponse)
+async def account_project_visibility(request: Request, is_public: str = Form(default="")):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+    project_body, _, _ = _auth_request("GET", "/api/projects/me", user["token"])
+    if not isinstance(project_body, dict) or not project_body.get("id"):
+        return templates.TemplateResponse(
+            "account.html",
+            _account_context(request, user, error="No project found for your account."),
+        )
+    pid = project_body["id"]
+    payload = {"is_public": bool(is_public)}
+    _, error, status = _auth_request("PATCH", f"/api/projects/{pid}", user["token"], payload)
     if status == 401:
         return _stale_session_redirect("/account")
     return templates.TemplateResponse(

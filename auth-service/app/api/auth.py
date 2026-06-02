@@ -91,13 +91,27 @@ def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)
 
     clear_failed_attempts(db, login_data.username)
 
+    default_project = (
+        db.query(Project)
+        .filter(Project.owner_user_id == user.id)
+        .order_by(Project.id)
+        .first()
+    )
+
     jwt_token, jti, expires_at = create_access_token(
         user_id=user.id,
         username=user.username,
-        is_superuser=user.is_superuser
+        is_superuser=user.is_superuser,
+        default_project_id=default_project.id if default_project else None,
     )
 
-    token_record = Token(user_id=user.id, jti=jti, expires_at=expires_at, is_revoked=False)
+    token_record = Token(
+        user_id=user.id,
+        jti=jti,
+        expires_at=expires_at,
+        is_revoked=False,
+        token_type="session",
+    )
     db.add(token_record)
     db.commit()
     db.refresh(token_record)

@@ -13,6 +13,8 @@ class Token(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("auth.users.id", ondelete="CASCADE"), nullable=False, index=True)
     token_name = Column(String(255), nullable=True)
+    token_type = Column(String(16), nullable=False, server_default="api")
+    project_id = Column(Integer, ForeignKey("auth.projects.id", ondelete="SET NULL"), nullable=True, index=True)
     jti = Column(String(255), unique=True, nullable=False, index=True)
     is_revoked = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
