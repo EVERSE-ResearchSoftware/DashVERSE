@@ -120,33 +120,22 @@ def delete_project(
 ) -> dict:
     project = _owned_project(db, current_user, project_id)
 
-    own_count = (
-        db.query(Project)
-        .filter(Project.owner_user_id == current_user.id)
-        .count()
+    result = db.execute(
+        text(
+            "UPDATE api.assessment_raw SET project_id = NULL "
+            "WHERE project_id = :pid AND created_by = :uid"
+        ),
+        {"pid": project_id, "uid": current_user.id},
     )
-    if own_count <= 1:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Cannot delete your only project",
-        )
-
-    assessment_count = db.execute(
-        text("SELECT COUNT(*) FROM api.assessment_raw WHERE project_id = :pid"),
-        {"pid": project_id},
-    ).scalar() or 0
-    if assessment_count > 0:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=(
-                f"Project still has {assessment_count} assessment(s). "
-                "Move them to another project first."
-            ),
-        )
+    unassigned = result.rowcount or 0
 
     db.delete(project)
     db.commit()
-    return {"message": "Project deleted", "project_id": project_id}
+    return {
+        "message": "Project deleted",
+        "project_id": project_id,
+        "unassigned_assessments": unassigned,
+    }
 
 
 @router.get(

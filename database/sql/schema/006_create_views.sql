@@ -15,14 +15,17 @@ SELECT
   COUNT(DISTINCT a.id) AS assessment_count,
   m.programming_language,
   m.description,
-  m.homepage_url
+  m.homepage_url,
+  a.project_id,
+  p.name AS project_name
 FROM assessment_raw a
 LEFT JOIN software_metadata m
   ON m.identifier = COALESCE(
        a.payload->'assessedSoftware'->'schema:identifier'->>'@id',
        a.payload->'assessedSoftware'->>'name'
      )
-GROUP BY 1, 2, 5, m.programming_language, m.description, m.homepage_url;
+LEFT JOIN auth.projects p ON p.id = a.project_id
+GROUP BY 1, 2, 5, m.programming_language, m.description, m.homepage_url, a.project_id, p.name;
 
 CREATE OR REPLACE VIEW assessments_detailed AS
 SELECT
@@ -77,50 +80,61 @@ CREATE OR REPLACE VIEW dimension_coverage AS
 SELECT
   cd.dimension_name,
   cd.dimension_id,
+  cd.project_id,
+  cd.project_name,
   COUNT(*) FILTER (WHERE cd.outcome = 'pass') AS passed,
   ROUND(100.0 * COUNT(*) FILTER (WHERE cd.outcome = 'pass')
                 / NULLIF(COUNT(*), 0), 2) AS pass_rate
 FROM checks_detailed cd
 WHERE cd.dimension_name IS NOT NULL
-GROUP BY cd.dimension_name, cd.dimension_id;
+GROUP BY cd.dimension_name, cd.dimension_id, cd.project_id, cd.project_name;
 
 CREATE OR REPLACE VIEW software_quality_scores AS
 SELECT
   cd.software_name,
   cd.software_id,
   cd.dimension_name,
+  cd.project_id,
+  cd.project_name,
   ROUND(100.0 * COUNT(*) FILTER (WHERE cd.outcome = 'pass')
                 / NULLIF(COUNT(*), 0), 2) AS score,
   MAX(cd.assessment_dttm) AS last_assessed_date
 FROM checks_detailed cd
 WHERE cd.dimension_name IS NOT NULL
-GROUP BY cd.software_name, cd.software_id, cd.dimension_name;
+GROUP BY cd.software_name, cd.software_id, cd.dimension_name, cd.project_id, cd.project_name;
 
 CREATE OR REPLACE VIEW assessment_trends AS
 SELECT
   date_trunc('month', (a.payload->>'dateCreated')::timestamp) AS month,
+  a.project_id,
+  p.name AS project_name,
   COUNT(DISTINCT a.id) AS assessments
 FROM assessment_raw a
-GROUP BY date_trunc('month', (a.payload->>'dateCreated')::timestamp)
-ORDER BY month;
+LEFT JOIN auth.projects p ON p.id = a.project_id
+GROUP BY 1, a.project_id, p.name
+ORDER BY 1;
 
 CREATE OR REPLACE VIEW dimension_trend AS
 SELECT
   date_trunc('month', cd.assessment_dttm) AS month,
   cd.dimension_name,
   cd.dimension_id,
+  cd.project_id,
+  cd.project_name,
   COUNT(*) AS total_checks,
   COUNT(*) FILTER (WHERE cd.outcome = 'pass') AS passed,
   ROUND(100.0 * COUNT(*) FILTER (WHERE cd.outcome = 'pass')
                 / NULLIF(COUNT(*), 0), 2) AS pass_rate
 FROM checks_detailed cd
 WHERE cd.dimension_name IS NOT NULL
-GROUP BY 1, 2, 3;
+GROUP BY 1, 2, 3, cd.project_id, cd.project_name;
 
 CREATE OR REPLACE VIEW software_history AS
 SELECT
   cd.software_name,
   cd.software_id,
+  cd.project_id,
+  cd.project_name,
   date_trunc('month', cd.assessment_dttm) AS month,
   COUNT(DISTINCT cd.assessment_id) AS assessments_in_month,
   COUNT(*) AS total_checks,
@@ -129,11 +143,13 @@ SELECT
   ROUND(100.0 * COUNT(*) FILTER (WHERE cd.outcome = 'pass')
                 / NULLIF(COUNT(*), 0), 2) AS pass_rate
 FROM checks_detailed cd
-GROUP BY cd.software_name, cd.software_id, 3;
+GROUP BY cd.software_name, cd.software_id, cd.project_id, cd.project_name, 5;
 
 CREATE OR REPLACE VIEW tool_reliability AS
 SELECT
   cd.checking_software,
+  cd.project_id,
+  cd.project_name,
   COUNT(*) AS total_checks,
   COUNT(*) FILTER (WHERE cd.outcome = 'pass') AS passed,
   COUNT(*) FILTER (WHERE cd.outcome = 'fail') AS failed,
@@ -142,13 +158,15 @@ SELECT
                 / NULLIF(COUNT(*), 0), 2) AS success_rate
 FROM checks_detailed cd
 WHERE cd.checking_software IS NOT NULL
-GROUP BY cd.checking_software;
+GROUP BY cd.checking_software, cd.project_id, cd.project_name;
 
 CREATE OR REPLACE VIEW compliance_status AS
 SELECT
   sqs.software_name,
   sqs.software_id,
   sqs.dimension_name,
+  sqs.project_id,
+  sqs.project_name,
   sqs.score AS pass_rate,
   (sqs.score >= 75) AS above_threshold
 FROM software_quality_scores sqs;
@@ -165,6 +183,8 @@ CREATE OR REPLACE VIEW common_issues AS
 SELECT
   cd.indicator_name,
   cd.dimension_name,
+  cd.project_id,
+  cd.project_name,
   COUNT(*) AS failure_count,
   i.description AS what_to_improve,
   i.source->>'@id' AS indicator_url,
@@ -174,7 +194,7 @@ LEFT JOIN indicators i ON i.name = cd.indicator_name
 LEFT JOIN dimensions d ON d.name = cd.dimension_name
 WHERE cd.outcome = 'fail'
   AND cd.indicator_name IS NOT NULL
-GROUP BY cd.indicator_name, cd.dimension_name, i.description, i.source, d.identifier
+GROUP BY cd.indicator_name, cd.dimension_name, cd.project_id, cd.project_name, i.description, i.source, d.identifier
 ORDER BY failure_count DESC;
 
 CREATE OR REPLACE VIEW per_software_issues AS
@@ -182,6 +202,8 @@ SELECT
   cd.software_name,
   cd.indicator_name,
   cd.dimension_name,
+  cd.project_id,
+  cd.project_name,
   COUNT(*) AS failure_count,
   i.description AS what_to_improve,
   i.source->>'@id' AS indicator_url,
@@ -191,7 +213,7 @@ LEFT JOIN indicators i ON i.name = cd.indicator_name
 LEFT JOIN dimensions d ON d.name = cd.dimension_name
 WHERE cd.outcome = 'fail'
   AND cd.indicator_name IS NOT NULL
-GROUP BY cd.software_name, cd.indicator_name, cd.dimension_name,
+GROUP BY cd.software_name, cd.indicator_name, cd.dimension_name, cd.project_id, cd.project_name,
          i.description, i.source, d.identifier;
 
 CREATE OR REPLACE VIEW indicators_flat AS
@@ -235,6 +257,8 @@ FROM dimensions d;
 CREATE OR REPLACE VIEW tools_summary AS
 SELECT
   cd.checking_software AS tool,
+  cd.project_id,
+  cd.project_name,
   COUNT(DISTINCT cd.dimension_name) AS dimensions_covered,
   COUNT(DISTINCT cd.indicator_name) AS indicators_covered,
   (SELECT COUNT(*) FROM indicators) AS catalog_indicators_total,
@@ -247,13 +271,15 @@ SELECT
                 / NULLIF(COUNT(*), 0), 1) AS success_rate
 FROM checks_detailed cd
 WHERE cd.checking_software IS NOT NULL
-GROUP BY 1;
+GROUP BY 1, cd.project_id, cd.project_name;
 
 CREATE OR REPLACE VIEW tools_coverage AS
 SELECT
   cd.checking_software AS tool,
   cd.dimension_name,
   cd.indicator_name,
+  cd.project_id,
+  cd.project_name,
   COUNT(*) AS checks,
   COUNT(*) FILTER (WHERE cd.outcome = 'pass') AS passed,
   COUNT(*) FILTER (WHERE cd.outcome = 'fail') AS failed
@@ -261,7 +287,7 @@ FROM checks_detailed cd
 WHERE cd.checking_software IS NOT NULL
   AND cd.dimension_name IS NOT NULL
   AND cd.indicator_name IS NOT NULL
-GROUP BY 1, 2, 3;
+GROUP BY 1, 2, 3, cd.project_id, cd.project_name;
 
 CREATE OR REPLACE VIEW catalog_coverage_breakdown AS
 WITH dim_tested AS (
@@ -307,19 +333,41 @@ WHERE cd.indicator_name IS NOT NULL;
 
 CREATE OR REPLACE VIEW software_vs_median AS
 WITH med AS (
-  SELECT dimension_name,
+  SELECT dimension_name, project_id, project_name,
          percentile_cont(0.5) WITHIN GROUP (ORDER BY score) AS median_score
   FROM software_quality_scores
-  GROUP BY dimension_name
+  GROUP BY dimension_name, project_id, project_name
 )
 SELECT
   sqs.software_name,
   sqs.dimension_name,
+  sqs.project_id,
+  sqs.project_name,
   sqs.score AS sw_score,
   med.median_score
 FROM software_quality_scores sqs
-JOIN med USING (dimension_name);
+JOIN med
+  ON med.dimension_name = sqs.dimension_name
+  AND med.project_id IS NOT DISTINCT FROM sqs.project_id;
 
 CREATE OR REPLACE VIEW projects AS
 SELECT id, name, owner_user_id, is_public, created_at, updated_at
 FROM auth.projects;
+
+ALTER VIEW assessments_detailed SET (security_invoker = true);
+ALTER VIEW checks_detailed SET (security_invoker = true);
+ALTER VIEW software SET (security_invoker = true);
+ALTER VIEW dimension_coverage SET (security_invoker = true);
+ALTER VIEW software_quality_scores SET (security_invoker = true);
+ALTER VIEW assessment_trends SET (security_invoker = true);
+ALTER VIEW dimension_trend SET (security_invoker = true);
+ALTER VIEW software_history SET (security_invoker = true);
+ALTER VIEW tool_reliability SET (security_invoker = true);
+ALTER VIEW compliance_status SET (security_invoker = true);
+ALTER VIEW common_issues SET (security_invoker = true);
+ALTER VIEW per_software_issues SET (security_invoker = true);
+ALTER VIEW tools_summary SET (security_invoker = true);
+ALTER VIEW tools_coverage SET (security_invoker = true);
+ALTER VIEW catalog_coverage SET (security_invoker = true);
+ALTER VIEW catalog_coverage_breakdown SET (security_invoker = true);
+ALTER VIEW software_vs_median SET (security_invoker = true);

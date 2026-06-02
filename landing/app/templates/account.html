@@ -61,7 +61,7 @@
     </div>
 </section>
 
-{% if software and projects %}
+{% if software %}
 <section class="dashboards" style="margin-bottom: 1.5rem;">
     <h2>My software</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
@@ -82,15 +82,22 @@
                 <td style="padding: 0.75rem;">{{ sw.software_name }}</td>
                 <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
                 <td colspan="2" style="padding: 0.5rem 0.75rem;">
+                    {% if projects %}
                     <form method="post" action="/account/software/assign" style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="hidden" name="software_name" value="{{ sw.software_name }}">
                         <select name="project_id" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                            {% if sw.project_id is none %}
+                            <option value="" selected disabled>(unassigned)</option>
+                            {% endif %}
                             {% for p in projects %}
                             <option value="{{ p.id }}" {% if p.id == sw.project_id %}selected{% endif %}>{{ p.name }}{% if p.is_public %} (public){% else %} (private){% endif %}</option>
                             {% endfor %}
                         </select>
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Move</button>
                     </form>
+                    {% else %}
+                    <span style="color: var(--color-text-muted);">{% if sw.project_id is none %}(unassigned){% else %}(no projects){% endif %}</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -99,23 +106,25 @@
 </section>
 {% endif %}
 
-{% if projects %}
 <section class="dashboards" style="margin-bottom: 1.5rem;">
     <h2>My projects</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Assessments are grouped by project. Public projects are visible to anonymous viewers on Global Overview and Assessments Explorer. Private projects are visible only to you. You always need at least one project, and a project must be empty before you can delete it.
+        Assessments are grouped by project. Public projects are visible to anonymous viewers on Global Overview and Assessments Explorer. Private projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
     </p>
+    {% if projects %}
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
         <thead style="background: var(--color-light-bg);">
             <tr>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Name</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Visibility</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Created</th>
                 <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for p in projects %}
+            {% set sw_in_project = software | selectattr('project_id', 'equalto', p.id) | list %}
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.5rem 0.75rem;">
                     <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.5rem;">
@@ -130,6 +139,13 @@
                     <span style="color: #c0392b;">Private</span>
                     {% endif %}
                 </td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">
+                    {% if sw_in_project %}
+                    {{ sw_in_project | map(attribute='software_name') | join(', ') }}
+                    {% else %}
+                    (none)
+                    {% endif %}
+                </td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
                     <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline;">
@@ -139,7 +155,7 @@
                         <button type="submit" name="is_public" value="on" class="btn-secondary" style="border: 0; cursor: pointer;">Make public</button>
                         {% endif %}
                     </form>
-                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit="return confirm('Delete project {{ p.name }}? This cannot be undone.');">
+                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit="return confirm('Delete project &quot;{{ p.name }}&quot;?{% if sw_in_project %} {{ sw_in_project|length }} software will become unassigned and only you will be able to see their assessments until you move them to another project.{% endif %} This cannot be undone.');">
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
                     </form>
                 </td>
@@ -147,6 +163,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">You don't have any projects yet. Create one below to start receiving assessments.</p>
+    {% endif %}
 
     <form method="post" action="/account/projects" style="margin-top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
         <label style="flex: 1; min-width: 200px;">
@@ -160,7 +179,6 @@
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Create project</button>
     </form>
 </section>
-{% endif %}
 
 <section class="dashboards">
     <h2>API tokens</h2>
@@ -169,12 +187,12 @@
         Treat them like passwords.
     </p>
 
+    {% if projects %}
     <form method="post" action="/account/tokens" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
         <label style="flex: 1; min-width: 200px;">
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Token name <span style="font-weight: normal;">(optional)</span></span>
             <input name="token_name" maxlength="100" placeholder="e.g. ci-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
         </label>
-        {% if projects %}
         <label style="min-width: 200px;">
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Project</span>
             <select name="project_id" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
@@ -183,9 +201,13 @@
                 {% endfor %}
             </select>
         </label>
-        {% endif %}
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>
     </form>
+    {% else %}
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; color: var(--color-text-muted);">
+        You need at least one project before you can generate an API token. Create one in the <strong>My projects</strong> section below.
+    </div>
+    {% endif %}
 
     {% if tokens %}
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">

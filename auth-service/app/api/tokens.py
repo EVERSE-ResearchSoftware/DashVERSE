@@ -53,7 +53,13 @@ def generate_token(
             .first()
         )
 
-    project_id = project.id if project else None
+    if project is None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="You need to create a project before generating an API token.",
+        )
+
+    project_id = project.id
 
     jwt_token, jti, expires_at = create_access_token(
         user_id=current_user.id,

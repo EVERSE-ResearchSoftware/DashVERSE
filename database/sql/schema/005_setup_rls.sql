@@ -41,7 +41,10 @@ $$ LANGUAGE sql STABLE SECURITY DEFINER;
 DROP POLICY IF EXISTS read_assessment ON assessment_raw;
 DROP POLICY IF EXISTS read_assessment_public ON assessment_raw;
 CREATE POLICY read_assessment_public ON assessment_raw FOR SELECT TO web_anon, web_user
-  USING (project_id IS NULL OR is_project_public(project_id));
+  USING (
+    (project_id IS NULL AND created_by IS NULL)
+    OR (project_id IS NOT NULL AND is_project_public(project_id))
+  );
 
 DROP POLICY IF EXISTS read_assessment_own ON assessment_raw;
 CREATE POLICY read_assessment_own ON assessment_raw FOR SELECT TO web_user

@@ -403,6 +403,104 @@ footer a {
     margin: 0 0.5rem;
 }
 
+/* user menu (avatar + dropdown) */
+.user-menu {
+    position: relative;
+}
+
+.user-menu details {
+    position: relative;
+}
+
+.user-menu summary {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    list-style: none;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    transition: background 0.15s;
+}
+
+.user-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.user-menu summary:hover {
+    background: var(--color-light-bg);
+}
+
+.user-menu details[open] summary {
+    background: var(--color-light-bg);
+}
+
+.user-menu .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-purple);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.user-menu .user-name {
+    white-space: nowrap;
+}
+
+.user-menu .caret {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+}
+
+.user-menu-dropdown {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    min-width: 180px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    list-style: none;
+    padding: 0.25rem 0;
+    margin: 0;
+    z-index: 100;
+    display: block;
+}
+
+.user-menu-dropdown li {
+    display: block;
+}
+
+.user-menu-dropdown a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 0;
+}
+
+.user-menu-dropdown a:hover,
+.user-menu-dropdown a.active {
+    background: var(--color-light-bg);
+    color: var(--color-purple);
+}
+
+.user-menu-dropdown .divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.25rem 0;
+}
+
 /* relationships section */
 .relationships {
     background: white;
@@ -591,9 +689,21 @@ footer a {
                 <li><a href="/concepts" {% if request.url.path == '/concepts' %}class="active"{% endif %}>Concepts</a></li>
                 <li class="nav-separator"></li>
                 {% if user %}
-                <li><a href="/me/assessments" {% if request.url.path == '/me/assessments' %}class="active"{% endif %}>Mine</a></li>
-                <li><a href="/account" {% if request.url.path == '/account' %}class="active"{% endif %}>Account</a></li>
-                <li><a href="/logout" title="Signed in as {{ user.username or user.sub }}">Logout</a></li>
+                <li class="user-menu">
+                    <details>
+                        <summary>
+                            <span class="avatar">{{ (user.username or user.sub or '?')[:1]|upper }}</span>
+                            <span class="user-name">{{ user.username or user.sub }}</span>
+                            <span class="caret">&#9662;</span>
+                        </summary>
+                        <ul class="user-menu-dropdown">
+                            <li><a href="/me/assessments" {% if request.url.path == '/me/assessments' %}class="active"{% endif %}>Mine</a></li>
+                            <li><a href="/account" {% if request.url.path == '/account' %}class="active"{% endif %}>Account</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                    </details>
+                </li>
                 {% else %}
                 <li><a href="/login?next={{ request.url.path|urlencode }}">Login</a></li>
                 {% endif %}

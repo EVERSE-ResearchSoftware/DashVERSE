@@ -81,3 +81,16 @@
 - name: Debug dataset IDs
   debug:
     var: dataset_ids
+
+- name: Refresh dataset columns from source
+  uri:
+    url: "{{ superset_api }}/dataset/{{ item.value }}/refresh"
+    method: PUT
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Referer: "{{ superset_url }}/"
+    status_code: [200, 422]
+  loop: "{{ dataset_ids | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"

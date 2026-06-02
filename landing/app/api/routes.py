@@ -104,7 +104,7 @@ def _superset_invalidate_datasets(uuids: list[str]) -> None:
         return
     try:
         req = urllib.request.Request(
-            f"{settings.superset_url}/api/v1/cache/invalidate",
+            f"{settings.superset_url}/api/v1/cachekey/invalidate",
             data=json.dumps({
                 "datasource_uids": [f"{u}__table" for u in uuids],
             }).encode(),
@@ -121,6 +121,24 @@ def _superset_invalidate_datasets(uuids: list[str]) -> None:
 
 _PROJECT_AWARE_DATASET_UUIDS = [
     "36f136b1-53e0-41c9-9f21-180bdea10683",
+    "2e5838cf-b850-4a74-997c-a709e7c36808",
+    "53b08a54-2e42-4412-b4dd-a4f8be57dfab",
+    "9c2d2e46-92de-4bd1-be23-c3081acd89b5",
+    "7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad",
+    "0df3b836-158c-4563-af46-d1b909dca733",
+    "a272ab14-6e6a-4b02-86e1-17eb77a6d37c",
+    "238d1c96-d76c-47cc-bc14-b957fd1c27c2",
+    "80662b12-f989-4498-be68-1afe226d00a2",
+    "c57303cb-cad4-42f6-9f01-6c7438a03ce3",
+    "ba5963a1-5b48-41f8-bb4c-f95a10449996",
+    "4017c786-12fc-4753-a436-6df9066b2e14",
+    "4bcfa543-1597-476f-a4a9-ea7dc1c437d2",
+    "9d5bb44d-4773-43fc-8ded-46218c3295ab",
+    "4a73de8d-ab35-4fb1-88ba-1e852d65ab48",
+    "0c1c12cb-19f1-49b5-867c-99327a0ab8e9",
+    "afa52222-59cf-4344-8094-73943f3dcde9",
+    "4372e3b3-6fa2-4369-b068-74204fa4d16f",
+    "3a34e152-6e74-46ce-8f6c-14189a402411",
 ]
 
 
@@ -645,6 +663,8 @@ async def account_project_create(
     )
     if status == 401:
         return _stale_session_redirect("/account")
+    if not error:
+        _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
         _account_context(request, user, error=error),
@@ -664,6 +684,8 @@ async def account_project_visibility(request: Request, project_id: int, is_publi
     )
     if status == 401:
         return _stale_session_redirect("/account")
+    if not error:
+        _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
         _account_context(request, user, error=error),
@@ -710,6 +732,8 @@ async def account_project_delete(request: Request, project_id: int):
     )
     if status == 401:
         return _stale_session_redirect("/account")
+    if not error:
+        _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
         _account_context(request, user, error=error),

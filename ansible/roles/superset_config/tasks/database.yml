@@ -26,6 +26,15 @@
     existing_db: null
   when: existing_db_list | length == 0
 
+- name: Build superset database extra config
+  set_fact:
+    superset_db_extra:
+      schemas_allowed_for_file_upload:
+        - "{{ database_schema }}"
+      engine_params:
+        connect_args:
+          options: "-c role=web_anon"
+
 - name: Create database connection
   uri:
     url: "{{ superset_api }}/database/"
@@ -43,7 +52,7 @@
       allow_cvas: false
       allow_dml: false
       allow_run_async: true
-      extra: "{{ {'schemas_allowed_for_file_upload': [database_schema]} | to_json }}"
+      extra: "{{ superset_db_extra | to_json }}"
     status_code: [200, 201, 422]
   when: existing_db_list | length == 0
   register: new_database
@@ -51,6 +60,20 @@
 - name: Set database ID from existing
   set_fact:
     database_id: "{{ existing_db.id }}"
+  when: existing_db_list | length > 0
+
+- name: Update existing database extra config
+  uri:
+    url: "{{ superset_api }}/database/{{ existing_db.id }}"
+    method: PUT
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Content-Type: application/json
+    body_format: json
+    body:
+      extra: "{{ superset_db_extra | to_json }}"
+    status_code: [200, 201]
   when: existing_db_list | length > 0
 
 - name: Set database ID from new
