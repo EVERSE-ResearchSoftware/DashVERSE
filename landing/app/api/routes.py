@@ -96,6 +96,34 @@ def _filter_state_key(dashboard_slug: str, filter_state: dict) -> str | None:
         log.warning("filter_state POST failed: %s", exc)
         return None
 
+def _superset_invalidate_datasets(uuids: list[str]) -> None:
+    if not uuids:
+        return
+    token = _superset_token()
+    if not token:
+        return
+    try:
+        req = urllib.request.Request(
+            f"{settings.superset_url}/api/v1/cache/invalidate",
+            data=json.dumps({
+                "datasource_uids": [f"{u}__table" for u in uuids],
+            }).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {token}",
+            },
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=5)
+    except Exception as exc:
+        log.warning("Superset cache invalidate failed: %s", exc)
+
+
+_PROJECT_AWARE_DATASET_UUIDS = [
+    "36f136b1-53e0-41c9-9f21-180bdea10683",
+]
+
+
 templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
 templates = Jinja2Templates(directory=templates_dir)
 
@@ -662,6 +690,8 @@ async def account_project_rename(request: Request, project_id: int, name: str = 
     )
     if status == 401:
         return _stale_session_redirect("/account")
+    if not error:
+        _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
         _account_context(request, user, error=error),
@@ -686,30 +716,11 @@ async def account_project_delete(request: Request, project_id: int):
     )
 
 
-def _my_software_names(sub: str, token: str) -> list[str]:
-    if not settings.postgrest_url or not sub:
+def _my_project_names(token: str) -> list[str]:
+    body, _, _ = _auth_request("GET", "/api/projects/", token)
+    if not isinstance(body, dict):
         return []
-    qs = urllib.parse.urlencode({
-        "created_by": f"eq.{sub}",
-        "select": "name:payload->assessedSoftware->>name",
-    })
-    url = f"{settings.postgrest_url}/assessment_raw?{qs}"
-    try:
-        req = urllib.request.Request(url, headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/json",
-        })
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            rows = json.loads(resp.read())
-    except Exception as exc:
-        log.warning("PostgREST /assessment_raw lookup failed: %s", exc)
-        return []
-    seen: list[str] = []
-    for row in rows:
-        name = row.get("name")
-        if name and name not in seen:
-            seen.append(name)
-    return seen
+    return [p["name"] for p in body.get("projects", []) if p.get("name")]
 
 
 @router.get("/me/assessments", response_class=HTMLResponse)
@@ -721,17 +732,17 @@ async def my_assessments(request: Request):
             status_code=302,
         )
 
-    names = _my_software_names(user["sub"], user["token"])
+    names = _my_project_names(user["token"])
     superset_base = settings.superset_external_url or ""
 
     permalink_key = None
     encoded_filter = ""
     if names:
         filter_state = {
-            "NATIVE_FILTER-software": {
-                "id": "NATIVE_FILTER-software",
+            "NATIVE_FILTER-project": {
+                "id": "NATIVE_FILTER-project",
                 "extraFormData": {
-                    "filters": [{"col": "software_name", "op": "IN", "val": names}]
+                    "filters": [{"col": "project_name", "op": "IN", "val": names}]
                 },
                 "filterState": {"value": names},
             }
@@ -740,10 +751,10 @@ async def my_assessments(request: Request):
 
         val_list = ",".join(f"'{n.replace(chr(39), chr(92) + chr(39))}'" for n in names)
         rison_filter = (
-            "(NATIVE_FILTER-software:("
-            "id:NATIVE_FILTER-software,"
+            "(NATIVE_FILTER-project:("
+            "id:NATIVE_FILTER-project,"
             f"filterState:(value:!({val_list})),"
-            f"extraFormData:(filters:!((col:software_name,op:IN,val:!({val_list}))))"
+            f"extraFormData:(filters:!((col:project_name,op:IN,val:!({val_list}))))"
             "))"
         )
         encoded_filter = urllib.parse.quote(rison_filter, safe="")
@@ -762,9 +773,9 @@ async def my_assessments(request: Request):
             "dashboard": {
                 "title": "My Assessments",
                 "description": (
-                    f"Assessments Explorer scoped to {len(names)} software(s) you've assessed."
+                    f"Assessments Explorer scoped to your {len(names)} project(s). Other users' projects are hidden even when they're public."
                     if names else
-                    "You have not authored any assessments yet. Showing the unscoped view."
+                    "You do not own any projects yet. Showing the unscoped view."
                 ),
                 "audience": user.get("username") or "you",
                 "rsqkit_url": "",
