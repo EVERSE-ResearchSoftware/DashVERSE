@@ -31,3 +31,20 @@ class ProjectUpdate(BaseModel):
 
     is_public: bool | None = Field(None, description="Public visibility flag")
     name: str | None = Field(None, min_length=1, max_length=255)
+
+
+class SoftwareEntry(BaseModel):
+
+    software_name: str
+    assessment_count: int
+    project_id: int | None
+    project_name: str | None
+
+
+class SoftwareListResponse(BaseModel):
+    software: List[SoftwareEntry]
+    total: int
+
+
+class AssignSoftwareRequest(BaseModel):
+    software_name: str = Field(..., min_length=1, max_length=255)

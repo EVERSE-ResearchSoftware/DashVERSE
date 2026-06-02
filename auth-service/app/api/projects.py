@@ -11,6 +11,9 @@ from app.schemas.project import (
     ProjectListResponse,
     ProjectCreate,
     ProjectUpdate,
+    SoftwareEntry,
+    SoftwareListResponse,
+    AssignSoftwareRequest,
 )
 
 router = APIRouter(prefix="/api/projects", tags=["Projects"])
@@ -144,3 +147,78 @@ def delete_project(
     db.delete(project)
     db.commit()
     return {"message": "Project deleted", "project_id": project_id}
+
+
+@router.get(
+    "/me/software",
+    response_model=SoftwareListResponse,
+    summary="List the caller's assessed software and which project each currently belongs to",
+)
+def list_my_software(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> SoftwareListResponse:
+    rows = db.execute(
+        text(
+            """
+            SELECT
+                a.payload->'assessedSoftware'->>'name' AS software_name,
+                COUNT(*) AS assessment_count,
+                MAX(a.project_id) AS project_id
+            FROM api.assessment_raw a
+            WHERE a.created_by = :uid
+              AND a.payload->'assessedSoftware'->>'name' IS NOT NULL
+            GROUP BY 1
+            ORDER BY 1
+            """
+        ),
+        {"uid": current_user.id},
+    ).fetchall()
+
+    project_lookup: dict[int, str] = {
+        p.id: p.name
+        for p in db.query(Project).filter(Project.owner_user_id == current_user.id).all()
+    }
+
+    software = [
+        SoftwareEntry(
+            software_name=row.software_name,
+            assessment_count=int(row.assessment_count),
+            project_id=row.project_id,
+            project_name=project_lookup.get(row.project_id) if row.project_id is not None else None,
+        )
+        for row in rows
+    ]
+    return SoftwareListResponse(software=software, total=len(software))
+
+
+@router.post(
+    "/{project_id}/software",
+    status_code=status.HTTP_200_OK,
+    summary="Reassign every assessment of one software (by the caller) to this project",
+)
+def assign_software(
+    project_id: int,
+    payload: AssignSoftwareRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    _owned_project(db, current_user, project_id)
+    result = db.execute(
+        text(
+            """
+            UPDATE api.assessment_raw
+            SET project_id = :pid
+            WHERE created_by = :uid
+              AND payload->'assessedSoftware'->>'name' = :sw
+            """
+        ),
+        {"pid": project_id, "uid": current_user.id, "sw": payload.software_name},
+    )
+    db.commit()
+    return {
+        "message": "Software reassigned",
+        "project_id": project_id,
+        "software_name": payload.software_name,
+        "rows_updated": result.rowcount,
+    }

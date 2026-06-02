@@ -483,6 +483,10 @@ def _account_context(request: Request, user: dict, *, new_token: str | None = No
     tokens = (body or {}).get("tokens", []) if isinstance(body, dict) else []
     project_body, _, _ = _auth_request("GET", "/api/projects/me", user["token"])
     project = project_body if isinstance(project_body, dict) and project_body.get("id") else None
+    projects_body, _, _ = _auth_request("GET", "/api/projects/", user["token"])
+    projects = (projects_body or {}).get("projects", []) if isinstance(projects_body, dict) else []
+    software_body, _, _ = _auth_request("GET", "/api/projects/me/software", user["token"])
+    software = (software_body or {}).get("software", []) if isinstance(software_body, dict) else []
     return {
         "request": request,
         "user": user,
@@ -493,6 +497,8 @@ def _account_context(request: Request, user: dict, *, new_token: str | None = No
         "error": error or list_error,
         "list_status": status,
         "project": project,
+        "projects": projects,
+        "software": software,
     }
 
 
@@ -511,11 +517,20 @@ async def account_page(request: Request):
 
 
 @router.post("/account/tokens", response_class=HTMLResponse)
-async def account_token_create(request: Request, token_name: str = Form(default="")):
+async def account_token_create(
+    request: Request,
+    token_name: str = Form(default=""),
+    project_id: str = Form(default=""),
+):
     user = current_user(request)
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
-    payload = {"token_name": token_name.strip() or None}
+    payload: dict = {"token_name": token_name.strip() or None}
+    if project_id.strip():
+        try:
+            payload["project_id"] = int(project_id)
+        except ValueError:
+            pass
     body, error, status = _auth_request("POST", "/api/tokens/", user["token"], payload)
     if status == 401:
         return _stale_session_redirect("/account")
@@ -555,20 +570,114 @@ async def account_token_delete(request: Request, token_id: int):
     )
 
 
-@router.post("/account/project/visibility", response_class=HTMLResponse)
-async def account_project_visibility(request: Request, is_public: str = Form(default="")):
+@router.post("/account/software/assign", response_class=HTMLResponse)
+async def account_software_assign(
+    request: Request,
+    software_name: str = Form(...),
+    project_id: int = Form(...),
+):
     user = current_user(request)
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
-    project_body, _, _ = _auth_request("GET", "/api/projects/me", user["token"])
-    if not isinstance(project_body, dict) or not project_body.get("id"):
+    _, error, status = _auth_request(
+        "POST",
+        f"/api/projects/{project_id}/software",
+        user["token"],
+        {"software_name": software_name},
+    )
+    if status == 401:
+        return _stale_session_redirect("/account")
+    return templates.TemplateResponse(
+        "account.html",
+        _account_context(request, user, error=error),
+    )
+
+
+@router.post("/account/projects", response_class=HTMLResponse)
+async def account_project_create(
+    request: Request,
+    name: str = Form(...),
+    is_public: str = Form(default=""),
+):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+    name = name.strip()
+    if not name:
         return templates.TemplateResponse(
             "account.html",
-            _account_context(request, user, error="No project found for your account."),
+            _account_context(request, user, error="Project name is required."),
+            status_code=400,
         )
-    pid = project_body["id"]
-    payload = {"is_public": bool(is_public)}
-    _, error, status = _auth_request("PATCH", f"/api/projects/{pid}", user["token"], payload)
+    _, error, status = _auth_request(
+        "POST",
+        "/api/projects/",
+        user["token"],
+        {"name": name, "is_public": bool(is_public)},
+    )
+    if status == 401:
+        return _stale_session_redirect("/account")
+    return templates.TemplateResponse(
+        "account.html",
+        _account_context(request, user, error=error),
+    )
+
+
+@router.post("/account/projects/{project_id}/visibility", response_class=HTMLResponse)
+async def account_project_visibility(request: Request, project_id: int, is_public: str = Form(default="")):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+    _, error, status = _auth_request(
+        "PATCH",
+        f"/api/projects/{project_id}",
+        user["token"],
+        {"is_public": bool(is_public)},
+    )
+    if status == 401:
+        return _stale_session_redirect("/account")
+    return templates.TemplateResponse(
+        "account.html",
+        _account_context(request, user, error=error),
+    )
+
+
+@router.post("/account/projects/{project_id}/rename", response_class=HTMLResponse)
+async def account_project_rename(request: Request, project_id: int, name: str = Form(...)):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+    name = name.strip()
+    if not name:
+        return templates.TemplateResponse(
+            "account.html",
+            _account_context(request, user, error="Project name is required."),
+            status_code=400,
+        )
+    _, error, status = _auth_request(
+        "PATCH",
+        f"/api/projects/{project_id}",
+        user["token"],
+        {"name": name},
+    )
+    if status == 401:
+        return _stale_session_redirect("/account")
+    return templates.TemplateResponse(
+        "account.html",
+        _account_context(request, user, error=error),
+    )
+
+
+@router.post("/account/projects/{project_id}/delete", response_class=HTMLResponse)
+async def account_project_delete(request: Request, project_id: int):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+    _, error, status = _auth_request(
+        "DELETE",
+        f"/api/projects/{project_id}",
+        user["token"],
+    )
     if status == 401:
         return _stale_session_redirect("/account")
     return templates.TemplateResponse(

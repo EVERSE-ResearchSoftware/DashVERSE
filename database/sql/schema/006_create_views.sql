@@ -36,8 +36,11 @@ SELECT
   jsonb_array_length(a.payload->'checks') AS total_checks,
   a.created_at,
   COALESCE(a.payload->'creator'->>'name', a.payload->'author'->>'name') AS creator_name,
-  a.payload->'license'->>'@id' AS license_id
-FROM assessment_raw a;
+  a.payload->'license'->>'@id' AS license_id,
+  a.project_id,
+  p.name AS project_name
+FROM assessment_raw a
+LEFT JOIN auth.projects p ON p.id = a.project_id;
 
 CREATE OR REPLACE VIEW checks_detailed AS
 SELECT
@@ -60,11 +63,14 @@ SELECT
   d.name AS dimension_name,
   d.identifier AS dimension_id,
   COALESCE(a.payload->'creator'->>'name', a.payload->'author'->>'name') AS creator_name,
-  check_outcome(check_item) AS outcome
+  check_outcome(check_item) AS outcome,
+  a.project_id,
+  p.name AS project_name
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
 LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
-LEFT JOIN dimensions d ON d.identifier = resolve_dimension_id(i.quality_dimension);
+LEFT JOIN dimensions d ON d.identifier = resolve_dimension_id(i.quality_dimension)
+LEFT JOIN auth.projects p ON p.id = a.project_id;
 
 
 CREATE OR REPLACE VIEW dimension_coverage AS
@@ -313,3 +319,7 @@ SELECT
   med.median_score
 FROM software_quality_scores sqs
 JOIN med USING (dimension_name);
+
+CREATE OR REPLACE VIEW projects AS
+SELECT id, name, owner_user_id, is_public, created_at, updated_at
+FROM auth.projects;

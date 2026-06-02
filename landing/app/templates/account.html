@@ -61,29 +61,104 @@
     </div>
 </section>
 
-{% if project %}
+{% if software and projects %}
 <section class="dashboards" style="margin-bottom: 1.5rem;">
-    <h2>My project</h2>
+    <h2>My software</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Every assessment you submit is grouped under your project. When the project is public, anonymous visitors can see your assessments on Global Overview and Assessments Explorer. When it is private, only you can see them.
+        Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments.
     </p>
-    <div class="dashboard-card" style="text-align: left; max-width: 720px;">
-        <p><strong>Name:</strong> {{ project.name }}</p>
-        <p><strong>Visibility:</strong>
-            {% if project.is_public %}
-            <span style="color: #2f855a;">Public</span>
-            {% else %}
-            <span style="color: #c0392b;">Private</span>
-            {% endif %}
-        </p>
-        <form method="post" action="/account/project/visibility" style="margin-top: 0.75rem;">
-            {% if project.is_public %}
-            <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Make private</button>
-            {% else %}
-            <button type="submit" name="is_public" value="on" class="btn-primary" style="border: 0; cursor: pointer;">Make public</button>
-            {% endif %}
-        </form>
-    </div>
+    <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        <thead style="background: var(--color-light-bg);">
+            <tr>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Assessments</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Project</th>
+                <th style="padding: 0.75rem;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sw in software %}
+            <tr style="border-top: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">{{ sw.software_name }}</td>
+                <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
+                <td colspan="2" style="padding: 0.5rem 0.75rem;">
+                    <form method="post" action="/account/software/assign" style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                        <select name="project_id" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                            {% for p in projects %}
+                            <option value="{{ p.id }}" {% if p.id == sw.project_id %}selected{% endif %}>{{ p.name }}{% if p.is_public %} (public){% else %} (private){% endif %}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Move</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
+{% if projects %}
+<section class="dashboards" style="margin-bottom: 1.5rem;">
+    <h2>My projects</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+        Assessments are grouped by project. Public projects are visible to anonymous viewers on Global Overview and Assessments Explorer. Private projects are visible only to you. You always need at least one project, and a project must be empty before you can delete it.
+    </p>
+    <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        <thead style="background: var(--color-light-bg);">
+            <tr>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Name</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Visibility</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Created</th>
+                <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in projects %}
+            <tr style="border-top: 1px solid #e2e8f0;">
+                <td style="padding: 0.5rem 0.75rem;">
+                    <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.5rem;">
+                        <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;" title="Rename">Rename</button>
+                    </form>
+                </td>
+                <td style="padding: 0.75rem;">
+                    {% if p.is_public %}
+                    <span style="color: #2f855a;">Public</span>
+                    {% else %}
+                    <span style="color: #c0392b;">Private</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
+                <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
+                    <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline;">
+                        {% if p.is_public %}
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Make private</button>
+                        {% else %}
+                        <button type="submit" name="is_public" value="on" class="btn-secondary" style="border: 0; cursor: pointer;">Make public</button>
+                        {% endif %}
+                    </form>
+                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit="return confirm('Delete project {{ p.name }}? This cannot be undone.');">
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="post" action="/account/projects" style="margin-top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
+        <label style="flex: 1; min-width: 200px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">New project name</span>
+            <input name="name" required maxlength="255" placeholder="e.g. data-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.4rem; padding-bottom: 0.5rem;">
+            <input type="checkbox" name="is_public" value="on">
+            <span style="color: var(--color-text-muted);">Public</span>
+        </label>
+        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Create project</button>
+    </form>
 </section>
 {% endif %}
 
@@ -99,6 +174,16 @@
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Token name <span style="font-weight: normal;">(optional)</span></span>
             <input name="token_name" maxlength="100" placeholder="e.g. ci-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
         </label>
+        {% if projects %}
+        <label style="min-width: 200px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Project</span>
+            <select name="project_id" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                {% for p in projects %}
+                <option value="{{ p.id }}">{{ p.name }}{% if p.is_public %} (public){% else %} (private){% endif %}</option>
+                {% endfor %}
+            </select>
+        </label>
+        {% endif %}
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>
     </form>
 
@@ -107,6 +192,7 @@
         <thead style="background: var(--color-light-bg);">
             <tr>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Name</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Project</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Created</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Expires</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Status</th>
@@ -115,8 +201,11 @@
         </thead>
         <tbody>
             {% for token in tokens %}
+            {% set ns = namespace(proj_name=None) %}
+            {% for p in projects %}{% if p.id == token.project_id %}{% set ns.proj_name = p.name %}{% endif %}{% endfor %}
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.75rem;">{{ token.token_name or '(unnamed)' }}</td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ ns.proj_name or '(default)' }}</td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ token.created_at[:10] if token.created_at else '' }}</td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ token.expires_at[:10] if token.expires_at else '' }}</td>
                 <td style="padding: 0.75rem;">

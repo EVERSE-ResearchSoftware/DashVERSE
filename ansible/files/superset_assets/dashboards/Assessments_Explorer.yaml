@@ -560,6 +560,40 @@ metadata:
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
+  - id: NATIVE_FILTER-project
+    name: Project
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: name
+      datasetUuid: 36f136b1-53e0-41c9-9f21-180bdea10683
+    filterType: filter_select
+    chartsInScope:
+    - 200
+    - 201
+    - 202
+    - 203
+    - 204
+    - 205
+    - 206
+    - 207
+    - 208
+    - 209
+    - 210
+    - 211
+    - 212
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
   - id: NATIVE_FILTER-software
     name: Software
     type: NATIVE_FILTER

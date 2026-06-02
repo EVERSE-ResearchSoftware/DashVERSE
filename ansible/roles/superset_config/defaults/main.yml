@@ -73,6 +73,9 @@ datasets:
   - name: dimensions_with_links
     table: dimensions_with_links
     schema: "{{ database_schema }}"
+  - name: projects
+    table: projects
+    schema: "{{ database_schema }}"
 
 dashboards:
   - name: "Global Overview"
