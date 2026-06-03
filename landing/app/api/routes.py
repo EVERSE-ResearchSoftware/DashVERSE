@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException, Query, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+import asyncio
 import os
 import json
 import time
@@ -8,6 +9,8 @@ import logging
 import urllib.parse
 import urllib.request
 import urllib.error
+
+import httpx
 
 from app.core.config import settings
 from app.core.auth import current_user
@@ -665,14 +668,44 @@ def _stale_session_redirect(next_path: str) -> RedirectResponse:
     return response
 
 
-def _account_context(request: Request, user: dict, *, new_token: str | None = None, error: str | None = None):
-    body, list_error, status = _auth_request("GET", "/api/tokens/", user["token"])
-    tokens = (body or {}).get("tokens", []) if isinstance(body, dict) else []
-    project_body, _, _ = _auth_request("GET", "/api/projects/me", user["token"])
-    project = project_body if isinstance(project_body, dict) and project_body.get("id") else None
-    projects_body, _, _ = _auth_request("GET", "/api/projects/", user["token"])
+async def _auth_get_async(client: httpx.AsyncClient, path: str, token: str) -> tuple[dict | list | None, str | None, int]:
+    try:
+        resp = await client.get(
+            f"{settings.auth_service_url.rstrip('/')}{path}",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/json",
+            },
+            timeout=5,
+        )
+    except httpx.RequestError as exc:
+        log.warning("auth-service GET %s failed: %s", path, exc)
+        return None, "Authentication service unavailable. Please try again later.", 0
+    if resp.status_code >= 400:
+        try:
+            body = resp.json()
+            return None, body.get("detail") or f"Request failed ({resp.status_code})", resp.status_code
+        except Exception:
+            return None, f"Request failed ({resp.status_code})", resp.status_code
+    try:
+        return resp.json(), None, resp.status_code
+    except Exception:
+        return {}, None, resp.status_code
+
+
+async def _account_context(request: Request, user: dict, *, new_token: str | None = None, error: str | None = None):
+    token = user["token"]
+    async with httpx.AsyncClient() as client:
+        tokens_r, projects_r, software_r = await asyncio.gather(
+            _auth_get_async(client, "/api/tokens/", token),
+            _auth_get_async(client, "/api/projects/", token),
+            _auth_get_async(client, "/api/projects/me/software", token),
+        )
+    tokens_body, list_error, status = tokens_r
+    tokens = (tokens_body or {}).get("tokens", []) if isinstance(tokens_body, dict) else []
+    projects_body, _, _ = projects_r
     projects = (projects_body or {}).get("projects", []) if isinstance(projects_body, dict) else []
-    software_body, _, _ = _auth_request("GET", "/api/projects/me/software", user["token"])
+    software_body, _, _ = software_r
     software = (software_body or {}).get("software", []) if isinstance(software_body, dict) else []
     return {
         "request": request,
@@ -683,7 +716,6 @@ def _account_context(request: Request, user: dict, *, new_token: str | None = No
         "new_token": new_token,
         "error": error or list_error,
         "list_status": status,
-        "project": project,
         "projects": projects,
         "software": software,
     }
@@ -697,7 +729,7 @@ async def account_page(request: Request):
             url=f"/login?next={urllib.parse.quote('/account', safe='')}",
             status_code=302,
         )
-    ctx = _account_context(request, user)
+    ctx = await _account_context(request, user)
     if ctx["list_status"] == 401:
         return _stale_session_redirect("/account")
     return templates.TemplateResponse("account.html", ctx)
@@ -724,7 +756,7 @@ async def account_token_create(
     new_jwt = (body or {}).get("access_token") if isinstance(body, dict) else None
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, new_token=new_jwt, error=error),
+        await _account_context(request, user, new_token=new_jwt, error=error),
         status_code=201 if new_jwt else 400,
     )
 
@@ -739,7 +771,7 @@ async def account_token_revoke(request: Request, token_id: int):
         return _stale_session_redirect("/account")
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 
@@ -753,7 +785,7 @@ async def account_token_delete(request: Request, token_id: int):
         return _stale_session_redirect("/account")
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 
@@ -776,7 +808,7 @@ async def account_software_assign(
         return _stale_session_redirect("/account")
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 
@@ -793,7 +825,7 @@ async def account_project_create(
     if not name:
         return templates.TemplateResponse(
             "account.html",
-            _account_context(request, user, error="Project name is required."),
+            await _account_context(request, user, error="Project name is required."),
             status_code=400,
         )
     _, error, status = _auth_request(
@@ -808,7 +840,7 @@ async def account_project_create(
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 
@@ -829,7 +861,7 @@ async def account_project_visibility(request: Request, project_id: int, is_publi
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 
@@ -842,7 +874,7 @@ async def account_project_rename(request: Request, project_id: int, name: str = 
     if not name:
         return templates.TemplateResponse(
             "account.html",
-            _account_context(request, user, error="Project name is required."),
+            await _account_context(request, user, error="Project name is required."),
             status_code=400,
         )
     _, error, status = _auth_request(
@@ -857,7 +889,7 @@ async def account_project_rename(request: Request, project_id: int, name: str = 
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 
@@ -877,7 +909,7 @@ async def account_project_delete(request: Request, project_id: int):
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
     return templates.TemplateResponse(
         "account.html",
-        _account_context(request, user, error=error),
+        await _account_context(request, user, error=error),
     )
 
 

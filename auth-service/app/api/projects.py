@@ -18,6 +18,8 @@ from app.schemas.project import (
 
 router = APIRouter(prefix="/api/projects", tags=["Projects"])
 
+MAX_PROJECTS_PER_USER = 50
+
 
 def _owned_project(db: Session, user: User, project_id: int) -> Project:
     project = (
@@ -80,6 +82,16 @@ def create_project(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> ProjectResponse:
+    count = (
+        db.query(Project)
+        .filter(Project.owner_user_id == current_user.id)
+        .count()
+    )
+    if count >= MAX_PROJECTS_PER_USER:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Project limit reached ({MAX_PROJECTS_PER_USER}). Delete an existing project first.",
+        )
     project = Project(
         name=payload.name,
         owner_user_id=current_user.id,

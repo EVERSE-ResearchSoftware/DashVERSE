@@ -18,6 +18,8 @@ from app.schemas.token import (
 
 router = APIRouter(prefix="/api/tokens", tags=["Tokens"])
 
+MAX_ACTIVE_API_TOKENS = 20
+
 
 @router.post(
     "/",
@@ -30,6 +32,21 @@ def generate_token(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> TokenWithJWT:
+    active = (
+        db.query(Token)
+        .filter(
+            Token.user_id == current_user.id,
+            Token.token_type == "api",
+            Token.is_revoked == False,  # noqa: E712 - sqlalchemy needs ==
+        )
+        .count()
+    )
+    if active >= MAX_ACTIVE_API_TOKENS:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"You already have {MAX_ACTIVE_API_TOKENS} active tokens. Revoke one before issuing another.",
+        )
+
     project: Project | None = None
     if token_data.project_id is not None:
         project = (
