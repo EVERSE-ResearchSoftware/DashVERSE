@@ -740,6 +740,7 @@ async def account_token_create(
     request: Request,
     token_name: str = Form(default=""),
     project_id: str = Form(default=""),
+    ttl_days: str = Form(default=""),
 ):
     user = current_user(request)
     if not user:
@@ -748,6 +749,11 @@ async def account_token_create(
     if project_id.strip():
         try:
             payload["project_id"] = int(project_id)
+        except ValueError:
+            pass
+    if ttl_days.strip():
+        try:
+            payload["ttl_days"] = int(ttl_days)
         except ValueError:
             pass
     body, error, status = _auth_request("POST", "/api/tokens/", user["token"], payload)

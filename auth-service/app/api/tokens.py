@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -78,12 +80,16 @@ def generate_token(
 
     project_id = project.id
 
+    expires_delta = (
+        timedelta(days=token_data.ttl_days) if token_data.ttl_days else None
+    )
     jwt_token, jti, expires_at = create_access_token(
         user_id=current_user.id,
         username=current_user.username,
         is_superuser=current_user.is_superuser,
         default_project_id=project_id,
         project_id=project_id,
+        expires_delta=expires_delta,
     )
 
     token_record = Token(

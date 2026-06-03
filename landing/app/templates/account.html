@@ -161,7 +161,7 @@
                         <button type="submit" name="is_public" value="on" class="btn-secondary" style="border: 0; cursor: pointer;">Make public</button>
                         {% endif %}
                     </form>
-                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit="return confirm('Delete project ' + {{ p.name|tojson }} + '?{% if sw_in_project %} {{ sw_in_project|length }} software will become unassigned and only you will be able to see their assessments until you move them to another project.{% endif %} This cannot be undone.');">
+                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit='return confirm("Delete project " + {{ p.name|tojson }} + "?{% if sw_in_project %} {{ sw_in_project|length }} software will become unassigned and only you will be able to see their assessments until you move them to another project.{% endif %} This cannot be undone.");'>
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
                     </form>
                 </td>
@@ -205,6 +205,15 @@
                 {% for p in projects %}
                 <option value="{{ p.id }}">{{ p.name }}{% if p.is_public %} (public){% else %} (private){% endif %}</option>
                 {% endfor %}
+            </select>
+        </label>
+        <label style="min-width: 140px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Lifetime</span>
+            <select name="ttl_days" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                <option value="30">30 days</option>
+                <option value="90" selected>90 days</option>
+                <option value="180">180 days</option>
+                <option value="365">365 days</option>
             </select>
         </label>
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>

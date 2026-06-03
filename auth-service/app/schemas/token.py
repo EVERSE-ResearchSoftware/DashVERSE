@@ -14,6 +14,12 @@ class TokenCreate(TokenBase):
         None,
         description="Project to scope this token to. Assessments submitted with the token go to this project. Defaults to the caller's primary project when omitted.",
     )
+    ttl_days: Optional[int] = Field(
+        None,
+        ge=1,
+        le=365,
+        description="Token lifetime in days (1-365). Defaults to the system-wide JWT expiry when omitted.",
+    )
 
 
 class TokenResponse(BaseModel):

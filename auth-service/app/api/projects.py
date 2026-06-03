@@ -132,21 +132,24 @@ def delete_project(
 ) -> dict:
     project = _owned_project(db, current_user, project_id)
 
-    result = db.execute(
-        text(
-            "UPDATE api.assessment_raw SET project_id = NULL "
-            "WHERE project_id = :pid AND created_by = :uid"
-        ),
-        {"pid": project_id, "uid": current_user.id},
-    )
-    unassigned = result.rowcount or 0
+    assigned = db.execute(
+        text("SELECT COUNT(*) FROM api.assessment_raw WHERE project_id = :pid"),
+        {"pid": project_id},
+    ).scalar() or 0
+    if assigned:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"Cannot delete project: {assigned} assessment(s) still assigned. "
+                "Move or delete the software first."
+            ),
+        )
 
     db.delete(project)
     db.commit()
     return {
         "message": "Project deleted",
         "project_id": project_id,
-        "unassigned_assessments": unassigned,
     }
 
 
@@ -222,4 +225,32 @@ def assign_software(
         "project_id": project_id,
         "software_name": payload.software_name,
         "rows_updated": result.rowcount,
+    }
+
+
+@router.post(
+    "/me/software/delete",
+    status_code=status.HTTP_200_OK,
+    summary="Delete every assessment of one software authored by the caller",
+)
+def delete_software_assessments(
+    payload: AssignSoftwareRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    result = db.execute(
+        text(
+            """
+            DELETE FROM api.assessment_raw
+            WHERE created_by = :uid
+              AND payload->'assessedSoftware'->>'name' = :sw
+            """
+        ),
+        {"uid": current_user.id, "sw": payload.software_name},
+    )
+    db.commit()
+    return {
+        "message": "Assessments deleted",
+        "software_name": payload.software_name,
+        "rows_deleted": result.rowcount,
     }
