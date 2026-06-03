@@ -96,6 +96,130 @@ def _filter_state_key(dashboard_slug: str, filter_state: dict) -> str | None:
         log.warning("filter_state POST failed: %s", exc)
         return None
 
+_embedded_uuid_cache: dict[str, str] = {}
+_dataset_id_cache: dict[str, int] = {}
+
+
+def _dataset_id_by_name(name: str, token: str) -> int | None:
+    if name in _dataset_id_cache:
+        return _dataset_id_cache[name]
+    try:
+        q = urllib.parse.quote(
+            f"(filters:!((col:table_name,opr:eq,value:{name})))",
+            safe="",
+        )
+        req = urllib.request.Request(
+            f"{settings.superset_url}/api/v1/dataset/?q={q}",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            body = json.loads(resp.read())
+        result = body.get("result") or []
+        if result:
+            did = result[0]["id"]
+            _dataset_id_cache[name] = did
+            return did
+    except Exception as exc:
+        log.warning("dataset id lookup failed for %s: %s", name, exc)
+    return None
+
+
+def _embedded_dashboard_uuid(slug: str) -> str | None:
+    if slug in _embedded_uuid_cache:
+        return _embedded_uuid_cache[slug]
+    token = _superset_token()
+    if not token:
+        return None
+    did = _dashboard_id(slug, token)
+    if did is None:
+        return None
+    try:
+        req = urllib.request.Request(
+            f"{settings.superset_url}/api/v1/dashboard/{did}/embedded",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            body = json.loads(resp.read())
+        u = body.get("result", {}).get("uuid")
+        if u:
+            _embedded_uuid_cache[slug] = u
+            return u
+    except Exception as exc:
+        log.warning("embedded uuid lookup failed for %s: %s", slug, exc)
+    return None
+
+
+def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
+    token = _superset_token()
+    if not token:
+        return None
+    embedded_uuid = _embedded_dashboard_uuid(slug)
+    if not embedded_uuid:
+        return None
+
+    uid = None
+    if user:
+        try:
+            uid = int(user.get("sub")) if user.get("sub") is not None else None
+        except (TypeError, ValueError):
+            uid = None
+
+    if uid is not None:
+        project_visibility = f"(is_public OR owner_user_id = {uid})"
+    else:
+        project_visibility = "is_public"
+
+    assess_clause = (
+        f"project_id IN (SELECT id FROM auth.projects WHERE {project_visibility})"
+    )
+
+    proj_clause = project_visibility
+
+    rls: list[dict] = []
+    for name in (
+        "assessments_detailed", "checks_detailed", "software",
+        "dimension_coverage", "software_quality_scores",
+        "assessment_trends", "dimension_trend", "software_history",
+        "tool_reliability", "compliance_status", "common_issues",
+        "per_software_issues", "tools_summary", "tools_coverage",
+        "software_vs_median",
+    ):
+        did = _dataset_id_by_name(name, token)
+        if did is not None:
+            rls.append({"dataset": did, "clause": assess_clause})
+
+    proj_did = _dataset_id_by_name("projects", token)
+    if proj_did is not None:
+        rls.append({"dataset": proj_did, "clause": proj_clause})
+
+    payload = {
+        "user": {
+            "username": (user or {}).get("username") or "anonymous",
+            "first_name": "",
+            "last_name": "",
+        },
+        "resources": [{"type": "dashboard", "id": embedded_uuid}],
+        "rls": rls,
+    }
+
+    try:
+        req = urllib.request.Request(
+            f"{settings.superset_url}/api/v1/security/guest_token/",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {token}",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            body = json.loads(resp.read())
+        return body.get("token")
+    except Exception as exc:
+        log.warning("Superset guest_token mint failed: %s", exc)
+        return None
+
+
 def _superset_invalidate_datasets(uuids: list[str]) -> None:
     if not uuids:
         return
@@ -321,11 +445,22 @@ async def dashboard(request: Request, slug: str):
             "slug": slug,
             "dashboard": dashboard_info,
             "embed_url": embed_url,
+            "embedded_uuid": _embedded_dashboard_uuid(slug),
             "superset_external_url": superset_base,
             "dashboards": DASHBOARDS,
             "current_dashboard": slug,
         }
     )
+
+
+@router.post("/superset/guest-token/{slug}")
+async def superset_guest_token(request: Request, slug: str):
+    if slug not in DASHBOARDS:
+        raise HTTPException(status_code=404, detail="Unknown dashboard")
+    token = _superset_guest_token_for(slug, current_user(request))
+    if not token:
+        raise HTTPException(status_code=502, detail="Could not mint guest token")
+    return {"token": token}
 
 
 def _safe_next(value: str | None) -> str:

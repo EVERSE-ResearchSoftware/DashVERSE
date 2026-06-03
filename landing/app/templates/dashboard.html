@@ -6,6 +6,9 @@
 
 {% block content %}
 <section class="dashboard-embed">
+    {% if embedded_uuid %}
+    <div id="dashboard-mount" data-slug="{{ slug }}" data-embedded-uuid="{{ embedded_uuid }}" data-superset-url="{{ superset_external_url }}"></div>
+    {% else %}
     <iframe
         id="dashboard-frame"
         data-slug="{{ slug }}"
@@ -17,8 +20,55 @@
         allowfullscreen
         title="{{ dashboard.title }} Dashboard"
     ></iframe>
+    {% endif %}
 </section>
 
+{% if embedded_uuid %}
+<script src="https://unpkg.com/@superset-ui/embedded-sdk@0.1.0-alpha.10/bundle/index.js"></script>
+<script>
+(function() {
+    var mount = document.getElementById('dashboard-mount');
+    var supersetUrl = mount.getAttribute('data-superset-url');
+    if (!supersetUrl) {
+        var host = window.location.hostname;
+        var protocol = window.location.protocol;
+        supersetUrl = protocol + '//' + host + ':8088';
+    }
+    var embeddedUuid = mount.getAttribute('data-embedded-uuid');
+
+    supersetEmbeddedSdk.embedDashboard({
+        id: embeddedUuid,
+        supersetDomain: supersetUrl,
+        mountPoint: mount,
+        // landing mints a fresh, short-lived guest token per request. the
+        // sdk calls this each time it needs to authenticate the iframe.
+        fetchGuestToken: function() {
+            return fetch('/superset/guest-token/' + mount.getAttribute('data-slug'), {
+                method: 'POST',
+                credentials: 'same-origin',
+            }).then(function(r) { return r.json(); })
+              .then(function(j) { return j.token; });
+        },
+        dashboardUiConfig: {
+            hideTitle: true,
+            hideChartControls: false,
+            filters: { expanded: true },
+        },
+    });
+})();
+</script>
+<style>
+#dashboard-mount,
+#dashboard-mount iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    flex: 1;
+    min-height: 0;
+    display: block;
+}
+</style>
+{% else %}
 <script>
 (function() {
     var iframe = document.getElementById('dashboard-frame');
@@ -28,7 +78,6 @@
     var nativeFilters = iframe.getAttribute('data-native-filters');
 
     if (!supersetUrl) {
-        // fallback for local development
         var supersetPort = iframe.getAttribute('data-superset-port');
         var host = window.location.hostname;
         var protocol = window.location.protocol;
@@ -37,15 +86,12 @@
 
     var url = supersetUrl + '/superset/dashboard/' + slug + '/?standalone=2';
     if (nativeFiltersKey) {
-        // permalink-style key: Superset treats it as an APPLIED filter so the
-        // dashboard renders pre-filtered without a manual "Apply" click.
         url += '&native_filters_key=' + nativeFiltersKey;
     } else if (nativeFilters) {
-        // fallback when the permalink couldn't be created: filter is loaded
-        // but pending; user must click "Apply Filters".
         url += '&native_filters=' + nativeFilters;
     }
     iframe.src = url;
 })();
 </script>
+{% endif %}
 {% endblock %}

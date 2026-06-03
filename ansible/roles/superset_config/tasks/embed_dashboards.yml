@@ -1,0 +1,18 @@
+---
+
+- name: Mark dashboards embeddable
+  uri:
+    url: "{{ superset_api }}/dashboard/{{ item }}/embedded"
+    method: POST
+    headers:
+      Cookie: "{{ session_cookie }}"
+      X-CSRFToken: "{{ csrf_token }}"
+      Referer: "{{ superset_url }}/"
+      Content-Type: application/json
+    body_format: json
+    body:
+      allowed_domains: []
+    status_code: [200, 201]
+  loop: "{{ embeddable_dashboard_slugs }}"
+  loop_control:
+    label: "{{ item }}"

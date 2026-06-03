@@ -71,7 +71,9 @@ SELECT
   p.name AS project_name
 FROM assessment_raw a
 CROSS JOIN LATERAL jsonb_array_elements(a.payload->'checks') AS check_item
-LEFT JOIN indicators i ON split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
+LEFT JOIN indicators i ON
+     split_part(check_item->'assessesIndicator'->>'@id', '/', -1) = i.identifier
+  OR ('software_has_' || split_part(check_item->'assessesIndicator'->>'@id', '/', -1)) = i.identifier
 LEFT JOIN dimensions d ON d.identifier = resolve_dimension_id(i.quality_dimension)
 LEFT JOIN auth.projects p ON p.id = a.project_id;
 

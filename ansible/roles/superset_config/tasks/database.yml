@@ -31,9 +31,6 @@
     superset_db_extra:
       schemas_allowed_for_file_upload:
         - "{{ database_schema }}"
-      engine_params:
-        connect_args:
-          options: "-c role=web_anon"
 
 - name: Create database connection
   uri:

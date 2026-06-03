@@ -139,6 +139,10 @@ dashboards:
       Highlights common issues, skill gaps, and areas where training can have the most impact.
       See: https://everse.software/RSQKit/trainer
 
+embeddable_dashboard_slugs:
+  - assessments
+  - global
+
 dashboard_role_keys:
   - policy_maker
   - principal_investigator
