@@ -161,7 +161,7 @@
                         <button type="submit" name="is_public" value="on" class="btn-secondary" style="border: 0; cursor: pointer;">Make public</button>
                         {% endif %}
                     </form>
-                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit="return confirm('Delete project &quot;{{ p.name }}&quot;?{% if sw_in_project %} {{ sw_in_project|length }} software will become unassigned and only you will be able to see their assessments until you move them to another project.{% endif %} This cannot be undone.');">
+                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit="return confirm('Delete project ' + {{ p.name|tojson }} + '?{% if sw_in_project %} {{ sw_in_project|length }} software will become unassigned and only you will be able to see their assessments until you move them to another project.{% endif %} This cannot be undone.');">
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
                     </form>
                 </td>

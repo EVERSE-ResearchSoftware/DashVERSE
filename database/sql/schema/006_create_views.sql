@@ -7,6 +7,7 @@ SELECT
     a.payload->'assessedSoftware'->>'name'
   ) AS identifier,
   a.payload->'assessedSoftware'->>'name' AS name,
+  a.payload->'assessedSoftware'->>'name' AS software_name,
   MAX(a.payload->'assessedSoftware'->>'softwareVersion') AS latest_version,
   MAX(a.payload->'assessedSoftware'->>'url') AS url,
   a.payload->'assessedSoftware'->'schema:identifier'->>'@id' AS doi,
@@ -25,7 +26,7 @@ LEFT JOIN software_metadata m
        a.payload->'assessedSoftware'->>'name'
      )
 LEFT JOIN auth.projects p ON p.id = a.project_id
-GROUP BY 1, 2, 5, m.programming_language, m.description, m.homepage_url, a.project_id, p.name;
+GROUP BY identifier, name, software_name, doi, m.programming_language, m.description, m.homepage_url, a.project_id, p.name;
 
 CREATE OR REPLACE VIEW assessments_detailed AS
 SELECT
@@ -253,6 +254,7 @@ WHERE u.dimension_slug IS NOT NULL AND u.dimension_slug <> '';
 CREATE OR REPLACE VIEW dimensions_with_links AS
 SELECT
   d.*,
+  d.name AS dimension_name,
   'https://everse.software/RSQKit/' || d.identifier AS rsqkit_url
 FROM dimensions d;
 
@@ -353,7 +355,14 @@ JOIN med
   AND med.project_id IS NOT DISTINCT FROM sqs.project_id;
 
 CREATE OR REPLACE VIEW projects AS
-SELECT id, name, owner_user_id, is_public, created_at, updated_at
+SELECT
+  id,
+  name,
+  name AS project_name,
+  owner_user_id,
+  is_public,
+  created_at,
+  updated_at
 FROM auth.projects;
 
 ALTER VIEW assessments_detailed SET (security_invoker = true);

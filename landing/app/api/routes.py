@@ -453,6 +453,12 @@ async def dashboard(request: Request, slug: str):
     )
 
 
+@router.post("/superset/refresh")
+async def superset_refresh(request: Request):
+    _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
+    return {"invalidated": len(_PROJECT_AWARE_DATASET_UUIDS)}
+
+
 @router.post("/superset/guest-token/{slug}")
 async def superset_guest_token(request: Request, slug: str):
     if slug not in DASHBOARDS:

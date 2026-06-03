@@ -153,7 +153,7 @@ def list_my_software(
             SELECT
                 a.payload->'assessedSoftware'->>'name' AS software_name,
                 COUNT(*) AS assessment_count,
-                MAX(a.project_id) AS project_id
+                mode() WITHIN GROUP (ORDER BY a.project_id) AS project_id
             FROM api.assessment_raw a
             WHERE a.created_by = :uid
               AND a.payload->'assessedSoftware'->>'name' IS NOT NULL

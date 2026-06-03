@@ -569,7 +569,7 @@ metadata:
       - ROOT_ID
     targets:
     - column:
-        name: name
+        name: project_name
       datasetUuid: 36f136b1-53e0-41c9-9f21-180bdea10683
     filterType: filter_select
     chartsInScope:
@@ -603,7 +603,7 @@ metadata:
       - ROOT_ID
     targets:
     - column:
-        name: name
+        name: software_name
       datasetUuid: 9c2d2e46-92de-4bd1-be23-c3081acd89b5
     filterType: filter_select
     chartsInScope: &id001
@@ -637,8 +637,8 @@ metadata:
       - ROOT_ID
     targets:
     - column:
-        name: name
-      datasetUuid: 164f117c-f8f7-42df-88d4-445b1159d457
+        name: dimension_name
+      datasetUuid: 354c08ce-1f0c-447f-b414-7c8d1885a022
     filterType: filter_select
     chartsInScope: *id001
     controlValues:
