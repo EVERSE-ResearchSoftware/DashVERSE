@@ -16,16 +16,6 @@
 <section class="dashboards">
     <h2>Available Dashboards</h2>
     <div class="dashboard-grid">
-        {% if user %}
-        <div class="dashboard-card">
-            <h3>My Assessments</h3>
-            <p class="description">The Assessments dashboard scoped to your projects. Filterable like the public view.</p>
-            <p class="audience"><strong>For:</strong> {{ user.username or 'you' }}</p>
-            <div class="card-links">
-                <a href="/me/assessments" class="btn-primary">View My Assessments</a>
-            </div>
-        </div>
-        {% endif %}
         {% for slug, dash in dashboards.items() %}
         <div class="dashboard-card">
             <h3>{{ dash.title }}</h3>
