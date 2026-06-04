@@ -68,6 +68,12 @@ configOverrides:
         # render advanced_data_type: url columns as clickable links in tables
         "ENABLE_ADVANCED_DATA_TYPES": True
     }
+  no_data_cache: |
+    # Skip the chart-data cache so dashboard edits show up on the next
+    # page load without waiting for /superset/refresh. Filter-state and
+    # explore-form caches stay on because the native_filters_key
+    # permalink path uses them.
+    DATA_CACHE_CONFIG = {"CACHE_TYPE": "NullCache"}
 
 extraEnv:
   DB_HOST: "${db_host}"

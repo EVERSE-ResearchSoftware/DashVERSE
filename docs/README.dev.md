@@ -199,6 +199,49 @@ Prerequisites:
 
 The Superset admin password is automatically retrieved from Kubernetes secrets during setup.
 
+### Chart-Data Cache
+
+The Superset chart-data cache is **disabled by default in local deployments**
+via `DATA_CACHE_CONFIG = {"CACHE_TYPE": "NullCache"}` in
+`terraform/modules/superset/values.yaml.tpl` (under `configOverrides.no_data_cache`).
+Every chart query hits Postgres directly, so any change you make -- editing a
+chart YAML, re-importing dashboards, pushing fresh assessments -- appears on the
+next page reload without needing to bust anything manually.
+
+To re-enable caching (closer to production behaviour), remove or comment out
+the `no_data_cache` block in the values template and apply just the Superset
+module:
+
+```shell
+tofu apply -target=module.superset -var-file=environments/local.tfvars
+```
+
+Then restart the Superset pod so the new config is loaded:
+
+```shell
+kubectl rollout restart deployment/superset -n dashverse
+```
+
+With caching back on, chart responses are served from Redis until the dataset's
+`cache_timeout` expires (or the global default takes over). To bust the cache
+on demand:
+
+- `POST http://localhost:8080/superset/refresh` -- invalidates every
+  project-aware dataset in one call (this is what
+  `landing/app/api/routes.py:_superset_invalidate_datasets` calls after a
+  project rename, visibility flip, or bulk data load).
+- Superset's own `POST /api/v1/cachekey/invalidate` endpoint for a custom
+  dataset UID list.
+
+Why disable it during development: edits to chart YAMLs propagate immediately,
+and freshly pushed assessments are visible without waiting for the dataset
+cache to expire. Why not in production: every chart load hits Postgres, which
+is fine for one developer but multiplies database load under concurrent users.
+
+Filter-state and explore-form caches stay enabled either way -- the
+`?native_filters_key=...` permalink workflow used by `?software=<id>` and
+`/me/assessments` depends on those.
+
 ## Documentation
 
 - `docs/developer/codebase.md` - the entry point for new contributors: how the pieces fit, where things live, and the per-component rationale.

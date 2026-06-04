@@ -46,6 +46,7 @@ position:
     - ROW-8
     - ROW-9
     - ROW-10
+    - ROW-11
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -356,6 +357,30 @@ position:
     - GRID_ID
     children:
     - CHART-15
+  CHART-16:
+    id: CHART-16
+    meta:
+      width: 12
+      height: 65
+      chartId: 215
+      sliceName: Technical Debt Heatmap
+      uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-11
+    children: []
+  ROW-11:
+    id: ROW-11
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-16
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -375,6 +400,7 @@ metadata:
     '211': true
     '213': true
     '214': true
+    '215': true
   refresh_frequency: 0
   chart_configuration:
     '200':
@@ -395,6 +421,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '201':
       id: 201
       crossFilters:
@@ -413,6 +440,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '202':
       id: 202
       crossFilters:
@@ -431,6 +459,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '203':
       id: 203
       crossFilters:
@@ -449,6 +478,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '204':
       id: 204
       crossFilters:
@@ -467,6 +497,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '205':
       id: 205
       crossFilters:
@@ -485,6 +516,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '206':
       id: 206
       crossFilters:
@@ -503,6 +535,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '207':
       id: 207
       crossFilters:
@@ -521,6 +554,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '208':
       id: 208
       crossFilters:
@@ -539,6 +573,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '209':
       id: 209
       crossFilters:
@@ -557,6 +592,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '210':
       id: 210
       crossFilters:
@@ -575,6 +611,7 @@ metadata:
         - 211
         - 213
         - 214
+        - 215
     '211':
       id: 211
       crossFilters:
@@ -593,6 +630,7 @@ metadata:
         - 210
         - 213
         - 214
+        - 215
     '213':
       id: 213
       crossFilters:
@@ -611,6 +649,7 @@ metadata:
         - 210
         - 211
         - 214
+        - 215
     '214':
       id: 214
       crossFilters:
@@ -629,6 +668,26 @@ metadata:
         - 210
         - 211
         - 213
+        - 215
+    '215':
+      id: 215
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
+        - 214
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -659,6 +718,7 @@ metadata:
     - 211
     - 213
     - 214
+    - 215
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -694,6 +754,7 @@ metadata:
     - 211
     - 213
     - 214
+    - 215
     controlValues:
       multiSelect: true
       inverseSelection: false

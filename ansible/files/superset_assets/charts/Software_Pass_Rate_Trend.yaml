@@ -16,6 +16,9 @@ params:
   show_legend: false
   rich_tooltip: true
   y_axis_format: '.1f'
+  zoomable: true
+  show_extra_controls: true
+  time_range: No filter
 query_context: null
 cache_timeout: null
 uuid: b5cf65e0-46fb-450c-9f8a-ed9c0289f19a
