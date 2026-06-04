@@ -193,7 +193,7 @@ position:
     id: CHART-8
     meta:
       width: 12
-      height: 65
+      height: 120
       chartId: 207
       sliceName: Compliance Heatmap
       uuid: 473de026-f3b0-4b95-824d-f45eef9fb677
@@ -361,7 +361,7 @@ position:
     id: CHART-16
     meta:
       width: 12
-      height: 65
+      height: 120
       chartId: 215
       sliceName: Technical Debt Heatmap
       uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed

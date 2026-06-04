@@ -1,19 +1,9 @@
 dashboard_title: Overview
-description: null
-css: "/* Friendlier empty-state styling (matches other dashboards) */\n.chart-container\
-  \ .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n\
-  .chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n\
-  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
-  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
-  \ #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n\
-  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
-  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
-  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
-  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
-  \ italic;\n    font-weight: normal;\n}\n"
+description:
+css: "/* Friendlier empty-state styling (matches other dashboards) */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n"
 slug: global
-certified_by: null
-certification_details: null
+certified_by:
+certification_details:
 published: true
 uuid: 0dd60c19-2aac-4cfc-b650-fa85970101be
 position:
@@ -32,11 +22,7 @@ position:
     meta:
       width: 12
       height: 8
-      code: '**Global Overview.** Portfolio-wide quality assessment activity + the
-        EVERSE quality model catalog. Aggregate counts, pass rates, and coverage statistics.
-        Anonymous-safe: no software or project names are exposed. Use the filters
-        above to narrow by dimension, date, or tool. See [RSQKit](https://everse.software/RSQKit)
-        for context.'
+      code: '**Global Overview.** Portfolio-wide quality assessment activity + the EVERSE quality model catalog. Aggregate counts, pass rates, and coverage statistics. Anonymous-safe: no software or project names are exposed. Use the filters above to narrow by dimension, date, or tool. See [RSQKit](https://everse.software/RSQKit) for context.'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -62,6 +48,7 @@ position:
     - ROW-10
     - ROW-11
     - ROW-12
+    - ROW-13
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -480,6 +467,30 @@ position:
     - GRID_ID
     children:
     - CHART-20
+  CHART-21:
+    id: CHART-21
+    meta:
+      width: 12
+      height: 65
+      chartId: 120
+      sliceName: Checking Tools Usage
+      uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-13
+    children: []
+  ROW-13:
+    id: ROW-13
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-21
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -505,6 +516,7 @@ metadata:
     '117': true
     '118': true
     '119': true
+    '120': true
   refresh_frequency: 0
   chart_configuration:
     '100':
@@ -531,6 +543,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '101':
       id: 101
       crossFilters:
@@ -555,6 +568,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '102':
       id: 102
       crossFilters:
@@ -579,6 +593,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '103':
       id: 103
       crossFilters:
@@ -603,6 +618,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '104':
       id: 104
       crossFilters:
@@ -627,6 +643,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '105':
       id: 105
       crossFilters:
@@ -651,6 +668,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '106':
       id: 106
       crossFilters:
@@ -675,6 +693,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '107':
       id: 107
       crossFilters:
@@ -699,6 +718,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '108':
       id: 108
       crossFilters:
@@ -723,6 +743,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '109':
       id: 109
       crossFilters:
@@ -747,6 +768,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '110':
       id: 110
       crossFilters:
@@ -771,6 +793,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '111':
       id: 111
       crossFilters:
@@ -795,6 +818,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '112':
       id: 112
       crossFilters:
@@ -819,6 +843,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '113':
       id: 113
       crossFilters:
@@ -843,6 +868,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '114':
       id: 114
       crossFilters:
@@ -867,6 +893,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '115':
       id: 115
       crossFilters:
@@ -891,6 +918,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '116':
       id: 116
       crossFilters:
@@ -915,6 +943,7 @@ metadata:
         - 117
         - 118
         - 119
+        - 120
     '117':
       id: 117
       crossFilters:
@@ -939,6 +968,7 @@ metadata:
         - 116
         - 118
         - 119
+        - 120
     '118':
       id: 118
       crossFilters:
@@ -963,6 +993,7 @@ metadata:
         - 116
         - 117
         - 119
+        - 120
     '119':
       id: 119
       crossFilters:
@@ -987,6 +1018,32 @@ metadata:
         - 116
         - 117
         - 118
+        - 120
+    '120':
+      id: 120
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 100
+        - 101
+        - 102
+        - 103
+        - 104
+        - 105
+        - 106
+        - 107
+        - 108
+        - 109
+        - 110
+        - 111
+        - 112
+        - 113
+        - 114
+        - 115
+        - 116
+        - 117
+        - 118
+        - 119
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -1023,6 +1080,7 @@ metadata:
     - 117
     - 118
     - 119
+    - 120
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -1030,7 +1088,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
   - id: NATIVE_FILTER-date
     name: Assessment date
     type: NATIVE_FILTER
@@ -1048,7 +1106,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
   - id: NATIVE_FILTER-tool
     name: Checking tool
     type: NATIVE_FILTER
@@ -1069,5 +1127,5 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
 version: 1.0.0
