@@ -818,6 +818,30 @@ async def account_software_assign(
     )
 
 
+@router.post("/account/software/delete", response_class=HTMLResponse)
+async def account_software_delete(
+    request: Request,
+    software_name: str = Form(...),
+):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+    _, error, status = _auth_request(
+        "POST",
+        "/api/projects/me/software/delete",
+        user["token"],
+        {"software_name": software_name},
+    )
+    if status == 401:
+        return _stale_session_redirect("/account")
+    if not error:
+        _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
+    return templates.TemplateResponse(
+        "account.html",
+        await _account_context(request, user, error=error),
+    )
+
+
 @router.post("/account/projects", response_class=HTMLResponse)
 async def account_project_create(
     request: Request,

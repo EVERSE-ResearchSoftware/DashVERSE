@@ -73,7 +73,7 @@
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Assessments</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Project</th>
-                <th style="padding: 0.75rem;"></th>
+                <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -81,7 +81,7 @@
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.75rem;">{{ sw.software_name }}</td>
                 <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
-                <td colspan="2" style="padding: 0.5rem 0.75rem;">
+                <td style="padding: 0.5rem 0.75rem;">
                     {% if projects | length > 1 %}
                     <form method="post" action="/account/software/assign" style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="hidden" name="software_name" value="{{ sw.software_name }}">
@@ -104,6 +104,12 @@
                         {% endif %}
                     </span>
                     {% endif %}
+                </td>
+                <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
+                    <form method="post" action="/account/software/delete" style="display: inline;" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
+                        <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete all</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
@@ -161,9 +167,13 @@
                         <button type="submit" name="is_public" value="on" class="btn-secondary" style="border: 0; cursor: pointer;">Make public</button>
                         {% endif %}
                     </form>
-                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit='return confirm("Delete project " + {{ p.name|tojson }} + "?{% if sw_in_project %} {{ sw_in_project|length }} software will become unassigned and only you will be able to see their assessments until you move them to another project.{% endif %} This cannot be undone.");'>
+                    {% if sw_in_project %}
+                    <button type="button" class="btn-secondary" style="border: 0; cursor: not-allowed; opacity: 0.5;" title="Cannot delete: {{ sw_in_project|length }} software still assigned. Move or delete them first." disabled>Delete</button>
+                    {% else %}
+                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit='return confirm("Delete project " + {{ p.name|tojson }} + "? This cannot be undone.");'>
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
                     </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

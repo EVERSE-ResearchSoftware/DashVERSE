@@ -1,19 +1,9 @@
 dashboard_title: Assessments
-description: null
-css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container\
-  \ .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container\
-  \ .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n\
-  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
-  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
-  \ #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n\
-  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
-  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
-  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
-  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
-  \ italic;\n    font-weight: normal;\n}\n"
+description:
+css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n"
 slug: assessments
-certified_by: null
-certification_details: null
+certified_by:
+certification_details:
 published: true
 uuid: 1820539b-3d1e-4eb6-ae9a-ce9b7ac2be64
 position:
@@ -32,12 +22,7 @@ position:
     meta:
       width: 12
       height: 8
-      code: "**Assessments Explorer.** Single filter-driven dashboard for exploring\
-        \ assessment data at any scope. With no filters set you see everything you\
-        \ can access; pick a Software to drill into one project, a Dimension to focus\
-        \ on one quality area, an Outcome to narrow to passes or failures, or a Date\
-        \ range to scope by time. Some charts (vs Portfolio Median, Compliance Heatmap)\
-        \ only render under specific filter combinations \u2014 that's intentional."
+      code: "**Assessments Explorer.** Single filter-driven dashboard for exploring assessment data at any scope. With no filters set you see everything you can access; pick a Software to drill into one project, a Dimension to focus on one quality area, an Outcome to narrow to passes or failures, or a Date range to scope by time. Some charts (vs Portfolio Median, Compliance Heatmap) only render under specific filter combinations -- that's intentional."
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -57,6 +42,10 @@ position:
     - ROW-4
     - ROW-5
     - ROW-6
+    - ROW-7
+    - ROW-8
+    - ROW-9
+    - ROW-10
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -202,7 +191,7 @@ position:
   CHART-8:
     id: CHART-8
     meta:
-      width: 6
+      width: 12
       height: 65
       chartId: 207
       sliceName: Compliance Heatmap
@@ -216,7 +205,7 @@ position:
   CHART-9:
     id: CHART-9
     meta:
-      width: 6
+      width: 12
       height: 65
       chartId: 208
       sliceName: Top Performing Software
@@ -225,7 +214,7 @@ position:
     parents:
     - ROOT_ID
     - GRID_ID
-    - ROW-4
+    - ROW-5
     children: []
   ROW-4:
     id: ROW-4
@@ -237,11 +226,10 @@ position:
     - GRID_ID
     children:
     - CHART-8
-    - CHART-9
   CHART-10:
     id: CHART-10
     meta:
-      width: 6
+      width: 12
       height: 65
       chartId: 209
       sliceName: Improvement Targets
@@ -250,12 +238,12 @@ position:
     parents:
     - ROOT_ID
     - GRID_ID
-    - ROW-5
+    - ROW-6
     children: []
   CHART-11:
     id: CHART-11
     meta:
-      width: 6
+      width: 12
       height: 65
       chartId: 210
       sliceName: Failed Checks Detail
@@ -264,7 +252,7 @@ position:
     parents:
     - ROOT_ID
     - GRID_ID
-    - ROW-5
+    - ROW-7
     children: []
   ROW-5:
     id: ROW-5
@@ -275,12 +263,11 @@ position:
     - ROOT_ID
     - GRID_ID
     children:
-    - CHART-10
-    - CHART-11
+    - CHART-9
   CHART-12:
     id: CHART-12
     meta:
-      width: 6
+      width: 12
       height: 65
       chartId: 211
       sliceName: Recent Assessments
@@ -289,21 +276,7 @@ position:
     parents:
     - ROOT_ID
     - GRID_ID
-    - ROW-6
-    children: []
-  CHART-13:
-    id: CHART-13
-    meta:
-      width: 6
-      height: 65
-      chartId: 212
-      sliceName: Checking Tools Usage
-      uuid: a3d1728c-6fb5-4c33-b8b3-da21daee40db
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-6
+    - ROW-8
     children: []
   ROW-6:
     id: ROW-6
@@ -314,8 +287,75 @@ position:
     - ROOT_ID
     - GRID_ID
     children:
+    - CHART-10
+  CHART-14:
+    id: CHART-14
+    meta:
+      width: 12
+      height: 65
+      chartId: 213
+      sliceName: Quality Across Projects
+      uuid: 310ec87c-c999-4001-a628-bc7489f0f52c
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-9
+    children: []
+  CHART-15:
+    id: CHART-15
+    meta:
+      width: 12
+      height: 65
+      chartId: 214
+      sliceName: Software Improvement Targets
+      uuid: 8ef6aaaa-18a6-405e-b394-101f9bf3e6df
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-10
+    children: []
+  ROW-7:
+    id: ROW-7
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-11
+  ROW-8:
+    id: ROW-8
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
     - CHART-12
-    - CHART-13
+  ROW-9:
+    id: ROW-9
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-14
+  ROW-10:
+    id: ROW-10
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-15
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -333,7 +373,8 @@ metadata:
     '209': true
     '210': true
     '211': true
-    '212': true
+    '213': true
+    '214': true
   refresh_frequency: 0
   chart_configuration:
     '200':
@@ -352,7 +393,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '201':
       id: 201
       crossFilters:
@@ -369,7 +411,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '202':
       id: 202
       crossFilters:
@@ -386,7 +429,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '203':
       id: 203
       crossFilters:
@@ -403,7 +447,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '204':
       id: 204
       crossFilters:
@@ -420,7 +465,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '205':
       id: 205
       crossFilters:
@@ -437,7 +483,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '206':
       id: 206
       crossFilters:
@@ -454,7 +501,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '207':
       id: 207
       crossFilters:
@@ -471,7 +519,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '208':
       id: 208
       crossFilters:
@@ -488,7 +537,8 @@ metadata:
         - 209
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '209':
       id: 209
       crossFilters:
@@ -505,7 +555,8 @@ metadata:
         - 208
         - 210
         - 211
-        - 212
+        - 213
+        - 214
     '210':
       id: 210
       crossFilters:
@@ -522,7 +573,8 @@ metadata:
         - 208
         - 209
         - 211
-        - 212
+        - 213
+        - 214
     '211':
       id: 211
       crossFilters:
@@ -539,9 +591,10 @@ metadata:
         - 208
         - 209
         - 210
-        - 212
-    '212':
-      id: 212
+        - 213
+        - 214
+    '213':
+      id: 213
       crossFilters:
         scope: global
         chartsInScope:
@@ -557,6 +610,25 @@ metadata:
         - 209
         - 210
         - 211
+        - 214
+    '214':
+      id: 214
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 200
+        - 201
+        - 202
+        - 203
+        - 204
+        - 205
+        - 206
+        - 207
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -585,7 +657,8 @@ metadata:
     - 209
     - 210
     - 211
-    - 212
+    - 213
+    - 214
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -593,7 +666,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
   - id: NATIVE_FILTER-software
     name: Software
     type: NATIVE_FILTER
@@ -619,7 +692,8 @@ metadata:
     - 209
     - 210
     - 211
-    - 212
+    - 213
+    - 214
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -627,7 +701,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
   - id: NATIVE_FILTER-dimension
     name: Dimension
     type: NATIVE_FILTER
@@ -648,7 +722,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
   - id: NATIVE_FILTER-outcome
     name: Outcome
     type: NATIVE_FILTER
@@ -669,7 +743,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
   - id: NATIVE_FILTER-date
     name: Assessment date
     type: NATIVE_FILTER
@@ -687,5 +761,5 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value: null
+        value:
 version: 1.0.0
