@@ -257,3 +257,56 @@ SQL schema definitions are in `database/sql/schema/`:
 - `007_grant_permissions.sql` - Role permissions
 
 These are loaded automatically during deployment via Terraform.
+
+## Visibility Model
+
+Two layers control who can see what, with the more specific layer
+winning over the more general one:
+
+1. **Project visibility** (`auth.projects.is_public`). Default: false
+   (private). A public project's assessments are visible to anonymous
+   visitors and any logged-in user. A private project's assessments are
+   visible only to the project owner.
+2. **Per-software override** (`auth.software_visibility`). Composite
+   primary key `(software_name, owner_user_id)` with `is_public BOOLEAN`.
+   When an override row exists for a given software_name and owner, it
+   wins over the visibility of the project the owner's assessments for
+   that software live in. The owner of the project always sees their own
+   data regardless of the override -- the override controls what other
+   viewers see, not the owner.
+
+### Examples
+
+| Project | Per-software override | Anonymous sees |
+|---|---|---|
+| public | none | yes |
+| public | private | no |
+| private | none | no |
+| private | public | yes |
+
+### Where this is enforced
+
+- Anonymous + authenticated dashboard reads go through Superset, which
+  receives a row-level-security (RLS) clause minted by
+  `landing/app/api/routes.py:_superset_guest_token_for`. The clause
+  joins `auth.software_visibility` to `auth.projects` via
+  `owner_user_id` and applies the rules above.
+- Software-aware views (those that expose `software_name`) get the
+  combined clause; pre-aggregated views without `software_name`
+  (dimension_coverage, assessment_trends, ...) fall back to project-only
+  visibility because the per-software override cannot be applied to
+  pre-aggregated rows.
+
+### Setting an override
+
+`PUT /api/projects/me/software/visibility` (auth-service) with body
+`{software_name, is_public}`:
+
+- `is_public: true` -- anyone can see the assessments
+- `is_public: false` -- only the owner can see them, even if the project
+  is public
+- `is_public: null` -- clear the override; visibility falls back to the
+  project's setting
+
+The same endpoint is exposed at `POST /account/software/visibility` on
+the landing portal so it can be driven by the account-page form.

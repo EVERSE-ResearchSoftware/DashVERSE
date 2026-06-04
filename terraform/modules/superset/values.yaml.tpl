@@ -60,7 +60,11 @@ configOverrides:
     TALISMAN_ENABLED = False
     WTF_CSRF_ENABLED = False
     HTTP_HEADERS = {"X-Frame-Options": "ALLOWALL"}
-    PUBLIC_ROLE_LIKE = "Gamma"
+    # Public role intentionally stripped of any UI permissions; anonymous
+    # viewers reach dashboards via guest tokens (embedded SDK) and don't
+    # need the Gamma-style chart/dataset/dashboard list pages. The
+    # explicit grants required for embedding live in
+    # ansible/roles/superset_config/tasks/permissions.yml.
     FAB_ADD_SECURITY_API = True
     FEATURE_FLAGS = {
         "EMBEDDED_SUPERSET": True,

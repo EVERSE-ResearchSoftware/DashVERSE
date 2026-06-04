@@ -169,27 +169,62 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
 
     if uid is not None:
         project_visibility = f"(is_public OR owner_user_id = {uid})"
+        owner_branch = (
+            f"project_id IN (SELECT id FROM auth.projects WHERE owner_user_id = {uid})"
+        )
     else:
         project_visibility = "is_public"
+        owner_branch = None
 
-    assess_clause = (
+    public_override = (
+        "EXISTS ("
+        "SELECT 1 FROM auth.software_visibility sv "
+        "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id "
+        "WHERE sv.software_name = software_name "
+        "AND p.id = project_id "
+        "AND sv.is_public = TRUE"
+        ")"
+    )
+    no_override = (
+        "NOT EXISTS ("
+        "SELECT 1 FROM auth.software_visibility sv "
+        "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id "
+        "WHERE sv.software_name = software_name "
+        "AND p.id = project_id"
+        ")"
+    )
+    public_project = (
+        "project_id IN (SELECT id FROM auth.projects WHERE is_public)"
+    )
+
+    software_aware_clause = f"{public_override} OR ({no_override} AND {public_project})"
+    if owner_branch:
+        software_aware_clause = f"({owner_branch}) OR ({software_aware_clause})"
+
+    aggregate_clause = (
         f"project_id IN (SELECT id FROM auth.projects WHERE {project_visibility})"
     )
 
     proj_clause = project_visibility
 
-    rls: list[dict] = []
-    for name in (
+    SOFTWARE_AWARE = {
         "assessments_detailed", "checks_detailed", "software",
-        "dimension_coverage", "software_quality_scores",
-        "assessment_trends", "dimension_trend", "software_history",
-        "tool_reliability", "compliance_status", "common_issues",
-        "per_software_issues", "tools_summary", "tools_coverage",
-        "software_vs_median",
-    ):
+        "software_quality_scores", "software_history",
+        "per_software_issues", "compliance_status", "software_vs_median",
+    }
+    AGGREGATE_ONLY = {
+        "dimension_coverage", "assessment_trends", "dimension_trend",
+        "tool_reliability", "common_issues", "tools_summary", "tools_coverage",
+    }
+    rls: list[dict] = []
+    for name in SOFTWARE_AWARE:
         did = _dataset_id_by_name(name, token)
         if did is not None:
-            rls.append({"dataset": did, "clause": assess_clause})
+            rls.append({"dataset": did, "clause": software_aware_clause})
+    for name in AGGREGATE_ONLY:
+        did = _dataset_id_by_name(name, token)
+        if did is not None:
+            rls.append({"dataset": did, "clause": aggregate_clause})
 
     proj_did = _dataset_id_by_name("projects", token)
     if proj_did is not None:
@@ -831,6 +866,45 @@ async def account_software_delete(
         "/api/projects/me/software/delete",
         user["token"],
         {"software_name": software_name},
+    )
+    if status == 401:
+        return _stale_session_redirect("/account")
+    if not error:
+        _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
+    return templates.TemplateResponse(
+        "account.html",
+        await _account_context(request, user, error=error),
+    )
+
+
+@router.post("/account/software/visibility", response_class=HTMLResponse)
+async def account_software_visibility(
+    request: Request,
+    software_name: str = Form(...),
+    visibility: str = Form(...),
+):
+    user = current_user(request)
+    if not user:
+        return RedirectResponse(url="/login?next=/account", status_code=302)
+
+    if visibility == "public":
+        is_public: bool | None = True
+    elif visibility == "private":
+        is_public = False
+    elif visibility == "clear":
+        is_public = None
+    else:
+        return templates.TemplateResponse(
+            "account.html",
+            await _account_context(request, user, error="Unknown visibility value."),
+            status_code=400,
+        )
+
+    _, error, status = _auth_request(
+        "PUT",
+        "/api/projects/me/software/visibility",
+        user["token"],
+        {"software_name": software_name, "is_public": is_public},
     )
     if status == 401:
         return _stale_session_redirect("/account")

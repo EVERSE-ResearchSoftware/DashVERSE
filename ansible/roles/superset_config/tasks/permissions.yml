@@ -1,25 +1,45 @@
 ---
 
-- name: Remove chart edit and query permissions from Public role
+- name: Strip all Public role permissions
   shell: |
     kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
     DELETE FROM ab_permission_view_role
-    WHERE role_id = (SELECT id FROM ab_role WHERE name = 'Public')
-    AND permission_view_id IN (
-        SELECT pv.id FROM ab_permission_view pv
-        JOIN ab_permission p ON pv.permission_id = p.id
-        JOIN ab_view_menu vm ON pv.view_menu_id = vm.id
-        WHERE (p.name = 'can_edit' AND vm.name = 'Chart')
-           OR (p.name = 'can_explore' AND vm.name = 'Superset')
-           OR (p.name = 'can_view_query' AND vm.name = 'Dashboard')
-           OR (p.name = 'can_view_chart_as_table' AND vm.name = 'Dashboard')
-    );
+    WHERE role_id = (SELECT id FROM ab_role WHERE name = 'Public');
     "
-  register: permission_removal_result
+  register: public_strip_result
 
-- name: Show permission removal result
+- name: Show Public-role strip result
   debug:
-    var: permission_removal_result.stdout_lines
+    var: public_strip_result.stdout_lines
+
+- name: Re-grant the minimum Public permissions needed for embedded dashboards
+  shell: |
+    kubectl exec -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -c "
+    INSERT INTO ab_permission_view_role (id, permission_view_id, role_id)
+    SELECT nextval('ab_permission_view_role_id_seq'), pv.id, r.id
+    FROM ab_permission_view pv
+    JOIN ab_permission p ON pv.permission_id = p.id
+    JOIN ab_view_menu vm ON pv.view_menu_id = vm.id
+    CROSS JOIN ab_role r
+    WHERE r.name = 'Public'
+      AND (
+        (p.name = 'can_dashboard' AND vm.name = 'Superset') OR
+        (p.name = 'can_explore_json' AND vm.name = 'Superset') OR
+        (p.name = 'can_fetch_datasource_metadata' AND vm.name = 'Superset') OR
+        (p.name = 'can_csrf_token' AND vm.name = 'SecurityRestApi') OR
+        (p.name = 'can_get' AND vm.name = 'EmbeddedDashboardRestApi') OR
+        (p.name = 'can_read' AND vm.name = 'EmbeddedDashboardRestApi')
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM ab_permission_view_role
+        WHERE permission_view_id = pv.id AND role_id = r.id
+      );
+    "
+  register: public_grant_result
+
+- name: Show Public-role grant result
+  debug:
+    var: public_grant_result.stdout_lines
 
 - name: Grant Public role datasource_access on each embedded dataset
   shell: |

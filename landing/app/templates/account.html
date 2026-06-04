@@ -65,7 +65,7 @@
 <section class="dashboards" style="margin-bottom: 1.5rem;">
     <h2>My software</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments.
+        Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments, or override its visibility directly. A per-software setting always wins over the project's visibility.
     </p>
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
         <thead style="background: var(--color-light-bg);">
@@ -73,11 +73,14 @@
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Assessments</th>
                 <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Project</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Visibility</th>
                 <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for sw in software %}
+            {% set ns = namespace(project_public=false) %}
+            {% for p in projects %}{% if p.id == sw.project_id %}{% set ns.project_public = p.is_public %}{% endif %}{% endfor %}
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.75rem;">{{ sw.software_name }}</td>
                 <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
@@ -104,6 +107,33 @@
                         {% endif %}
                     </span>
                     {% endif %}
+                </td>
+                <td style="padding: 0.5rem 0.75rem;">
+                    <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">
+                        {% if sw.is_public is none %}
+                            {% if ns.project_public %}
+                            <span style="color: #2f855a;">Public</span>
+                            {% else %}
+                            <span style="color: #c0392b;">Private</span>
+                            {% endif %}
+                            <span style="color: var(--color-text-muted);">(via project)</span>
+                        {% elif sw.is_public %}
+                            <span style="color: #2f855a;">Public</span>
+                            <span style="color: var(--color-text-muted);">(override)</span>
+                        {% else %}
+                            <span style="color: #c0392b;">Private</span>
+                            <span style="color: var(--color-text-muted);">(override)</span>
+                        {% endif %}
+                    </div>
+                    <form method="post" action="/account/software/visibility" style="display: flex; gap: 0.3rem;">
+                        <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                        <select name="visibility" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
+                            <option value="clear" {% if sw.is_public is none %}selected{% endif %}>Inherit from project</option>
+                            <option value="public" {% if sw.is_public is not none and sw.is_public %}selected{% endif %}>Public</option>
+                            <option value="private" {% if sw.is_public is not none and not sw.is_public %}selected{% endif %}>Private</option>
+                        </select>
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Set</button>
+                    </form>
                 </td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
                     <form method="post" action="/account/software/delete" style="display: inline;" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
