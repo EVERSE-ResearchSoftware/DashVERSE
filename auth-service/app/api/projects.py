@@ -6,6 +6,7 @@ from app.core.database import get_db
 from app.api.dependencies import get_current_user
 from app.models.user import User
 from app.models.project import Project
+from app.models.software_visibility import SoftwareVisibility
 from app.schemas.project import (
     ProjectResponse,
     ProjectListResponse,
@@ -14,6 +15,7 @@ from app.schemas.project import (
     SoftwareEntry,
     SoftwareListResponse,
     AssignSoftwareRequest,
+    SetSoftwareVisibilityRequest,
 )
 
 router = APIRouter(prefix="/api/projects", tags=["Projects"])
@@ -184,12 +186,20 @@ def list_my_software(
         for p in db.query(Project).filter(Project.owner_user_id == current_user.id).all()
     }
 
+    visibility_lookup: dict[str, bool] = {
+        sv.software_name: sv.is_public
+        for sv in db.query(SoftwareVisibility)
+        .filter(SoftwareVisibility.owner_user_id == current_user.id)
+        .all()
+    }
+
     software = [
         SoftwareEntry(
             software_name=row.software_name,
             assessment_count=int(row.assessment_count),
             project_id=row.project_id,
             project_name=project_lookup.get(row.project_id) if row.project_id is not None else None,
+            is_public=visibility_lookup.get(row.software_name),
         )
         for row in rows
     ]
@@ -253,4 +263,46 @@ def delete_software_assessments(
         "message": "Assessments deleted",
         "software_name": payload.software_name,
         "rows_deleted": result.rowcount,
+    }
+
+
+@router.put(
+    "/me/software/visibility",
+    status_code=status.HTTP_200_OK,
+    summary="Set or clear the public/private visibility override for one software",
+)
+def set_software_visibility(
+    payload: SetSoftwareVisibilityRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    existing = (
+        db.query(SoftwareVisibility)
+        .filter(
+            SoftwareVisibility.software_name == payload.software_name,
+            SoftwareVisibility.owner_user_id == current_user.id,
+        )
+        .first()
+    )
+    if payload.is_public is None:
+        if existing:
+            db.delete(existing)
+            db.commit()
+            return {"message": "Override cleared", "software_name": payload.software_name}
+        return {"message": "No override to clear", "software_name": payload.software_name}
+
+    if existing:
+        existing.is_public = payload.is_public
+    else:
+        existing = SoftwareVisibility(
+            software_name=payload.software_name,
+            owner_user_id=current_user.id,
+            is_public=payload.is_public,
+        )
+        db.add(existing)
+    db.commit()
+    return {
+        "message": "Override set",
+        "software_name": payload.software_name,
+        "is_public": existing.is_public,
     }

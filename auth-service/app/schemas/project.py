@@ -39,6 +39,7 @@ class SoftwareEntry(BaseModel):
     assessment_count: int
     project_id: int | None
     project_name: str | None
+    is_public: bool | None = None
 
 
 class SoftwareListResponse(BaseModel):
@@ -48,3 +49,15 @@ class SoftwareListResponse(BaseModel):
 
 class AssignSoftwareRequest(BaseModel):
     software_name: str = Field(..., min_length=1, max_length=255)
+
+
+class SetSoftwareVisibilityRequest(BaseModel):
+
+    software_name: str = Field(..., min_length=1, max_length=255)
+    is_public: bool | None = Field(
+        None,
+        description=(
+            "TRUE = public override; FALSE = private override; "
+            "null = clear override and inherit from project."
+        ),
+    )
