@@ -177,20 +177,18 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
         owner_branch = None
 
     public_override = (
-        "EXISTS ("
-        "SELECT 1 FROM auth.software_visibility sv "
+        "(software_name, project_id) IN ("
+        "SELECT sv.software_name, p.id "
+        "FROM auth.software_visibility sv "
         "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id "
-        "WHERE sv.software_name = software_name "
-        "AND p.id = project_id "
-        "AND sv.is_public = TRUE"
+        "WHERE sv.is_public = TRUE"
         ")"
     )
     no_override = (
-        "NOT EXISTS ("
-        "SELECT 1 FROM auth.software_visibility sv "
-        "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id "
-        "WHERE sv.software_name = software_name "
-        "AND p.id = project_id"
+        "(software_name, project_id) NOT IN ("
+        "SELECT sv.software_name, p.id "
+        "FROM auth.software_visibility sv "
+        "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id"
         ")"
     )
     public_project = (
@@ -229,6 +227,11 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
     proj_did = _dataset_id_by_name("projects", token)
     if proj_did is not None:
         rls.append({"dataset": proj_did, "clause": proj_clause})
+
+    if uid is None:
+        sw_lang_did = _dataset_id_by_name("software_languages", token)
+        if sw_lang_did is not None:
+            rls.append({"dataset": sw_lang_did, "clause": "1=0"})
 
     payload = {
         "user": {

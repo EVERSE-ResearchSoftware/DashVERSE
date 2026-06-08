@@ -60,11 +60,12 @@ configOverrides:
     TALISMAN_ENABLED = False
     WTF_CSRF_ENABLED = False
     HTTP_HEADERS = {"X-Frame-Options": "ALLOWALL"}
-    # Public role intentionally stripped of any UI permissions; anonymous
-    # viewers reach dashboards via guest tokens (embedded SDK) and don't
-    # need the Gamma-style chart/dataset/dashboard list pages. The
-    # explicit grants required for embedding live in
+    # Public role inherits Gamma's read-only permissions so the embedded
+    # SDK can call /api/v1/dashboard/* and /api/v1/chart/* to render
+    # iframes. The UI list pages and any write operations are then
+    # explicitly revoked in
     # ansible/roles/superset_config/tasks/permissions.yml.
+    PUBLIC_ROLE_LIKE = "Gamma"
     FAB_ADD_SECURITY_API = True
     FEATURE_FLAGS = {
         "EMBEDDED_SUPERSET": True,
@@ -78,6 +79,43 @@ configOverrides:
     # explore-form caches stay on because the native_filters_key
     # permalink path uses them.
     DATA_CACHE_CONFIG = {"CACHE_TYPE": "NullCache"}
+  anon_list_lockout: |
+    # The Public role still has Gamma's read permission on Chart, Dashboard
+    # and Dataset REST APIs (needed by the embedded SDK for chart-config
+    # fetches), so revoking can_list alone doesn't stop the React SPA at
+    # /chart/list, /dashboard/list, /tablemodelview/list from populating
+    # itself client-side. A Flask before_request hook handles those routes
+    # explicitly: anonymous viewers get bounced to /login, embedded SDK
+    # API calls under /api/v1/* keep working.
+    def FLASK_APP_MUTATOR(app):
+        from flask import redirect, request
+        from flask_login import current_user
+
+        PROTECTED_PREFIXES = (
+            "/chart/list",
+            "/dashboard/list",
+            "/tablemodelview/list",
+            "/databaseview/list",
+            "/annotationlayer/list",
+            "/csstemplatemodelview/list",
+            "/tagmodelview/list",
+            "/savedqueryview/list",
+            "/logmodelview/list",
+            "/users/list",
+            "/roles/list",
+        )
+
+        @app.before_request
+        def _block_anon_from_lists():
+            try:
+                if current_user.is_authenticated:
+                    return None
+            except Exception:
+                return None
+            path = request.path.rstrip("/")
+            if any(path == p or path.startswith(p + "/") for p in PROTECTED_PREFIXES):
+                return redirect("/login/?next=" + request.full_path)
+            return None
 
 extraEnv:
   DB_HOST: "${db_host}"
