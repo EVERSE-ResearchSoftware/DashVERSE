@@ -40,7 +40,7 @@
         id: embeddedUuid,
         supersetDomain: supersetUrl,
         mountPoint: mount,
-        // landing mints a fresh, short-lived guest token per request. the
+        // frontend mints a fresh, short-lived guest token per request. the
         // sdk calls this each time it needs to authenticate the iframe.
         fetchGuestToken: function() {
             return fetch('/superset/guest-token/' + mount.getAttribute('data-slug'), {

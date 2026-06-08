@@ -579,7 +579,7 @@ def _issue_session_cookie(access_token: str, next_url: str) -> RedirectResponse:
 
 def _auth_post(path: str, payload: dict) -> tuple[dict | None, str | None]:
     req = urllib.request.Request(
-        f"{settings.auth_service_url.rstrip('/')}{path}",
+        f"{settings.backend_url.rstrip('/')}{path}",
         data=json.dumps(payload).encode(),
         headers={"Content-Type": "application/json"},
         method="POST",
@@ -594,7 +594,7 @@ def _auth_post(path: str, payload: dict) -> tuple[dict | None, str | None]:
         except Exception:
             return None, f"Request failed ({exc.code})"
     except Exception as exc:
-        log.warning("auth-service %s failed: %s", path, exc)
+        log.warning("backend %s failed: %s", path, exc)
         return None, "Authentication service unavailable. Please try again later."
 
 
@@ -673,7 +673,7 @@ async def logout(request: Request):
 def _auth_request(method: str, path: str, token: str, payload: dict | None = None) -> tuple[dict | list | None, str | None, int]:
     data = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(
-        f"{settings.auth_service_url.rstrip('/')}{path}",
+        f"{settings.backend_url.rstrip('/')}{path}",
         data=data,
         headers={
             "Content-Type": "application/json",
@@ -693,7 +693,7 @@ def _auth_request(method: str, path: str, token: str, payload: dict | None = Non
         except Exception:
             return None, f"Request failed ({exc.code})", exc.code
     except Exception as exc:
-        log.warning("auth-service %s %s failed: %s", method, path, exc)
+        log.warning("backend %s %s failed: %s", method, path, exc)
         return None, "Authentication service unavailable. Please try again later.", 0
 
 
@@ -709,7 +709,7 @@ def _stale_session_redirect(next_path: str) -> RedirectResponse:
 async def _auth_get_async(client: httpx.AsyncClient, path: str, token: str) -> tuple[dict | list | None, str | None, int]:
     try:
         resp = await client.get(
-            f"{settings.auth_service_url.rstrip('/')}{path}",
+            f"{settings.backend_url.rstrip('/')}{path}",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Accept": "application/json",
@@ -717,7 +717,7 @@ async def _auth_get_async(client: httpx.AsyncClient, path: str, token: str) -> t
             timeout=5,
         )
     except httpx.RequestError as exc:
-        log.warning("auth-service GET %s failed: %s", path, exc)
+        log.warning("backend GET %s failed: %s", path, exc)
         return None, "Authentication service unavailable. Please try again later.", 0
     if resp.status_code >= 400:
         try:

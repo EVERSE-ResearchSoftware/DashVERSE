@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     postgrest_url: str = "http://postgrest:3000"
 
-    auth_service_url: str = "http://auth-service:8000"
+    backend_url: str = "http://backend:8000"
 
     password_min_length: int = 12
 

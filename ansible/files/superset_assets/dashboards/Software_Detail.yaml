@@ -269,7 +269,7 @@ position:
       code: '**Software Detail.** Per-software KPIs, quality trend, dimension profile,
         comparison against the portfolio median, failing checks, and improvement targets.
         Pick a project from the **Software** filter, or pre-filter via the URL (`/?software=<identifier>`
-        from the landing portal).'
+        from the frontend portal).'
     type: MARKDOWN
     parents:
     - ROOT_ID

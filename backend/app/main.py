@@ -16,14 +16,14 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting up auth-service...")
+    logger.info("Starting up backend...")
 
     logger.info("Creating database tables...")
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created successfully")
 
     yield
-    logger.info("Shutting down auth-service...")
+    logger.info("Shutting down backend...")
 
 
 app = FastAPI(
@@ -52,7 +52,7 @@ app.include_router(projects.router)
 async def health_check():
     return {
         "status": "healthy",
-        "service": "auth-service",
+        "service": "backend",
         "version": "1.0.0"
     }
 

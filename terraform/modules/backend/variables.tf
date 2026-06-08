@@ -1,16 +1,16 @@
 variable "namespace_name" {
-  description = "Kubernetes namespace for auth-service deployment"
+  description = "Kubernetes namespace for backend deployment"
   type        = string
 }
 
-variable "auth_service_image" {
-  description = "Docker image for auth-service"
+variable "backend_image" {
+  description = "Docker image for backend"
   type        = string
-  default     = "dashverse/auth-service:latest"
+  default     = "dashverse/backend:latest"
 }
 
 variable "replicas" {
-  description = "Number of auth-service replicas"
+  description = "Number of backend replicas"
   type        = number
   default     = 1
 }
@@ -86,25 +86,25 @@ variable "log_level" {
 }
 
 variable "cpu_limit" {
-  description = "CPU limit for auth-service container"
+  description = "CPU limit for backend container"
   type        = string
   default     = "500m"
 }
 
 variable "memory_limit" {
-  description = "Memory limit for auth-service container"
+  description = "Memory limit for backend container"
   type        = string
   default     = "512Mi"
 }
 
 variable "cpu_request" {
-  description = "CPU request for auth-service container"
+  description = "CPU request for backend container"
   type        = string
   default     = "250m"
 }
 
 variable "memory_request" {
-  description = "Memory request for auth-service container"
+  description = "Memory request for backend container"
   type        = string
   default     = "256Mi"
 }

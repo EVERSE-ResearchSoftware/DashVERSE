@@ -77,8 +77,8 @@ module "sync" {
   secrets_name = module.secrets.secret_name
 }
 
-module "auth_service" {
-  source = "./modules/auth-service"
+module "backend" {
+  source = "./modules/backend"
 
   namespace_name = module.namespace.name
   common_labels  = var.common_labels
@@ -91,8 +91,8 @@ module "auth_service" {
   module_depends_on = [module.postgresql]
 }
 
-module "landing" {
-  source = "./modules/landing"
+module "frontend" {
+  source = "./modules/frontend"
 
   namespace_name = module.namespace.name
   common_labels  = var.common_labels
@@ -113,13 +113,13 @@ module "postgrest_docs" {
   service_port = 3001
 }
 
-module "auth_docs" {
+module "backend_docs" {
   source = "./modules/api-docs"
 
   namespace    = module.namespace.name
-  name         = "auth-docs"
+  name         = "backend-docs"
   labels       = var.common_labels
-  openapi_url  = "http://auth-service:8000/openapi.json"
+  openapi_url  = "http://backend:8000/openapi.json"
   theme        = "blue"
   service_port = 8001
 }

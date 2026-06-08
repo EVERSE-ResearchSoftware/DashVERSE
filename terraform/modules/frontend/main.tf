@@ -1,6 +1,6 @@
-resource "kubernetes_deployment" "landing" {
+resource "kubernetes_deployment" "frontend" {
   metadata {
-    name      = "landing"
+    name      = "frontend"
     namespace = var.namespace_name
     labels    = var.common_labels
   }
@@ -12,7 +12,7 @@ resource "kubernetes_deployment" "landing" {
 
     selector {
       match_labels = {
-        app = "landing"
+        app = "frontend"
       }
     }
 
@@ -21,15 +21,15 @@ resource "kubernetes_deployment" "landing" {
         labels = merge(
           var.common_labels,
           {
-            app = "landing"
+            app = "frontend"
           }
         )
       }
 
       spec {
         container {
-          name              = "landing"
-          image             = var.landing_image
+          name              = "frontend"
+          image             = var.frontend_image
           image_pull_policy = "IfNotPresent"
 
           port {
@@ -89,8 +89,8 @@ resource "kubernetes_deployment" "landing" {
           }
 
           env {
-            name  = "AUTH_SERVICE_URL"
-            value = var.auth_service_url
+            name  = "BACKEND_URL"
+            value = var.backend_url
           }
 
           resources {
@@ -144,9 +144,9 @@ resource "kubernetes_deployment" "landing" {
   }
 }
 
-resource "kubernetes_service" "landing" {
+resource "kubernetes_service" "frontend" {
   metadata {
-    name      = "landing"
+    name      = "frontend"
     namespace = var.namespace_name
     labels    = var.common_labels
   }
@@ -157,7 +157,7 @@ resource "kubernetes_service" "landing" {
     type = "ClusterIP"
 
     selector = {
-      app = "landing"
+      app = "frontend"
     }
 
     port {

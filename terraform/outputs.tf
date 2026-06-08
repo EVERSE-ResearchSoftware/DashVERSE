@@ -26,10 +26,10 @@ output "superset_port" {
   value = module.superset.port
 }
 
-output "auth_service_url" {
-  value = module.auth_service.service_url
+output "backend_url" {
+  value = module.backend.service_url
 }
 
-output "auth_service_port" {
-  value = module.auth_service.service_port
+output "backend_port" {
+  value = module.backend.service_port
 }

@@ -1,6 +1,6 @@
-resource "kubernetes_deployment" "auth_service" {
+resource "kubernetes_deployment" "backend" {
   metadata {
-    name      = "auth-service"
+    name      = "backend"
     namespace = var.namespace_name
     labels    = var.common_labels
   }
@@ -12,7 +12,7 @@ resource "kubernetes_deployment" "auth_service" {
 
     selector {
       match_labels = {
-        app = "auth-service"
+        app = "backend"
       }
     }
 
@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "auth_service" {
         labels = merge(
           var.common_labels,
           {
-            app = "auth-service"
+            app = "backend"
           }
         )
       }
@@ -41,7 +41,7 @@ resource "kubernetes_deployment" "auth_service" {
               echo "Schema not found, waiting 5 seconds..."
               sleep 5
             done
-            echo "Schema found, ready to start auth-service"
+            echo "Schema found, ready to start backend"
             EOF
           ]
 
@@ -66,8 +66,8 @@ resource "kubernetes_deployment" "auth_service" {
         }
 
         container {
-          name              = "auth-service"
-          image             = var.auth_service_image
+          name              = "backend"
+          image             = var.backend_image
           image_pull_policy = "IfNotPresent"
 
           port {
@@ -185,9 +185,9 @@ resource "kubernetes_deployment" "auth_service" {
   depends_on = [var.module_depends_on]
 }
 
-resource "kubernetes_service" "auth_service" {
+resource "kubernetes_service" "backend" {
   metadata {
-    name      = "auth-service"
+    name      = "backend"
     namespace = var.namespace_name
     labels    = var.common_labels
   }
@@ -198,7 +198,7 @@ resource "kubernetes_service" "auth_service" {
     type = "ClusterIP"
 
     selector = {
-      app = "auth-service"
+      app = "backend"
     }
 
     port {

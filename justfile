@@ -7,7 +7,7 @@ forward_address := "127.0.0.1"
 default:
     @just --list
 
-deploy: build-auth build-landing
+deploy: build-backend build-frontend
     cd terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve
 
 destroy:
@@ -26,10 +26,10 @@ port-forward:
         [postgresql]=5432
         [postgrest]=3000
         [superset]=8088
-        [auth-service]=8000
-        [landing]=8080
+        [backend]=8000
+        [frontend]=8080
         [postgrest-docs]=3001
-        [auth-docs]=8001
+        [backend-docs]=8001
     )
     pids=()
     cleanup() {
@@ -71,11 +71,11 @@ logs-postgrest:
 logs-superset:
     kubectl logs -n {{ns}} -l app.kubernetes.io/name=superset -f
 
-logs-auth:
-    kubectl logs -n {{ns}} -l app=auth-service -f
+logs-backend:
+    kubectl logs -n {{ns}} -l app=backend -f
 
-logs-landing:
-    kubectl logs -n {{ns}} -l app=landing -f
+logs-frontend:
+    kubectl logs -n {{ns}} -l app=frontend -f
 
 clean:
     cd terraform && rm -rf .terraform .terraform.lock.hcl .tofu
@@ -97,18 +97,18 @@ jwt username password:
         -d '{"username":"{{username}}","password":"{{password}}"}' \
         | jq -r .access_token
 
-build-auth:
+build-backend:
     if [ "{{env}}" = "local" ]; then \
-        minikube image build -t dashverse/auth-service:latest auth-service/; \
+        minikube image build -t dashverse/backend:latest backend/; \
     else \
-        docker build -t dashverse/auth-service:latest auth-service/; \
+        docker build -t dashverse/backend:latest backend/; \
     fi
 
-build-landing:
+build-frontend:
     if [ "{{env}}" = "local" ]; then \
-        minikube image build -t dashverse/landing:latest landing/; \
+        minikube image build -t dashverse/frontend:latest frontend/; \
     else \
-        docker build -t dashverse/landing:latest landing/; \
+        docker build -t dashverse/frontend:latest frontend/; \
     fi
 
 setup-dashboards:

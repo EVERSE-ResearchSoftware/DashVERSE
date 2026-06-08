@@ -3,10 +3,10 @@ variable "namespace_name" {
   type        = string
 }
 
-variable "landing_image" {
-  description = "Docker image for landing site"
+variable "frontend_image" {
+  description = "Docker image for frontend site"
   type        = string
-  default     = "dashverse/landing:latest"
+  default     = "dashverse/frontend:latest"
 }
 
 variable "replicas" {
@@ -75,7 +75,7 @@ variable "jwt_secret_key" {
 }
 
 variable "jwt_algorithm" {
-  description = "JWT signing algorithm (must match auth-service)"
+  description = "JWT signing algorithm (must match backend)"
   type        = string
   default     = "HS256"
 }
@@ -86,8 +86,8 @@ variable "postgrest_url" {
   default     = "http://postgrest:3000"
 }
 
-variable "auth_service_url" {
-  description = "Internal cluster URL for auth-service (used server-side for /api/auth/login proxying)"
+variable "backend_url" {
+  description = "Internal cluster URL for backend (used server-side for /api/auth/login proxying)"
   type        = string
-  default     = "http://auth-service:8000"
+  default     = "http://backend:8000"
 }
