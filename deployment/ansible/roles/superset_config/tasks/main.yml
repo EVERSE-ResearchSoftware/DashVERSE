@@ -14,6 +14,9 @@
 - name: Remap dashboard filter scopes to live chart IDs
   include_tasks: remap_filter_scopes.yml
 
+- name: Reconcile dashboard_slices with position_json
+  include_tasks: reconcile_slices.yml
+
 - name: Mark dashboards embeddable
   include_tasks: embed_dashboards.yml
 

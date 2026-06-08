@@ -1,0 +1,19 @@
+---
+
+- name: Reconcile dashboard_slices with position_json
+  command:
+    cmd: >
+      kubectl exec -i -n dashverse -c superset deploy/superset --
+      env
+      PGHOST=postgresql PGPORT=5432
+      PGDATABASE={{ database_db }}
+      PGUSER={{ database_user }}
+      PGPASSWORD={{ lookup('env', 'DATABASE_PASSWORD') }}
+      python3 -
+    stdin: "{{ lookup('file', role_path + '/files/reconcile_slices.py') }}"
+  register: reconcile_result
+  changed_when: "'total orphans dropped: 0' not in reconcile_result.stdout"
+
+- name: Show reconcile result
+  debug:
+    var: reconcile_result.stdout_lines
