@@ -3,6 +3,9 @@ main_dttm_col: null
 description: Project metadata exposed for filter dropdowns (name, owner, visibility flag). Backed by auth.projects via the api.projects view.
 default_endpoint: null
 offset: 0
+# Low-cardinality lookup table that users rename interactively. Disable
+# the values cache so the Project filter dropdown reflects edits made
+# from /account on the next dashboard load.
 cache_timeout: 0
 catalog: dashverse
 schema: api

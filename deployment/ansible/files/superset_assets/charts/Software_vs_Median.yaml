@@ -19,6 +19,10 @@ params:
     column:
       column_name: median_score
     aggregate: AVG
+  # HAVING gate: when more than one software is in scope (i.e. no Software
+  # filter applied), the post-aggregation predicate fails for every group,
+  # so the query returns zero rows and Superset renders the empty-state
+  # placeholder. With one software selected, every group passes.
   adhoc_filters:
   - clause: HAVING
     expressionType: SQL

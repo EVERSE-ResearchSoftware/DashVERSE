@@ -8,10 +8,10 @@ default:
     @just --list
 
 deploy: build-backend build-frontend
-    cd terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve
+    cd deployment/terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve
 
 destroy:
-    cd terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve
+    cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve
 
 destroy-all: destroy
     minikube delete --all
@@ -78,14 +78,14 @@ logs-frontend:
     kubectl logs -n {{ns}} -l app=frontend -f
 
 clean:
-    cd terraform && rm -rf .terraform .terraform.lock.hcl .tofu
+    cd deployment/terraform && rm -rf .terraform .terraform.lock.hcl .tofu
 
 sync:
-    cd ansible && \
+    cd deployment/ansible && \
         ansible-playbook -i inventory/{{env}}.yml playbooks/sync_everse.yml --tags fetch
 
 sync-apply:
-    cd ansible && \
+    cd deployment/ansible && \
         ansible-playbook -i inventory/{{env}}.yml playbooks/sync_everse.yml
 
 sync-trigger:
@@ -112,13 +112,13 @@ build-frontend:
     fi
 
 setup-dashboards:
-    cd ansible && \
+    cd deployment/ansible && \
     DATABASE_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.postgres-password}' | base64 -d) \
     SUPERSET_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.superset-admin-password}' | base64 -d) \
     ansible-playbook -i inventory/{{env}}.yml playbooks/configure_superset.yml
 
 export-superset-assets:
-    @OUT_DIR=ansible/files/superset_assets && \
+    @OUT_DIR=deployment/ansible/files/superset_assets && \
     TMP_ZIP=/tmp/dashverse-assets.zip && \
     TMP_EXTRACT=/tmp/dashverse-assets-extract && \
     echo "Exporting from deploy/superset" && \
@@ -133,7 +133,7 @@ export-superset-assets:
     echo "Exported $(find $OUT_DIR -name '*.yaml' | wc -l) YAML files to $OUT_DIR"
 
 seed-data:
-    cd ansible && \
+    cd deployment/ansible && \
         ansible-playbook -i inventory/{{env}}.yml playbooks/seed_data.yml
 
 show-access:
