@@ -15,7 +15,7 @@ If you have Nix installed, all dependencies are provided via `nix develop`.
 
 ## Deployment configurations
 
-The deployment settings for both local (testing) and production environments can be found in `terraform/environments` folder.
+The deployment settings for both local (testing) and production environments can be found in `deployment/terraform/environments` folder.
 
 ## Deployment
 
@@ -71,9 +71,9 @@ TLDR:
    - Superset: http://localhost:8088
    - PostgREST API: http://localhost:3000
    - PostgREST API Docs: http://localhost:3001
-   - Auth Service: http://localhost:8000
-   - Auth Service API Docs: http://localhost:8001
-   - Landing site: http://localhost:8080
+   - Backend: http://localhost:8000
+   - Backend API Docs: http://localhost:8001
+   - Frontend site: http://localhost:8080
 
 At this point should have all the configured services and preconfigured dashboards available. You can start adding assessment data to the dashboard.
 
@@ -113,7 +113,7 @@ kubectl get secret dashverse-secrets -n dashverse -o jsonpath='{.data.superset-a
 ### Manual Deployment
 
 ```shell
-cd terraform
+cd deployment/terraform
 tofu init
 tofu apply -var-file="environments/local.tfvars"
 ```
@@ -132,7 +132,7 @@ just seed-data
 just env=production setup-dashboards
 ```
 
-The production configuration (`terraform/environments/production.tfvars`) includes settings for external URLs used in iframe embedding.
+The production configuration (`deployment/terraform/environments/production.tfvars`) includes settings for external URLs used in iframe embedding.
 
 ### Sync EVERSE Data
 
@@ -153,7 +153,7 @@ just sync-apply
 
 ### Authentication
 
-The Auth Service provides a web interface for user registration and JWT token generation.
+The Backend provides a web interface for user registration and JWT token generation.
 
 1. Open http://localhost:8000 (after port-forward)
 2. Register a new account
@@ -171,7 +171,7 @@ just jwt <username> <password>
 Interactive API documentation is provided using [Scalar](https://scalar.com/):
 
 - **PostgREST API Docs**: http://localhost:3001 - Database REST interface with all available endpoints
-- **Auth Service API Docs**: http://localhost:8001 - Authentication endpoints for user management and JWT tokens
+- **Backend API Docs**: http://localhost:8001 - Authentication endpoints for user management and JWT tokens
 
 The documentation is automatically generated from OpenAPI specifications and includes an interactive request builder.
 
@@ -203,7 +203,7 @@ The Superset admin password is automatically retrieved from Kubernetes secrets d
 
 The Superset chart-data cache is **disabled by default in local deployments**
 via `DATA_CACHE_CONFIG = {"CACHE_TYPE": "NullCache"}` in
-`terraform/modules/superset/values.yaml.tpl` (under `configOverrides.no_data_cache`).
+`deployment/terraform/modules/superset/values.yaml.tpl` (under `configOverrides.no_data_cache`).
 Every chart query hits Postgres directly, so any change you make -- editing a
 chart YAML, re-importing dashboards, pushing fresh assessments -- appears on the
 next page reload without needing to bust anything manually.
@@ -228,7 +228,7 @@ on demand:
 
 - `POST http://localhost:8080/superset/refresh` -- invalidates every
   project-aware dataset in one call (this is what
-  `landing/app/api/routes.py:_superset_invalidate_datasets` calls after a
+  `frontend/app/api/routes.py:_superset_invalidate_datasets` calls after a
   project rename, visibility flip, or bulk data load).
 - Superset's own `POST /api/v1/cachekey/invalidate` endpoint for a custom
   dataset UID list.

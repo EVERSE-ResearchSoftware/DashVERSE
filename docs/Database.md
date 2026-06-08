@@ -230,10 +230,10 @@ SELECT payload->>'dateCreated', payload->'checks' FROM assessment_raw;
 
 ## Populating Test Data
 
-The `database/populate_data.py` script generates fake data for development:
+The `deployment/database/populate_data.py` script generates fake data for development:
 
 ```shell
-cd database
+cd deployment/database
 export DB_HOST=localhost
 export DB_PORT=5432
 export DB_NAME=dashverse
@@ -246,7 +246,7 @@ Use `--clear` to truncate tables before populating.
 
 ## Schema Files
 
-SQL schema definitions are in `database/sql/schema/`:
+SQL schema definitions are in `deployment/database/sql/schema/`:
 
 - `001_create_schema.sql` - Schema and roles
 - `002_create_tables.sql` - Tables and base views
@@ -288,7 +288,7 @@ winning over the more general one:
 
 - Anonymous + authenticated dashboard reads go through Superset, which
   receives a row-level-security (RLS) clause minted by
-  `landing/app/api/routes.py:_superset_guest_token_for`. The clause
+  `frontend/app/api/routes.py:_superset_guest_token_for`. The clause
   joins `auth.software_visibility` to `auth.projects` via
   `owner_user_id` and applies the rules above.
 - Software-aware views (those that expose `software_name`) get the
@@ -299,7 +299,7 @@ winning over the more general one:
 
 ### Setting an override
 
-`PUT /api/projects/me/software/visibility` (auth-service) with body
+`PUT /api/projects/me/software/visibility` (backend) with body
 `{software_name, is_public}`:
 
 - `is_public: true` -- anyone can see the assessments
@@ -309,4 +309,4 @@ winning over the more general one:
   project's setting
 
 The same endpoint is exposed at `POST /account/software/visibility` on
-the landing portal so it can be driven by the account-page form.
+the frontend portal so it can be driven by the account-page form.

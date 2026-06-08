@@ -3,7 +3,7 @@
 The recommended workflow is: design in the Superset UI, export the
 result to YAML, commit it. The Ansible role re-imports those YAMLs on
 every `just setup-dashboards` run, so the files in
-`ansible/files/superset_assets/` are the source of truth for what each
+`deployment/ansible/files/superset_assets/` are the source of truth for what each
 dashboard contains.
 
 For an end-user walk-through of the Superset UI itself, see
@@ -15,7 +15,7 @@ You need a running cluster reachable on localhost
 (`just deploy && just port-forward`), the Superset admin password
 (`just show-access`), and the dataset you want to chart against already
 registered. The dataset list lives in
-`ansible/roles/superset_config/defaults/main.yml`.
+`deployment/ansible/roles/superset_config/defaults/main.yml`.
 
 ## Adding a chart to an existing role dashboard
 
@@ -33,7 +33,7 @@ Refresh the YAML and commit:
 
 ```
 just export-superset-assets
-git add ansible/files/superset_assets/
+git add deployment/ansible/files/superset_assets/
 git commit -m "add <chart name> to <role> dashboard"
 ```
 
@@ -44,18 +44,18 @@ are live.
 
 Datasets sit between Superset and the underlying SQL views, so add the
 view first. Drop the `CREATE VIEW` into
-`database/sql/schema/006_create_views.sql` with a matching `GRANT` in
+`deployment/database/sql/schema/006_create_views.sql` with a matching `GRANT` in
 `007_grant_permissions.sql`, then either redeploy the database or apply
 the file in place:
 
 ```
 kubectl exec -i -n dashverse deploy/postgresql \
     -- psql -U dashverse -d dashverse \
-    < database/sql/schema/006_create_views.sql
+    < deployment/database/sql/schema/006_create_views.sql
 ```
 
 Then add an entry under `datasets:` in
-`ansible/roles/superset_config/defaults/main.yml`:
+`deployment/ansible/roles/superset_config/defaults/main.yml`:
 
 ```yaml
 - name: my_new_view
@@ -76,12 +76,12 @@ Creator, Dimension, ...), and export.
 Then wire the role into the codebase:
 
 - Add the key to `dashboard_role_keys` in
-  `ansible/roles/superset_config/defaults/main.yml`.
-- Add the role to the `DASHBOARDS` dict in `landing/app/api/routes.py`,
+  `deployment/ansible/roles/superset_config/defaults/main.yml`.
+- Add the role to the `DASHBOARDS` dict in `frontend/app/api/routes.py`,
   including its `rsqkit_url`.
-- Add a nav link in `landing/app/templates/base.html`.
+- Add a nav link in `frontend/app/templates/base.html`.
 
-Re-run `just setup-dashboards` and `just build-landing` and verify in
+Re-run `just setup-dashboards` and `just build-frontend` and verify in
 the browser.
 
 ## Editing an existing chart or dashboard

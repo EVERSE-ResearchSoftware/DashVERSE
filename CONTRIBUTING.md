@@ -58,10 +58,10 @@ Match the surrounding code. Some defaults:
 
 | Area                                         | Indent   | Notes                                                                                                                      |
 | -------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Python (auth-service, landing, database)     | 4 spaces | Type hints on function signatures where they add value. Prefer `logging.getLogger(__name__)`.                              |
-| SQL (database/sql)                           | 4 spaces | Uppercase keywords (`CREATE TABLE`, `SELECT`), lowercase identifiers. Brief comment for non-trivial views or triggers.     |
-| Terraform (terraform/)                       | 2 spaces | HCL convention. One resource per file when it helps clarity. Use `locals {}` to reduce repetition.                         |
-| Ansible (ansible/)                           | 2 spaces | Descriptive task names. The Superset role splits charts and dashboards per RSQKit role under `tasks/everse_roles/<role>/`. |
+| Python (backend, frontend, database)     | 4 spaces | Type hints on function signatures where they add value. Prefer `logging.getLogger(__name__)`.                              |
+| SQL (deployment/database/sql)                           | 4 spaces | Uppercase keywords (`CREATE TABLE`, `SELECT`), lowercase identifiers. Brief comment for non-trivial views or triggers.     |
+| Terraform (deployment/terraform/)                       | 2 spaces | HCL convention. One resource per file when it helps clarity. Use `locals {}` to reduce repetition.                         |
+| Ansible (deployment/ansible/)                           | 2 spaces | Descriptive task names. The Superset role splits charts and dashboards per RSQKit role under `tasks/everse_roles/<role>/`. |
 | Shell (scripts/)                             | 2 spaces | `#!/usr/bin/env bash` and `set -euo pipefail` at the top.                                                                  |
 
 Keep diffs free of unrelated whitespace changes. Run formatters before pushing if the language has one configured locally.
