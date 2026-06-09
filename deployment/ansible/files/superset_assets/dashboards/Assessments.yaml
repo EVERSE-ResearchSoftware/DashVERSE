@@ -363,7 +363,7 @@ position:
       width: 12
       height: 65
       chartId: 215
-      sliceName: Technical Debt Heatmap
+      sliceName: Quality Score Heatmap
       uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed
     type: CHART
     parents:

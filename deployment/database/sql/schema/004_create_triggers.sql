@@ -76,7 +76,8 @@ BEGIN
     RETURN 'pass';
   ELSIF out_val IN ('false', 'invalid', 'fail', 'Fail', 'failed') THEN
     RETURN 'fail';
-  ELSIF out_val IN ('n/a', 'na', 'not_applicable', 'NotApplicable', 'NA') THEN
+  ELSIF out_val IN ('n/a', 'na', 'not_applicable', 'NotApplicable', 'NA',
+                    'error', 'Error', 'ERROR') THEN
     RETURN 'not_applicable';
   END IF;
 

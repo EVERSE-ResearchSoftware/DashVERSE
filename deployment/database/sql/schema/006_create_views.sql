@@ -163,7 +163,14 @@ SELECT
   sqs.project_id,
   sqs.project_name,
   sqs.score AS pass_rate,
-  (sqs.score >= 75) AS above_threshold
+  COALESCE(
+    NULLIF(current_setting('app.compliance_threshold', true), ''),
+    '75'
+  )::numeric AS threshold_value,
+  (sqs.score >= COALESCE(
+    NULLIF(current_setting('app.compliance_threshold', true), ''),
+    '75'
+  )::numeric) AS above_threshold
 FROM software_quality_scores sqs;
 
 DROP VIEW IF EXISTS software_languages;

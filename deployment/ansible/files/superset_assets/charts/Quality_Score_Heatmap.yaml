@@ -1,7 +1,9 @@
-slice_name: Technical Debt Heatmap
-description: Score per software-by-dimension; greener cells are stronger, oranger
-  cells weaker. Use to spot which project-dimension pairs need the most engineering
-  effort.
+slice_name: Quality Score Heatmap
+description: Pass-rate score per software-by-dimension (computed as the percentage
+  of passing checks). Greener cells are stronger, oranger cells weaker. The
+  "score" is the same number plotted in Software Pass Rate, just broken out
+  per dimension. Use to spot which project-dimension pairs need the most
+  engineering effort.
 certified_by: null
 certification_details: null
 viz_type: heatmap_v2
