@@ -36,14 +36,8 @@ CREATE TABLE IF NOT EXISTS assessment_raw (
 ALTER TABLE assessment_raw ADD COLUMN IF NOT EXISTS project_id BIGINT;
 CREATE INDEX IF NOT EXISTS idx_assessment_raw_project_id ON assessment_raw(project_id);
 
-CREATE TABLE IF NOT EXISTS software_metadata (
-  identifier VARCHAR PRIMARY KEY,
-  programming_language VARCHAR[],
-  description TEXT,
-  homepage_url VARCHAR,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+DROP VIEW IF EXISTS software_languages;
+DROP TABLE IF EXISTS software_metadata;
 
 CREATE OR REPLACE VIEW assessment AS
 SELECT

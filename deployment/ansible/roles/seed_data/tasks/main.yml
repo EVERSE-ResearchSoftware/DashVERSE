@@ -7,13 +7,6 @@
   register: seed_result
   changed_when: "'INSERT' in seed_result.stdout"
 
-- name: Apply software_metadata seed data
-  command:
-    cmd: kubectl exec -i -n dashverse deploy/postgresql -- psql -U {{ database_user }} -d {{ database_db }} -v ON_ERROR_STOP=1
-    stdin: "{{ lookup('file', playbook_dir + '/../../database/sql/data/005_software_metadata.sql') }}"
-  register: meta_seed_result
-  changed_when: "'INSERT' in meta_seed_result.stdout"
-
 - name: Show seed apply summary
   debug:
     msg: "{{ seed_result.stdout_lines }}"

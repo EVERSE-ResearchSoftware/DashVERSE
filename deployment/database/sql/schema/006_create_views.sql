@@ -14,19 +14,11 @@ SELECT
   MIN(a.created_at) AS first_seen,
   MAX(a.created_at) AS last_seen,
   COUNT(DISTINCT a.id) AS assessment_count,
-  m.programming_language,
-  m.description,
-  m.homepage_url,
   a.project_id,
   p.name AS project_name
 FROM assessment_raw a
-LEFT JOIN software_metadata m
-  ON m.identifier = COALESCE(
-       a.payload->'assessedSoftware'->'schema:identifier'->>'@id',
-       a.payload->'assessedSoftware'->>'name'
-     )
 LEFT JOIN auth.projects p ON p.id = a.project_id
-GROUP BY identifier, name, software_name, doi, m.programming_language, m.description, m.homepage_url, a.project_id, p.name;
+GROUP BY identifier, name, software_name, doi, a.project_id, p.name;
 
 CREATE OR REPLACE VIEW assessments_detailed AS
 SELECT
@@ -175,12 +167,6 @@ SELECT
 FROM software_quality_scores sqs;
 
 DROP VIEW IF EXISTS software_languages;
-CREATE VIEW software_languages AS
-SELECT
-  sm.identifier AS software_identifier,
-  lang AS language
-FROM software_metadata sm, UNNEST(sm.programming_language) AS lang
-WHERE sm.programming_language IS NOT NULL;
 
 CREATE OR REPLACE VIEW common_issues AS
 SELECT

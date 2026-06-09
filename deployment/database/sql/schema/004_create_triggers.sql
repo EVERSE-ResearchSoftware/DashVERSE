@@ -8,11 +8,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS tr_software_metadata_updated ON software_metadata;
-CREATE TRIGGER tr_software_metadata_updated
-  BEFORE UPDATE ON software_metadata
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-
 DROP TRIGGER IF EXISTS tr_dimensions_updated ON dimensions;
 CREATE TRIGGER tr_dimensions_updated
   BEFORE UPDATE ON dimensions

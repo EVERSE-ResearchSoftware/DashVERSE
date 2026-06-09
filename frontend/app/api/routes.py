@@ -228,11 +228,6 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
     if proj_did is not None:
         rls.append({"dataset": proj_did, "clause": proj_clause})
 
-    if uid is None:
-        sw_lang_did = _dataset_id_by_name("software_languages", token)
-        if sw_lang_did is not None:
-            rls.append({"dataset": sw_lang_did, "clause": "1=0"})
-
     payload = {
         "user": {
             "username": (user or {}).get("username") or "anonymous",
@@ -292,7 +287,6 @@ _PROJECT_AWARE_DATASET_UUIDS = [
     "7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad",
     "0df3b836-158c-4563-af46-d1b909dca733",
     "a272ab14-6e6a-4b02-86e1-17eb77a6d37c",
-    "238d1c96-d76c-47cc-bc14-b957fd1c27c2",
     "80662b12-f989-4498-be68-1afe226d00a2",
     "c57303cb-cad4-42f6-9f01-6c7438a03ce3",
     "ba5963a1-5b48-41f8-bb4c-f95a10449996",
