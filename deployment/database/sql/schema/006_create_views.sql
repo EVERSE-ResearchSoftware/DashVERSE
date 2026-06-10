@@ -1,6 +1,7 @@
 SET search_path TO api, public;
 
-CREATE OR REPLACE VIEW software AS
+DROP VIEW IF EXISTS software CASCADE;
+CREATE VIEW software AS
 SELECT
   COALESCE(
     a.payload->'assessedSoftware'->'schema:identifier'->>'@id',
@@ -155,7 +156,8 @@ FROM checks_detailed cd
 WHERE cd.checking_software IS NOT NULL
 GROUP BY cd.checking_software, cd.project_id, cd.project_name;
 
-CREATE OR REPLACE VIEW compliance_status AS
+DROP VIEW IF EXISTS compliance_status;
+CREATE VIEW compliance_status AS
 SELECT
   sqs.software_name,
   sqs.software_id,

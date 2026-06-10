@@ -20,23 +20,24 @@ DashVERSE stores research software quality assessment data following the EVERSE 
 | `indicators` | Quality indicators linked to dimensions |
 | `assessment_raw` | Raw assessment data stored as JSONB |
 
-### software
+### software (view, derived)
 
-Stores metadata about registered research software projects.
+`software` is a **view** over `assessment_raw`, not a base table. Every
+column is sourced from the rsqa payload's `assessedSoftware` block; no
+hand-curated per-deployment metadata is exposed.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | INTEGER | Primary key |
-| identifier | VARCHAR | Unique identifier (e.g., "numpy", "pandas") |
-| name | VARCHAR | Display name |
-| description | TEXT | Project description |
-| version | VARCHAR | Current version |
-| license | VARCHAR | License type (MIT, Apache-2.0, GPL-3.0, etc.) |
-| repository_url | VARCHAR | Source code repository URL |
-| homepage_url | VARCHAR | Project homepage URL |
-| programming_language | VARCHAR[] | Array of programming languages used |
-| created_at | TIMESTAMP | Record creation time |
-| updated_at | TIMESTAMP | Last update time |
+| Column | Source |
+|--------|--------|
+| identifier | `assessedSoftware.schema:identifier.@id` ?? `assessedSoftware.name` |
+| name | `assessedSoftware.name` |
+| software_name | same as `name`, aliased for native-filter binding |
+| latest_version | MAX(`assessedSoftware.softwareVersion`) |
+| url | MAX(`assessedSoftware.url`) |
+| doi | `assessedSoftware.schema:identifier.@id` |
+| first_seen / last_seen | MIN / MAX of `assessment_raw.created_at` |
+| assessment_count | COUNT(DISTINCT assessment_raw.id) |
+| project_id | `assessment_raw.project_id` |
+| project_name | from `auth.projects` |
 
 ### dimensions
 
@@ -114,7 +115,36 @@ Raw assessment data stored as JSONB following the EVERSE JSON-LD format.
 | `software_quality_scores` | Quality scores per software and dimension |
 | `assessment_trends` | Monthly assessment statistics |
 | `common_issues` | Frequently failing indicators |
-| `software_languages` | Software grouped by programming language |
+
+## Derived Metrics
+
+The dashboards expose several numbers that are not in the rsqa payload
+directly -- `pass_rate`, `score`, `above_threshold`, `success_rate`. All
+of them are computed in SQL views from two raw payload fields:
+`checks[].output` and `checks[].status.@id`. The derivation chain is:
+
+1. **`check_outcome(check_item)`** (function in
+   `004_create_triggers.sql`) maps the raw `output` and `status` to one
+   of `pass` / `fail` / `not_applicable` / `unknown`. Recognised values:
+   - `pass` <- `true`, `valid`, `pass`, `Pass`, `passed`
+   - `fail` <- `false`, `invalid`, `fail`, `Fail`, `failed`
+   - `not_applicable` <- `n/a`, `na`, `not_applicable`, `NotApplicable`,
+     `NA`, `error`, `Error`, `ERROR` (errored checks are treated as
+     skipped so they don't penalise the pass rate)
+   - falls back to substring matches on `status.@id`
+     (`Pass`, `Fail`, `NotApplicable`)
+2. **`pass_rate`** and `score` (aliased) are computed in each
+   aggregating view as
+   `ROUND(100.0 * COUNT(*) FILTER (WHERE outcome = 'pass') / NULLIF(COUNT(*), 0), 2)`.
+3. **`compliance_status.above_threshold`** = `score >= threshold`. The
+   threshold is configurable via the `app.compliance_threshold`
+   Postgres setting (numeric 0-100, default 75; set to 0 to disable).
+   Apply with `ALTER DATABASE dashverse SET app.compliance_threshold =
+   80;` and reload Superset's pool.
+
+The `Quality Score Heatmap` chart (formerly "Technical Debt Heatmap")
+plots `AVG(score)` per (software, dimension) -- there is no separate
+"debt" calculation; it's the same pass-rate score sliced two ways.
 
 ## Quality Dimensions
 

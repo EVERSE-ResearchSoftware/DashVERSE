@@ -37,9 +37,10 @@ ALTER TABLE assessment_raw ADD COLUMN IF NOT EXISTS project_id BIGINT;
 CREATE INDEX IF NOT EXISTS idx_assessment_raw_project_id ON assessment_raw(project_id);
 
 DROP VIEW IF EXISTS software_languages;
-DROP TABLE IF EXISTS software_metadata;
+DROP TABLE IF EXISTS software_metadata CASCADE;
 
-CREATE OR REPLACE VIEW assessment AS
+DROP VIEW IF EXISTS assessment;
+CREATE VIEW assessment AS
 SELECT
   id,
   payload->>'@context' AS "@context",

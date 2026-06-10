@@ -33,7 +33,6 @@ Superset datasets are connected to PostgreSQL tables and views in the `api` sche
 | software_quality_scores | View        | Quality scores per software and dimension       |
 | assessment_trends       | View        | Monthly assessment statistics                   |
 | common_issues           | View        | Frequently failing indicators                   |
-| software_languages      | View        | Software by programming language                |
 
 ## Available Metrics
 
@@ -116,14 +115,15 @@ Registered research software projects.
 | id                   | INTEGER   | Primary key                          |
 | identifier           | VARCHAR   | Unique identifier                    |
 | name                 | VARCHAR   | Display name                         |
-| description          | TEXT      | Project description                  |
-| version              | VARCHAR   | Current version                      |
-| license              | VARCHAR   | License type (MIT, Apache-2.0, etc.) |
-| repository_url       | VARCHAR   | Source code repository URL           |
-| homepage_url         | VARCHAR   | Project homepage URL                 |
-| programming_language | VARCHAR[] | Array of programming languages       |
-| created_at           | TIMESTAMP | Record creation time                 |
-| updated_at           | TIMESTAMP | Last update time                     |
+| latest_version       | VARCHAR   | MAX over `assessedSoftware.softwareVersion` |
+| url                  | VARCHAR   | `assessedSoftware.url` |
+| doi                  | VARCHAR   | `assessedSoftware.schema:identifier.@id` when set |
+| assessment_count     | BIGINT    | COUNT(DISTINCT assessment_raw.id) |
+| first_seen           | TIMESTAMP | MIN(assessment_raw.created_at) |
+| last_seen            | TIMESTAMP | MAX(assessment_raw.created_at) |
+
+Software is a derived view; columns come from `assessedSoftware` on each
+ingested assessment_raw payload, never from a curated registry.
 
 ### assessments (assessment_raw)
 
@@ -248,16 +248,6 @@ Frequently failing indicators across all assessments.
 | failure_count     | BIGINT | Number of failures              |
 | affected_software | TEXT[] | Software affected by this issue |
 
-### software_languages
-
-Software projects with programming languages.
-
-| Column        | Type      | Description                 |
-| ------------- | --------- | --------------------------- |
-| id            | INTEGER   | Software ID                 |
-| software_name | TEXT      | Software name               |
-| language      | VARCHAR[] | Programming languages array |
-
 ## Dashboard Use Cases
 
 ### Software Quality Overview
@@ -306,7 +296,6 @@ Common filter dimensions available:
 | indicator_name | Filter by quality indicator | indicator_results, checks_detailed, common_issues |
 | status | Filter by check outcome | checks_detailed, indicator_results |
 | assessment_date | Filter by date range | checks_detailed, assessment_trends |
-| programming_language | Filter by language | software_languages, software |
 
 ## Example Queries
 
