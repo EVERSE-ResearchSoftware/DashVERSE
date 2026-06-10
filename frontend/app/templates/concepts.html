@@ -117,6 +117,101 @@
 </section>
 
 <section class="example-assessment">
+    <h2>Pass Rate</h2>
+    <p>
+        Most quality metrics on the dashboards (Software Pass Rate, Pass Rate by Dimension,
+        Quality Score Heatmap, Compliance Heatmap) boil down to one number:
+        the <strong>pass rate</strong>. It is computed entirely from the
+        <code>output</code> and <code>status</code> fields on each
+        <strong>Check</strong> in an assessment.
+    </p>
+    <div class="explanation">
+        <h4>Step 1 &mdash; classify each check</h4>
+        <p style="margin-bottom: 0.6rem;">
+            DashVERSE normalises the raw <code>output</code> string and the
+            <code>status.@id</code> of each check into one of four outcomes:
+        </p>
+        <ul>
+            <li><strong>pass</strong> &mdash; <code>output</code> is one of
+                <code>true</code>, <code>valid</code>, <code>pass</code>,
+                <code>Pass</code>, <code>passed</code></li>
+            <li><strong>fail</strong> &mdash; <code>output</code> is one of
+                <code>false</code>, <code>invalid</code>, <code>fail</code>,
+                <code>Fail</code>, <code>failed</code>, or
+                <code>status.@id</code> ends with <code>FailedActionStatus</code></li>
+            <li><strong>not_applicable</strong> &mdash; <code>output</code> is one of
+                <code>n/a</code>, <code>na</code>, <code>not_applicable</code>,
+                <code>NotApplicable</code>, <code>NA</code>, or
+                <code>error</code> (errored checks are treated as skipped so a
+                broken plugin doesn't drag the score down)</li>
+            <li><strong>unknown</strong> &mdash; anything else; ignored by the
+                pass-rate formula</li>
+        </ul>
+    </div>
+    <div class="explanation">
+        <h4>Step 2 &mdash; aggregate</h4>
+        <p style="margin: 0;">
+            Pass rate is just the fraction of <code>pass</code> outcomes,
+            counted over every check in the scope (per software, per
+            dimension, per month, etc.):
+        </p>
+        <pre style="background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; margin-top: 0.6rem;"><code>pass_rate = 100 &times; count(outcome = 'pass')
+                  / count(*)</code></pre>
+        <p style="margin: 0; color: var(--color-text-muted);">
+            Result is a number between 0 and 100. Identical formula whether
+            you're looking at one software's score for one dimension, the
+            portfolio-wide pass rate, or a monthly trend &mdash; only the
+            <em>filter</em> changes.
+        </p>
+    </div>
+    <div class="explanation">
+        <h4>Worked example</h4>
+        <p style="margin-bottom: 0.6rem;">
+            Suppose an assessment of <strong>CFFinit</strong> reports five
+            checks:
+        </p>
+        <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 0.6rem;">
+            <thead style="background: var(--color-light-bg);">
+                <tr>
+                    <th style="text-align: left; padding: 0.5rem 0.75rem; font-size: 0.85rem;">Indicator</th>
+                    <th style="text-align: left; padding: 0.5rem 0.75rem; font-size: 0.85rem;"><code>output</code></th>
+                    <th style="text-align: left; padding: 0.5rem 0.75rem; font-size: 0.85rem;">Outcome</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 0.4rem 0.75rem;">software_has_license</td><td style="padding: 0.4rem 0.75rem;"><code>true</code></td><td style="padding: 0.4rem 0.75rem; color: #2f855a;">pass</td></tr>
+                <tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 0.4rem 0.75rem;">software_has_citation</td><td style="padding: 0.4rem 0.75rem;"><code>valid</code></td><td style="padding: 0.4rem 0.75rem; color: #2f855a;">pass</td></tr>
+                <tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 0.4rem 0.75rem;">software_has_tests</td><td style="padding: 0.4rem 0.75rem;"><code>false</code></td><td style="padding: 0.4rem 0.75rem; color: #c0392b;">fail</td></tr>
+                <tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 0.4rem 0.75rem;">software_has_documentation</td><td style="padding: 0.4rem 0.75rem;"><code>true</code></td><td style="padding: 0.4rem 0.75rem; color: #2f855a;">pass</td></tr>
+                <tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 0.4rem 0.75rem;">archived_in_software_heritage</td><td style="padding: 0.4rem 0.75rem;"><code>error</code></td><td style="padding: 0.4rem 0.75rem; color: var(--color-text-muted);">not_applicable</td></tr>
+            </tbody>
+        </table>
+        <p style="margin: 0;">
+            Three of the five outcomes are <code>pass</code>. The errored
+            check counts as <em>not_applicable</em> and is excluded from the
+            total. So:
+        </p>
+        <pre style="background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; margin-top: 0.6rem;"><code>pass_rate = 100 &times; 3 / 5 = 60.0 %</code></pre>
+        <p style="margin: 0; color: var(--color-text-muted);">
+            (Older versions of DashVERSE counted errored checks in the
+            denominator. Treating them as not_applicable matches the EVERSE
+            convention: a broken tool says nothing about the software's
+            actual quality.)
+        </p>
+    </div>
+    <div class="explanation">
+        <h4>Compliance threshold</h4>
+        <p style="margin: 0;">
+            A few views also report whether the pass rate is "compliant":
+            <code>pass_rate &ge; threshold</code>. The threshold defaults to
+            <strong>75&nbsp;%</strong> but is configurable per deployment via the
+            <code>app.compliance_threshold</code> Postgres setting. Setting it
+            to&nbsp;0 disables thresholding (every score counts as compliant).
+        </p>
+    </div>
+</section>
+
+<section class="example-assessment">
     <h2>Example Assessment</h2>
     <p>
         This JSON object represents a complete software quality assessment for a project,

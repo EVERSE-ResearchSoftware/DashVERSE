@@ -124,7 +124,7 @@ position:
   CHART-11:
     id: CHART-11
     meta:
-      width: 4
+      width: 12
       height: 65
       chartId: 110
       sliceName: Catalog Coverage

@@ -4,11 +4,9 @@ description: How many of the EVERSE quality model's dimensions and indicators
   coverage; pick a project to see how complete its assessment is.
 certified_by: null
 certification_details: null
-viz_type: table
+viz_type: echarts_timeseries_bar
 params:
-  query_mode: aggregate
-  groupby:
-  - category
+  x_axis: category
   metrics:
   - label: Tested
     expressionType: SIMPLE
@@ -20,13 +18,12 @@ params:
     column:
       column_name: catalog_total
     aggregate: MAX
-  - label: Coverage %
-    expressionType: SQL
-    sqlExpression: ROUND(100.0 * COUNT(DISTINCT item_id) / NULLIF(MAX(catalog_total), 0), 1)
+  color_scheme: supersetColors
+  orientation: horizontal
+  show_legend: true
+  rich_tooltip: true
+  y_axis_format: ',d'
   row_limit: 10
-  table_filter: false
-  show_cell_bars: true
-  color_pn: false
 query_context: null
 cache_timeout: null
 uuid: 81c3c9a0-eff6-4fa2-bfca-e515dc3d59f5
