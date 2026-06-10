@@ -44,7 +44,6 @@ SELECT
   id,
   payload->>'@context' AS "@context",
   payload->>'@type' AS "@type",
-  payload->>'@id' AS "@id",
   payload->>'dateCreated' AS "dateCreated",
   payload->>'license' AS license,
   payload->'author' AS author,

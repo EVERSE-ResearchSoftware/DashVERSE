@@ -31,7 +31,7 @@ SELECT
   ) AS software_id,
   jsonb_array_length(a.payload->'checks') AS total_checks,
   a.created_at,
-  COALESCE(a.payload->'creator'->>'name', a.payload->'author'->>'name') AS creator_name,
+  a.payload->'author'->>'name' AS creator_name,
   a.payload->'license'->>'@id' AS license_id,
   a.project_id,
   p.name AS project_name
@@ -58,7 +58,7 @@ SELECT
   i.name AS indicator_name,
   d.name AS dimension_name,
   d.identifier AS dimension_id,
-  COALESCE(a.payload->'creator'->>'name', a.payload->'author'->>'name') AS creator_name,
+  a.payload->'author'->>'name' AS creator_name,
   check_outcome(check_item) AS outcome,
   a.project_id,
   p.name AS project_name
