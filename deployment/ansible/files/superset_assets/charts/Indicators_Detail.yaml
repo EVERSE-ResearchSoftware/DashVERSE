@@ -7,6 +7,7 @@ certified_by: null
 certification_details: null
 viz_type: table
 params:
+  query_mode: raw
   all_columns:
   - dimension_name
   - indicator_name
