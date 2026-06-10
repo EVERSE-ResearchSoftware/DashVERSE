@@ -10,14 +10,16 @@
         JOIN ab_permission p ON pv.permission_id = p.id
         JOIN ab_view_menu vm ON pv.view_menu_id = vm.id
         WHERE
-          -- write / mutating operations
+          -- write / mutating operations. can_share_* and can_csv kept
+          -- granted so the iframe's kabob menu still offers Download CSV
+          -- and Copy permalink -- both expose only what the iframe is
+          -- already showing the viewer.
           p.name IN (
             'can_add', 'can_delete', 'can_edit', 'can_write',
             'can_post', 'can_put', 'can_patch',
             'can_export', 'can_import',
             'can_bulk_create', 'can_delete_embedded',
-            'can_set_embedded', 'can_share_dashboard',
-            'can_share_chart'
+            'can_set_embedded'
           )
           -- FAB UI list pages (the /chart/list/ etc. routes)
           OR p.name = 'can_list'
@@ -26,8 +28,6 @@
           -- explore / SQL lab / debug helpers we don't want anonymous
           OR (p.name = 'can_explore' AND vm.name = 'Superset')
           OR (p.name = 'can_view_query' AND vm.name = 'Dashboard')
-          OR (p.name = 'can_view_chart_as_table' AND vm.name = 'Dashboard')
-          OR (p.name = 'can_csv' AND vm.name = 'Superset')
           OR (p.name = 'can_estimate_query_cost' AND vm.name = 'SQLLab')
           OR (p.name = 'can_external_metadata' AND vm.name = 'Datasource')
           OR (p.name = 'can_external_metadata_by_name' AND vm.name = 'Datasource')

@@ -11,7 +11,9 @@
     </p>
 </section>
 
-<section class="concepts-grid">
+<hr class="section-sep">
+
+<sectionclass="concepts-grid">
     <div class="concept-card">
         <h2>Dimension</h2>
         <p class="definition">
@@ -86,7 +88,9 @@
     </div>
 </section>
 
-<section class="relationships">
+<hr class="section-sep">
+
+<sectionclass="relationships">
     <h2>How They Relate</h2>
     <div class="relationship-flow">
         <div class="rel-tile">
@@ -116,7 +120,9 @@
     </p>
 </section>
 
-<section class="example-assessment">
+<hr class="section-sep">
+
+<sectionclass="example-assessment">
     <h2>Pass Rate</h2>
     <p>
         Most quality metrics on the dashboards (Software Pass Rate, Pass Rate by Dimension,
@@ -155,8 +161,8 @@
             counted over every check in the scope (per software, per
             dimension, per month, etc.):
         </p>
-        <pre style="background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; margin-top: 0.6rem;"><code>pass_rate = 100 &times; count(outcome = 'pass')
-                  / count(*)</code></pre>
+        <pre class="nohljsln" style="background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; margin-top: 0.6rem; font-family: 'Fira Code', monospace;">pass_rate = 100 &times; count(outcome = 'pass')
+                  / count(*)</pre>
         <p style="margin: 0; color: var(--color-text-muted);">
             Result is a number between 0 and 100. Identical formula whether
             you're looking at one software's score for one dimension, the
@@ -191,12 +197,11 @@
             check counts as <em>not_applicable</em> and is excluded from the
             total. So:
         </p>
-        <pre style="background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; margin-top: 0.6rem;"><code>pass_rate = 100 &times; 3 / 5 = 60.0 %</code></pre>
+        <pre class="nohljsln" style="background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; margin-top: 0.6rem; font-family: 'Fira Code', monospace;">pass_rate = 100 &times; 3 / 5 = 60.0 %</pre>
         <p style="margin: 0; color: var(--color-text-muted);">
-            (Older versions of DashVERSE counted errored checks in the
-            denominator. Treating them as not_applicable matches the EVERSE
+            Treating errored checks as not_applicable matches the EVERSE
             convention: a broken tool says nothing about the software's
-            actual quality.)
+            actual quality, so it shouldn't pull the score down.
         </p>
     </div>
     <div class="explanation">
@@ -211,7 +216,9 @@
     </div>
 </section>
 
-<section class="example-assessment">
+<hr class="section-sep">
+
+<sectionclass="example-assessment">
     <h2>Example Assessment</h2>
     <p>
         This JSON object represents a complete software quality assessment for a project,
@@ -240,10 +247,15 @@
             </li>
         </ul>
     </div>
-    <pre><code class="language-json">{{ assessment_example }}</code></pre>
+    <details class="expand-json">
+        <summary>Show the JSON</summary>
+        <pre><code class="language-json">{{ assessment_example }}</code></pre>
+    </details>
 </section>
 
-<section class="learn-more">
+<hr class="section-sep">
+
+<sectionclass="learn-more">
     <h2>Learn More</h2>
     <div class="links-grid">
         <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="learn-link">
