@@ -34,9 +34,6 @@ datasets:
   - name: checks_detailed
     table: checks_detailed
     schema: "{{ database_schema }}"
-  - name: software_languages
-    table: software_languages
-    schema: "{{ database_schema }}"
   - name: dimension_trend
     table: dimension_trend
     schema: "{{ database_schema }}"

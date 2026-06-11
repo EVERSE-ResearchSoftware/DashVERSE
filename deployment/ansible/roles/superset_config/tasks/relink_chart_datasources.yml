@@ -1,0 +1,31 @@
+---
+
+- name: Collect chart uuid / dataset_uuid pairs from local YAMLs
+  shell: |
+    set -e
+    for f in {{ playbook_dir }}/../files/superset_assets/charts/*.yaml; do
+      cu=$(awk '/^uuid:/ {print $2; exit}' "$f")
+      du=$(awk '/^dataset_uuid:/ {print $2; exit}' "$f")
+      [ -n "$cu" ] && [ -n "$du" ] && echo "$cu:$du"
+    done | paste -sd,
+  register: chart_datasource_pairs_raw
+  changed_when: false
+
+- name: Re-link slices to match YAML dataset_uuid
+  command:
+    cmd: >
+      kubectl exec -i -n dashverse -c superset deploy/superset --
+      env
+      PGHOST=postgresql PGPORT=5432
+      PGDATABASE={{ database_db }}
+      PGUSER={{ database_user }}
+      PGPASSWORD={{ lookup('env', 'DATABASE_PASSWORD') }}
+      CHART_DATASOURCE_PAIRS={{ chart_datasource_pairs_raw.stdout }}
+      python3 -
+    stdin: "{{ lookup('file', role_path + '/files/relink_chart_datasources.py') }}"
+  register: relink_result
+  changed_when: "'charts relinked=0 ' not in relink_result.stdout"
+
+- name: Show relink result
+  debug:
+    var: relink_result.stdout_lines

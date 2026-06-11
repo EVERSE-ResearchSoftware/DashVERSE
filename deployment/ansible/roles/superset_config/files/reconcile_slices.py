@@ -4,7 +4,7 @@ import sys
 
 import psycopg2
 
-SLUGS = ["assessments", "global"]
+SLUGS = ["assessments", "global", "catalog"]
 
 conn = psycopg2.connect(
     host=os.environ["PGHOST"],

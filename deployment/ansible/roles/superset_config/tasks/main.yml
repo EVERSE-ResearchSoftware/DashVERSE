@@ -5,8 +5,14 @@
 - name: Configure datasets
   include_tasks: datasets.yml
 
+- name: Purge dashboards/charts not present in local YAMLs
+  include_tasks: purge_orphans.yml
+
 - name: Import asset bundle
   include_tasks: import_assets.yml
+
+- name: Re-link chart datasources to match YAML dataset_uuid
+  include_tasks: relink_chart_datasources.yml
 
 - name: Normalize chart params after import
   include_tasks: normalize_chart_params.yml

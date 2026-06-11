@@ -27,6 +27,7 @@ GRANT SELECT ON indicators_flat TO web_anon, web_user;
 GRANT SELECT ON tools_coverage TO web_anon, web_user;
 GRANT SELECT ON tools_summary TO web_anon, web_user;
 GRANT SELECT ON dimensions_with_links TO web_anon, web_user;
+GRANT SELECT ON assessment_checks TO web_anon, web_user;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT SELECT ON TABLES TO web_anon;
 ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT ALL ON TABLES TO web_user;

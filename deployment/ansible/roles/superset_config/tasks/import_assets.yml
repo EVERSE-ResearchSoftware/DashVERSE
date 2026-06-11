@@ -3,7 +3,7 @@
 - name: Stage assets in a wrapper folder for the import bundle
   shell: |
     set -e
-    rm -rf /tmp/dashverse_bundle /tmp/dashverse-superset-assets.zip /tmp/dashverse-superset-charts.zip
+    rm -rf /tmp/dashverse_bundle /tmp/dashverse_chart_bundle /tmp/dashverse-superset-assets.zip /tmp/dashverse-superset-charts.zip
     mkdir -p /tmp/dashverse_bundle/dashverse_assets
     cp -r "{{ playbook_dir }}/../files/superset_assets/." /tmp/dashverse_bundle/dashverse_assets/
     rm -f /tmp/dashverse_bundle/dashverse_assets/README.md

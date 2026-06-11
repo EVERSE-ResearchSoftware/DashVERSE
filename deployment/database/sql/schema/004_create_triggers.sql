@@ -69,27 +69,27 @@ DECLARE
   status_id TEXT := check_item->'status'->>'@id';
 BEGIN
   IF status_id LIKE '%FailedActionStatus%' THEN
-    RETURN 'fail';
+    RETURN 'Fail';
   END IF;
 
   IF out_val IN ('true', 'valid', 'pass', 'Pass', 'passed') THEN
-    RETURN 'pass';
+    RETURN 'Pass';
   ELSIF out_val IN ('false', 'invalid', 'fail', 'Fail', 'failed') THEN
-    RETURN 'fail';
+    RETURN 'Fail';
   ELSIF out_val IN ('n/a', 'na', 'not_applicable', 'NotApplicable', 'NA',
                     'error', 'Error', 'ERROR') THEN
-    RETURN 'not_applicable';
+    RETURN 'Not applicable';
   END IF;
 
   IF status_id LIKE '%Pass%' THEN
-    RETURN 'pass';
+    RETURN 'Pass';
   ELSIF status_id LIKE '%Fail%' THEN
-    RETURN 'fail';
+    RETURN 'Fail';
   ELSIF status_id LIKE '%NotApplicable%' THEN
-    RETURN 'not_applicable';
+    RETURN 'Not applicable';
   END IF;
 
-  RETURN 'unknown';
+  RETURN 'Unknown';
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 

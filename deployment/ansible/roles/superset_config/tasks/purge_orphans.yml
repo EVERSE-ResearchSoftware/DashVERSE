@@ -1,0 +1,40 @@
+---
+
+- name: Collect expected dashboard UUIDs from local YAMLs
+  shell: |
+    grep -h '^uuid:' {{ playbook_dir }}/../files/superset_assets/dashboards/*.yaml \
+      | awk '{print $2}' | paste -sd,
+  register: expected_dashboard_uuids
+  changed_when: false
+
+- name: Collect expected chart UUIDs from local YAMLs
+  shell: |
+    grep -h '^uuid:' {{ playbook_dir }}/../files/superset_assets/charts/*.yaml \
+      | awk '{print $2}' | paste -sd,
+  register: expected_chart_uuids
+  changed_when: false
+
+- name: Build expected dataset name list (from defaults/main.yml datasets var)
+  set_fact:
+    expected_dataset_names: "{{ datasets | map(attribute='table') | join(',') }}"
+
+- name: Purge dashboards/charts/datasets that have no matching local definition
+  command:
+    cmd: >
+      kubectl exec -i -n dashverse -c superset deploy/superset --
+      env
+      PGHOST=postgresql PGPORT=5432
+      PGDATABASE={{ database_db }}
+      PGUSER={{ database_user }}
+      PGPASSWORD={{ lookup('env', 'DATABASE_PASSWORD') }}
+      EXPECTED_DASHBOARD_UUIDS={{ expected_dashboard_uuids.stdout }}
+      EXPECTED_CHART_UUIDS={{ expected_chart_uuids.stdout }}
+      EXPECTED_DATASET_NAMES={{ expected_dataset_names }}
+      python3 -
+    stdin: "{{ lookup('file', role_path + '/files/purge_orphans.py') }}"
+  register: purge_result
+  changed_when: "'dashboards dropped=0 charts dropped=0 datasets dropped=0' not in purge_result.stdout"
+
+- name: Show purge result
+  debug:
+    var: purge_result.stdout_lines
