@@ -1,28 +1,41 @@
 slice_name: Dimension Profile
-description: Pass rate per quality dimension. With no software selected this is the
-  portfolio profile; pick a project to see its profile. Larger slices are stronger
-  dimensions; small slices are the gaps to address next.
+description: |
+  Outcome breakdown per quality dimension. With no software selected, this is
+  the portfolio profile; pick a project in the filters to see its profile.
+  100% stacked bars make it easy to compare dimensions -- the bigger the blue
+  segment, the stronger the dimension; bigger orange means more failures.
 certified_by: null
 certification_details: null
-viz_type: pie
+viz_type: echarts_timeseries_bar
 params:
+  x_axis: dimension_name
   groupby:
-  - dimension_name
-  metric:
-    label: pass_rate
+  - outcome
+  metrics:
+  - label: checks
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  adhoc_filters:
+  - clause: WHERE
     expressionType: SIMPLE
-    column:
-      column_name: score
-    aggregate: AVG
+    subject: dimension_name
+    operator: IS NOT NULL
+    comparator: ''
   color_scheme: supersetColors
-  show_labels: true
+  label_colors:
+    Pass: '#0072B2'
+    Fail: '#D55E00'
+    Not applicable: '#999999'
+  orientation: horizontal
+  stack: Stack
+  contributionMode: row
   show_legend: true
-  number_format: .1f
-  labels_outside: true
-  show_labels_threshold: 5
-  label_type: key_percent
+  show_value: false
+  rich_tooltip: true
+  y_axis_format: .0%
+  row_limit: 50
 query_context: null
 cache_timeout: null
 uuid: 7f71f69e-f937-4297-9f31-018d9d756442
 version: 1.0.0
-dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

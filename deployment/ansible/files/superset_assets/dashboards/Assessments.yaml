@@ -36,12 +36,16 @@ position:
     - ROOT_ID
     children:
     - ROW-INTRO
+    - ROW-HEADER-MD-SECTION-OVERVIEW
     - ROW-1
-    - ROW-2
+    - ROW-HEADER-MD-SECTION-PROFILE
+    - ROW-PROFILE-TREND
     - ROW-3
-    - ROW-4
+    - ROW-HEADER-MD-SECTION-COMPARE
     - ROW-5
+    - ROW-HEADER-MD-SECTION-IMPROVE
     - ROW-6
+    - ROW-HEADER-MD-SECTION-DETAIL
     - ROW-7
     - ROW-8
     - ROW-9
@@ -57,24 +61,10 @@ position:
     meta:
       text: Dashboard
     type: HEADER
-  CHART-1:
-    id: CHART-1
-    meta:
-      width: 3
-      height: 50
-      chartId: 200
-      sliceName: Pass Rate
-      uuid: db67d53f-a80b-43fb-890a-e9d4f9bcabf2
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1
-    children: []
   CHART-2:
     id: CHART-2
     meta:
-      width: 3
+      width: 4
       height: 50
       chartId: 201
       sliceName: Assessments
@@ -88,7 +78,7 @@ position:
   CHART-3:
     id: CHART-3
     meta:
-      width: 3
+      width: 4
       height: 50
       chartId: 202
       sliceName: Software in scope
@@ -102,7 +92,7 @@ position:
   CHART-4:
     id: CHART-4
     meta:
-      width: 3
+      width: 4
       height: 50
       chartId: 203
       sliceName: Last activity
@@ -122,34 +112,9 @@ position:
     - ROOT_ID
     - GRID_ID
     children:
-    - CHART-1
     - CHART-2
     - CHART-3
     - CHART-4
-  CHART-5:
-    id: CHART-5
-    meta:
-      width: 12
-      height: 60
-      chartId: 204
-      sliceName: Pass Rate Trend
-      uuid: b5cf65e0-46fb-450c-9f8a-ed9c0289f19a
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-2
-    children: []
-  ROW-2:
-    id: ROW-2
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-5
   CHART-6:
     id: CHART-6
     meta:
@@ -158,20 +123,6 @@ position:
       chartId: 205
       sliceName: Dimension Profile
       uuid: 7f71f69e-f937-4297-9f31-018d9d756442
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-3
-    children: []
-  CHART-7:
-    id: CHART-7
-    meta:
-      width: 6
-      height: 65
-      chartId: 206
-      sliceName: vs Portfolio Median
-      uuid: a4956807-1aa2-4086-9cb1-f212f9d90d08
     type: CHART
     parents:
     - ROOT_ID
@@ -188,21 +139,7 @@ position:
     - GRID_ID
     children:
     - CHART-6
-    - CHART-7
-  CHART-8:
-    id: CHART-8
-    meta:
-      width: 12
-      height: 65
-      chartId: 207
-      sliceName: Compliance Heatmap
-      uuid: 473de026-f3b0-4b95-824d-f45eef9fb677
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-4
-    children: []
+    - CHART-OUTCOME-MIX
   CHART-9:
     id: CHART-9
     meta:
@@ -217,16 +154,6 @@ position:
     - GRID_ID
     - ROW-5
     children: []
-  ROW-4:
-    id: ROW-4
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-8
   CHART-10:
     id: CHART-10
     meta:
@@ -361,9 +288,9 @@ position:
     id: CHART-16
     meta:
       width: 12
-      height: 65
+      height: 90
       chartId: 215
-      sliceName: Quality Score Heatmap
+      sliceName: Outcomes Heatmap
       uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed
     type: CHART
     parents:
@@ -381,19 +308,163 @@ position:
     - GRID_ID
     children:
     - CHART-16
+  CHART-OUTCOME-MIX:
+    id: CHART-OUTCOME-MIX
+    meta:
+      width: 6
+      height: 65
+      chartId: 220
+      sliceName: Outcome Mix
+      uuid: 49a686de-52d9-4987-b057-d00c43659430
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-3
+    children: []
+  CHART-OUTCOME-TREND:
+    id: CHART-OUTCOME-TREND
+    meta:
+      width: 12
+      height: 55
+      chartId: 221
+      sliceName: Outcome Trend
+      uuid: 70b43be8-543b-4426-ac71-c3ec22d9f619
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-PROFILE-TREND
+    children: []
+  ROW-HEADER-MD-SECTION-DETAIL:
+    id: ROW-HEADER-MD-SECTION-DETAIL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MD-SECTION-DETAIL
+  MD-SECTION-DETAIL:
+    id: MD-SECTION-DETAIL
+    meta:
+      width: 12
+      height: 18
+      code: "<h2 style=\"margin: 0 0 4px 0; font-size: 1.5em; font-weight: 700; color: #1f2937; line-height: 1.2;\">Detail and evidence</h2>\n<p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Drill into the underlying checks: failing-check evidence and the timeline of recent assessment submissions.</p>\n<hr style=\"border: 0; height: 4px; background: #009E73; margin: 6px 0 0 0; border-radius: 2px;\">"
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-HEADER-MD-SECTION-DETAIL
+    children: []
+  ROW-HEADER-MD-SECTION-IMPROVE:
+    id: ROW-HEADER-MD-SECTION-IMPROVE
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MD-SECTION-IMPROVE
+  MD-SECTION-IMPROVE:
+    id: MD-SECTION-IMPROVE
+    meta:
+      width: 12
+      height: 18
+      code: "<h2 style=\"margin: 0 0 4px 0; font-size: 1.5em; font-weight: 700; color: #1f2937; line-height: 1.2;\">What to fix</h2>\n<p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Failing indicators ranked by frequency. Orange cells flag the highest-impact targets to tackle first.</p>\n<hr style=\"border: 0; height: 4px; background: #009E73; margin: 6px 0 0 0; border-radius: 2px;\">"
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-HEADER-MD-SECTION-IMPROVE
+    children: []
+  ROW-HEADER-MD-SECTION-COMPARE:
+    id: ROW-HEADER-MD-SECTION-COMPARE
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MD-SECTION-COMPARE
+  MD-SECTION-COMPARE:
+    id: MD-SECTION-COMPARE
+    meta:
+      width: 12
+      height: 18
+      code: "<h2 style=\"margin: 0 0 4px 0; font-size: 1.5em; font-weight: 700; color: #1f2937; line-height: 1.2;\">Compare projects</h2>\n<p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Rank projects, compare outcomes side by side, and spot software-by-dimension hot-spots in the heatmap.</p>\n<hr style=\"border: 0; height: 4px; background: #009E73; margin: 6px 0 0 0; border-radius: 2px;\">"
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-HEADER-MD-SECTION-COMPARE
+    children: []
+  ROW-HEADER-MD-SECTION-PROFILE:
+    id: ROW-HEADER-MD-SECTION-PROFILE
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MD-SECTION-PROFILE
+  MD-SECTION-PROFILE:
+    id: MD-SECTION-PROFILE
+    meta:
+      width: 12
+      height: 18
+      code: "<h2 style=\"margin: 0 0 4px 0; font-size: 1.5em; font-weight: 700; color: #1f2937; line-height: 1.2;\">Quality profile</h2>\n<p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Outcomes over time, per dimension, and an overall outcome mix. Pick a software in the filters to focus the view.</p>\n<hr style=\"border: 0; height: 4px; background: #009E73; margin: 6px 0 0 0; border-radius: 2px;\">"
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-HEADER-MD-SECTION-PROFILE
+    children: []
+  ROW-HEADER-MD-SECTION-OVERVIEW:
+    id: ROW-HEADER-MD-SECTION-OVERVIEW
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - MD-SECTION-OVERVIEW
+  MD-SECTION-OVERVIEW:
+    id: MD-SECTION-OVERVIEW
+    meta:
+      width: 12
+      height: 18
+      code: "<h2 style=\"margin: 0 0 4px 0; font-size: 1.5em; font-weight: 700; color: #1f2937; line-height: 1.2;\">Overview</h2>\n<p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">At-a-glance counts of assessments, software in scope, and the date of the most recent submission.</p>\n<hr style=\"border: 0; height: 4px; background: #009E73; margin: 6px 0 0 0; border-radius: 2px;\">"
+    type: MARKDOWN
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-HEADER-MD-SECTION-OVERVIEW
+    children: []
+  ROW-PROFILE-TREND:
+    id: ROW-PROFILE-TREND
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-OUTCOME-TREND
 metadata:
   color_scheme: supersetColors
   label_colors: {}
   default_filters: '{}'
   expanded_slices:
-    '200': true
     '201': true
     '202': true
     '203': true
-    '204': true
     '205': true
-    '206': true
-    '207': true
     '208': true
     '209': true
     '210': true
@@ -401,39 +472,18 @@ metadata:
     '213': true
     '214': true
     '215': true
+    '220': true
+    '221': true
   refresh_frequency: 0
   chart_configuration:
-    '200':
-      id: 200
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 202
-        - 203
-        - 204
-        - 205
-        - 206
-        - 207
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
     '201':
       id: 201
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
@@ -441,18 +491,16 @@ metadata:
         - 213
         - 214
         - 215
+        - 220
+        - 221
     '202':
       id: 202
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
@@ -460,18 +508,16 @@ metadata:
         - 213
         - 214
         - 215
+        - 220
+        - 221
     '203':
       id: 203
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
@@ -479,37 +525,16 @@ metadata:
         - 213
         - 214
         - 215
-    '204':
-      id: 204
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 200
-        - 201
-        - 202
-        - 203
-        - 205
-        - 206
-        - 207
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
+        - 220
+        - 221
     '205':
       id: 205
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
-        - 206
-        - 207
         - 208
         - 209
         - 210
@@ -517,177 +542,160 @@ metadata:
         - 213
         - 214
         - 215
-    '206':
-      id: 206
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 200
-        - 201
-        - 202
-        - 203
-        - 204
-        - 205
-        - 207
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-    '207':
-      id: 207
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 200
-        - 201
-        - 202
-        - 203
-        - 204
-        - 205
-        - 206
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
+        - 220
+        - 221
     '208':
       id: 208
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 209
         - 210
         - 211
         - 213
         - 214
         - 215
+        - 220
+        - 221
     '209':
       id: 209
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 210
         - 211
         - 213
         - 214
         - 215
+        - 220
+        - 221
     '210':
       id: 210
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 211
         - 213
         - 214
         - 215
+        - 220
+        - 221
     '211':
       id: 211
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
         - 213
         - 214
         - 215
+        - 220
+        - 221
     '213':
       id: 213
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
         - 211
         - 214
         - 215
+        - 220
+        - 221
     '214':
       id: 214
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
         - 211
         - 213
         - 215
+        - 220
+        - 221
     '215':
       id: 215
       crossFilters:
         scope: global
         chartsInScope:
-        - 200
         - 201
         - 202
         - 203
-        - 204
         - 205
-        - 206
-        - 207
         - 208
         - 209
         - 210
         - 211
         - 213
         - 214
+        - 220
+        - 221
+    '220':
+      id: 220
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 201
+        - 202
+        - 203
+        - 205
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
+        - 214
+        - 215
+        - 221
+    '221':
+      id: 221
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 201
+        - 202
+        - 203
+        - 205
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
+        - 214
+        - 215
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -701,17 +709,13 @@ metadata:
     targets:
     - column:
         name: project_name
-      datasetUuid: 36f136b1-53e0-41c9-9f21-180bdea10683
+      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 200
     - 201
     - 202
     - 203
-    - 204
     - 205
-    - 206
-    - 207
     - 208
     - 209
     - 210
@@ -737,17 +741,13 @@ metadata:
     targets:
     - column:
         name: software_name
-      datasetUuid: 9c2d2e46-92de-4bd1-be23-c3081acd89b5
+      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 200
     - 201
     - 202
     - 203
-    - 204
     - 205
-    - 206
-    - 207
     - 208
     - 210
     - 211
@@ -772,17 +772,13 @@ metadata:
     targets:
     - column:
         name: dimension_name
-      datasetUuid: 354c08ce-1f0c-447f-b414-7c8d1885a022
+      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 200
     - 201
     - 202
     - 203
-    - 204
     - 205
-    - 206
-    - 207
     - 208
     - 209
     - 210
@@ -808,17 +804,13 @@ metadata:
     targets:
     - column:
         name: outcome
-      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 200
     - 201
     - 202
     - 203
-    - 204
     - 205
-    - 206
-    - 207
     - 208
     - 210
     - 211
@@ -842,18 +834,14 @@ metadata:
       - ROOT_ID
     targets:
     - column:
-        name: assessment_dttm
-      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+        name: assessed_at
+      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_time
     chartsInScope:
-    - 200
     - 201
     - 202
     - 203
-    - 204
     - 205
-    - 206
-    - 207
     - 208
     - 210
     - 211

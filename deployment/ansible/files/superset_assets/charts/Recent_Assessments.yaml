@@ -1,30 +1,44 @@
 slice_name: Recent Assessments
-description: Most recently submitted assessments, ordered by date. Use to confirm
-  assessments arrived on schedule for the projects you expect.
+description: Most recent assessments, one row per assessment, ordered by
+  assessment date. Use to confirm assessments arrived on schedule for the
+  projects you expect.
 certified_by: null
 certification_details: null
 viz_type: table
 params:
-  query_mode: raw
-  all_columns:
+  query_mode: aggregate
+  groupby:
   - software_name
-  - date_created
-  - total_checks
-  order_by_cols:
-  - - date_created
-    - false
-  row_limit: 20
-  show_cell_bars: true
-  align_pn: true
-  color_pn: false
-  page_length: 25
+  - assessment_id
+  - assessed_at
+  metrics:
+  - label: checks
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: assessment_id
+    operator: IS NOT NULL
+    comparator: ''
+  row_limit: 50
+  show_cell_bars: false
+  page_length: 50
+  table_filter: true
   column_config:
-    total_checks:
+    software_name:
+      horizontalAlign: left
+    assessment_id:
+      horizontalAlign: right
+    assessed_at:
+      horizontalAlign: left
+    checks:
       d3NumberFormat: ',d'
       horizontalAlign: right
-  conditional_formatting: []
+  order_by_cols:
+  - '["assessed_at", false]'
 query_context: null
 cache_timeout: null
 uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd
 version: 1.0.0
-dataset_uuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

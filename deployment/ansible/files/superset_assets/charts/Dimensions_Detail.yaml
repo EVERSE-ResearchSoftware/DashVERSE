@@ -13,7 +13,7 @@ params:
   - rsqkit_url
   row_limit: 50
   table_filter: true
-  page_length: 25
+  page_length: 50
   column_config:
     description:
       columnWidth: 480

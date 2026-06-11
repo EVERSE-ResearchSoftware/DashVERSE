@@ -1,0 +1,45 @@
+slice_name: Outcome Trend
+description: |
+  How many checks have passed, failed, or returned not-applicable each month.
+  Each outcome has its own smooth filled curve so the three trends can be
+  compared independently. Drag the range slider below the chart to zoom into
+  a date window.
+certified_by: null
+certification_details: null
+viz_type: echarts_area
+params:
+  x_axis: assessed_at
+  time_grain_sqla: P1M
+  groupby:
+  - outcome
+  metrics:
+  - label: checks
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  label_colors:
+    Pass: '#0072B2'
+    Fail: '#D55E00'
+    Not applicable: '#999999'
+  stack: null
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  rich_tooltip: true
+  tooltipSortByMetric: true
+  area: true
+  smoothLine: true
+  markerEnabled: true
+  markerSize: 8
+  opacity: 0.4
+  zoomable: true
+  show_value: false
+  y_axis_format: ',d'
+  y_axis_title: Checks
+  truncate_xaxis: false
+  row_limit: 5000
+query_context: null
+cache_timeout: null
+uuid: 70b43be8-543b-4426-ac71-c3ec22d9f619
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

@@ -1,0 +1,33 @@
+slice_name: Outcome Mix
+description: Share of pass, fail, and not-applicable checks. With no software
+  selected, this is the portfolio-wide split; pick a project in the filters
+  to focus on a single software.
+certified_by: null
+certification_details: null
+viz_type: pie
+params:
+  groupby:
+  - outcome
+  metric:
+    label: checks
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  label_colors:
+    Pass: '#0072B2'
+    Fail: '#D55E00'
+    Not applicable: '#999999'
+  show_labels: true
+  show_labels_threshold: 5
+  labels_outside: true
+  show_legend: true
+  donut: true
+  innerRadius: 55
+  outerRadius: 90
+  label_type: key_percent
+  number_format: .0%
+query_context: null
+cache_timeout: null
+uuid: 49a686de-52d9-4987-b057-d00c43659430
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

@@ -1,34 +1,48 @@
 slice_name: Top Performing Software
-description: Software ranked by quality score per dimension. Use to identify exemplars
-  for case studies and shared best-practice sessions.
+description: Software ranked by how many distinct indicators they pass across
+  all their assessments. Higher counts mean broader catalog coverage with
+  passing checks -- good candidates for case studies and best-practice
+  sharing.
 certified_by: null
 certification_details: null
-viz_type: table
+viz_type: echarts_timeseries_bar
 params:
-  query_mode: raw
-  all_columns:
-  - software_name
-  - dimension_name
-  - score
-  order_by_cols:
-  - - score
+  x_axis: software_name
+  metrics:
+  - label: passing_indicators
+    expressionType: SIMPLE
+    column:
+      column_name: indicator_id
+    aggregate: COUNT_DISTINCT
+  orderby:
+  - - label: passing_indicators
+      expressionType: SIMPLE
+      column:
+        column_name: indicator_id
+      aggregate: COUNT_DISTINCT
     - false
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: outcome
+    operator: ==
+    comparator: Pass
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: software_name
+    operator: IS NOT NULL
+    comparator: ''
+  color_scheme: supersetColors
+  label_colors:
+    passing_indicators: '#0072B2'
+  orientation: horizontal
+  show_legend: false
+  show_value: true
+  rich_tooltip: true
+  y_axis_format: ',d'
   row_limit: 15
-  show_cell_bars: true
-  align_pn: true
-  color_pn: false
-  page_length: 25
-  column_config:
-    score:
-      d3NumberFormat: .1f
-      horizontalAlign: right
-  conditional_formatting:
-  - column: score
-    colorScheme: '#5fb56a'
-    operator: '>'
-    targetValue: 0
 query_context: null
 cache_timeout: null
 uuid: b3b748b4-45c1-4427-b847-46b57599a6d8
 version: 1.0.0
-dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

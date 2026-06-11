@@ -16,7 +16,7 @@ params:
   - indicator_url
   row_limit: 200
   table_filter: true
-  page_length: 25
+  page_length: 50
   column_config:
     indicator_description:
       columnWidth: 420

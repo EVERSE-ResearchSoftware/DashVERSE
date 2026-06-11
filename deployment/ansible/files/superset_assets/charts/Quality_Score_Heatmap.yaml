@@ -1,9 +1,8 @@
-slice_name: Quality Score Heatmap
-description: Pass-rate score per software-by-dimension (computed as the percentage
-  of passing checks). Greener cells are stronger, oranger cells weaker. The
-  "score" is the same number plotted in Software Pass Rate, just broken out
-  per dimension. Use to spot which project-dimension pairs need the most
-  engineering effort.
+slice_name: Outcomes Heatmap
+description: Number of failing checks per software-dimension pair. Brighter
+  cells mean more failures concentrated in that pair -- where to focus next.
+  Empty/dark cells mean the pair is either fully passing or hasn't been
+  exercised. Filter by software to narrow the view.
 certified_by: null
 certification_details: null
 viz_type: heatmap_v2
@@ -12,13 +11,34 @@ params:
   groupby:
   - software_name
   metric:
-    label: score
+    label: failures
     expressionType: SQL
-    sqlExpression: AVG(score)::float
+    sqlExpression: COUNT(*) FILTER (WHERE outcome = 'Fail')
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: dimension_name
+    operator: IS NOT NULL
+    comparator: ''
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: software_name
+    operator: IS NOT NULL
+    comparator: ''
+  linear_color_scheme: superset_seq_1
   show_values: true
+  value_format: ',d'
+  show_legend: true
   legend_type: continuous
+  legend_orientation: vertical
+  legend_position: right
+  legend_margin: 12
+  yscale_interval: 1
+  xscale_interval: 1
+  sort_x_axis: alpha_asc
+  sort_y_axis: alpha_asc
 query_context: null
 cache_timeout: null
 uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed
 version: 1.0.0
-dataset_uuid: 7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

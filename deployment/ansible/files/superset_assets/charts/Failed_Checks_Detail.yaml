@@ -1,6 +1,7 @@
 slice_name: Failed Checks Detail
-description: Searchable table of failing checks with software, dimension, indicator,
-  output, and evidence. Filter to a specific repo or dimension to plan remediation.
+description: Searchable table of failing checks with software, dimension,
+  indicator, tool output, and the evidence the tool emitted. Filter to a
+  specific repo or dimension to plan remediation.
 certified_by: null
 certification_details: null
 viz_type: table
@@ -10,28 +11,34 @@ params:
   - software_name
   - dimension_name
   - indicator_name
-  - output
+  - tool_name
+  - output_raw
   - evidence
   adhoc_filters:
   - clause: WHERE
     expressionType: SIMPLE
     subject: outcome
     operator: ==
-    comparator: fail
-  row_limit: 100
+    comparator: Fail
+  row_limit: 200
   table_filter: true
-  show_cell_bars: true
-  align_pn: true
-  color_pn: false
-  page_length: 25
+  show_cell_bars: false
+  page_length: 50
   column_config:
-    output:
-      columnWidth: 400
+    output_raw:
+      columnWidth: 220
     evidence:
       columnWidth: 400
-  conditional_formatting: []
+    software_name:
+      horizontalAlign: left
+    dimension_name:
+      horizontalAlign: left
+    indicator_name:
+      horizontalAlign: left
+    tool_name:
+      horizontalAlign: left
 query_context: null
 cache_timeout: null
 uuid: 6e6cb154-cb9b-42c9-a508-dd6d6d122e2a
 version: 1.0.0
-dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
