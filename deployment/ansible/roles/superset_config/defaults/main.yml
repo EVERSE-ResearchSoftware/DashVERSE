@@ -73,6 +73,9 @@ datasets:
   - name: projects
     table: projects
     schema: "{{ database_schema }}"
+  - name: assessment_checks
+    table: assessment_checks
+    schema: "{{ database_schema }}"
 
 dashboards:
   - name: "Overview"

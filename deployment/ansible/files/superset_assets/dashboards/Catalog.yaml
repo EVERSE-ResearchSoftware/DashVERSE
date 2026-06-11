@@ -1,22 +1,10 @@
 dashboard_title: Catalog
-description: null
-css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names\
-  \ because the empty-state DOM has\n   drifted between versions; one of these selectors\
-  \ will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n\
-  .chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n\
-  \    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n\
-  .chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n\
-  .chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color:\
-  \ #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n\
-  .chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n\
-  .chart-container .empty-chart-message::after {\n    content: \"Adjust the filters\
-  \ at the top, or read the chart description for guidance.\";\n    display: block;\n\
-  \    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style:\
-  \ italic;\n    font-weight: normal;\n}\n"
+description:
+css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names because the empty-state DOM has\n   drifted between versions; one of these selectors will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n"
 slug: catalog
-certified_by: null
-certification_details: null
-published: false
+certified_by:
+certification_details:
+published: true
 uuid: 03b92f18-8a88-46e4-a844-00ff077d57b8
 position:
   ROW-1:
@@ -211,8 +199,8 @@ position:
     - ROW-2B
     - ROW-3
     - ROW-4
-    - ROW-5
-    - ROW-6
+    - ROW-COV-TOOL
+    - ROW-TOOLS
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -223,54 +211,6 @@ position:
     meta:
       text: Dashboard
     type: HEADER
-  ROW-5:
-    id: ROW-5
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-10
-  ROW-6:
-    id: ROW-6
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-11
-  CHART-10:
-    id: CHART-10
-    meta:
-      width: 12
-      height: 50
-      chartId: 73
-      sliceName: Tools Summary
-      uuid: fd828b78-816e-4484-8a39-9823236b55f5
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-5
-    children: []
-  CHART-11:
-    id: CHART-11
-    meta:
-      width: 12
-      height: 70
-      chartId: 74
-      sliceName: Tools Coverage
-      uuid: 78464b78-070b-4344-982f-e4266715edc7
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-6
-    children: []
   ROW-INTRO:
     id: ROW-INTRO
     meta:
@@ -286,14 +226,60 @@ position:
     meta:
       width: 12
       height: 8
-      code: '**Catalog overview.** Reference view of the EVERSE quality model itself:
-        catalog size, how much of it has been exercised by assessments, which tools
-        are in use, and the full list of dimensions and indicators with definitions.'
+      code: '**Catalog overview.** Reference view of the EVERSE quality model itself: catalog size, how much of it has been exercised by assessments, and the full list of dimensions and indicators with definitions.'
     type: MARKDOWN
     parents:
     - ROOT_ID
     - GRID_ID
     - ROW-INTRO
+    children: []
+  ROW-TOOLS:
+    id: ROW-TOOLS
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-TOOLS
+  CHART-TOOLS:
+    id: CHART-TOOLS
+    meta:
+      width: 12
+      height: 70
+      chartId: 74
+      sliceName: Tools Coverage
+      uuid: 78464b78-070b-4344-982f-e4266715edc7
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-TOOLS
+    children: []
+  ROW-COV-TOOL:
+    id: ROW-COV-TOOL
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-COV-TOOL
+  CHART-COV-TOOL:
+    id: CHART-COV-TOOL
+    meta:
+      width: 12
+      height: 60
+      chartId: 75
+      sliceName: Coverage per Tool
+      uuid: 036f2215-3c0e-49bd-9abf-cd99a25e04d5
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-COV-TOOL
     children: []
 metadata:
   color_scheme: supersetColors
@@ -309,8 +295,8 @@ metadata:
     '70': true
     '71': true
     '72': true
-    '73': true
     '74': true
+    '75': true
   refresh_frequency: 0
   chart_configuration:
     '64':
@@ -326,8 +312,8 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '65':
       id: 65
       crossFilters:
@@ -341,8 +327,8 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '66':
       id: 66
       crossFilters:
@@ -356,8 +342,8 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '67':
       id: 67
       crossFilters:
@@ -371,8 +357,8 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '68':
       id: 68
       crossFilters:
@@ -386,8 +372,8 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '69':
       id: 69
       crossFilters:
@@ -401,8 +387,8 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '70':
       id: 70
       crossFilters:
@@ -416,8 +402,8 @@ metadata:
         - 69
         - 71
         - 72
-        - 73
         - 74
+        - 75
     '71':
       id: 71
       crossFilters:
@@ -431,8 +417,8 @@ metadata:
         - 69
         - 70
         - 72
-        - 73
         - 74
+        - 75
     '72':
       id: 72
       crossFilters:
@@ -446,23 +432,8 @@ metadata:
         - 69
         - 70
         - 71
-        - 73
         - 74
-    '73':
-      id: 73
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 64
-        - 65
-        - 66
-        - 67
-        - 68
-        - 69
-        - 70
-        - 71
-        - 72
-        - 74
+        - 75
     '74':
       id: 74
       crossFilters:
@@ -477,93 +448,24 @@ metadata:
         - 70
         - 71
         - 72
-        - 73
+        - 75
+    '75':
+      id: 75
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 74
   shared_label_colors: {}
-  cross_filters_enabled: true
-  native_filter_configuration:
-  - id: NATIVE_FILTER-quality_dimension
-    name: Quality Dimension
-    type: NATIVE_FILTER
-    scope:
-      excluded:
-      - 64
-      - 65
-      - 66
-      - 67
-      - 69
-      - 71
-      - 72
-      - 73
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: dimension_name
-      datasetUuid: 6ac66a0a-6568-4438-83cf-9ff9e634dab1
-    filterType: filter_select
-    chartsInScope:
-    - 68
-    - 70
-    - 74
-    controlValues:
-      multiSelect: true
-      inverseSelection: false
-      searchAllOptions: false
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value: null
-  - id: NATIVE_FILTER-cat-indicator-status
-    name: Indicator status
-    type: NATIVE_FILTER
-    scope:
-      excluded: []
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: status
-      datasetUuid: eacc0b0c-6e6c-4c75-84c2-115ef1ffc527
-    filterType: filter_select
-    chartsInScope: &id001
-    - 64
-    - 65
-    - 66
-    - 67
-    - 68
-    - 69
-    - 70
-    - 71
-    - 72
-    - 73
-    - 74
-    controlValues:
-      multiSelect: true
-      inverseSelection: false
-      searchAllOptions: false
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value: null
-  - id: NATIVE_FILTER-cat-tool
-    name: Checking tool
-    type: NATIVE_FILTER
-    scope:
-      excluded: []
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: tool
-      datasetUuid: 0c1c12cb-19f1-49b5-867c-99327a0ab8e9
-    filterType: filter_select
-    chartsInScope: *id001
-    controlValues:
-      multiSelect: true
-      inverseSelection: false
-      searchAllOptions: false
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value: null
+  cross_filters_enabled: false
+  native_filter_configuration: []
+  show_native_filters: false
 version: 1.0.0

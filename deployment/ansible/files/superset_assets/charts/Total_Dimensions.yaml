@@ -11,6 +11,11 @@ params:
   header_font_size: 0.4
   subheader_font_size: 0.15
   subheader: Catalog Dimensions
+  color_picker:
+    r: 0
+    g: 158
+    b: 115
+    a: 1
 query_context: null
 cache_timeout: null
 uuid: 41b48712-d3e7-49ba-8a4e-f442f9d32d06

@@ -19,6 +19,9 @@ params:
       column_name: catalog_total
     aggregate: MAX
   color_scheme: supersetColors
+  label_colors:
+    Tested: '#0072B2'
+    Catalog: '#009E73'
   orientation: horizontal
   show_legend: true
   rich_tooltip: true

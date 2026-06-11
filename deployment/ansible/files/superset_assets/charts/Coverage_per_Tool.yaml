@@ -1,0 +1,41 @@
+slice_name: Coverage per Tool
+description: How many distinct indicators and quality dimensions each checking
+  tool exercises across all assessments. Long bars indicate broad coverage.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_bar
+params:
+  x_axis: tool_name
+  metrics:
+  - label: Indicators
+    expressionType: SIMPLE
+    column:
+      column_name: indicator_id
+    aggregate: COUNT_DISTINCT
+  - label: Dimensions
+    expressionType: SIMPLE
+    column:
+      column_name: dimension_id
+    aggregate: COUNT_DISTINCT
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: tool_name
+    operator: IS NOT NULL
+    comparator: ''
+  color_scheme: supersetColors
+  label_colors:
+    Indicators: '#0072B2'
+    Dimensions: '#009E73'
+  orientation: horizontal
+  show_legend: true
+  rich_tooltip: true
+  show_value: true
+  stack: false
+  y_axis_format: ',d'
+  row_limit: 50
+query_context: null
+cache_timeout: null
+uuid: 036f2215-3c0e-49bd-9abf-cd99a25e04d5
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

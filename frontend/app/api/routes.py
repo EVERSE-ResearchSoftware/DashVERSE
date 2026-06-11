@@ -205,6 +205,11 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
 
     proj_clause = project_visibility
 
+    if uid is not None:
+        checks_clause = f"effective_visibility = 'public' OR author_user_id = {uid}"
+    else:
+        checks_clause = "effective_visibility = 'public'"
+
     SOFTWARE_AWARE = {
         "assessments_detailed", "checks_detailed", "software",
         "software_quality_scores", "software_history",
@@ -227,6 +232,10 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
     proj_did = _dataset_id_by_name("projects", token)
     if proj_did is not None:
         rls.append({"dataset": proj_did, "clause": proj_clause})
+
+    checks_did = _dataset_id_by_name("assessment_checks", token)
+    if checks_did is not None:
+        rls.append({"dataset": checks_did, "clause": checks_clause})
 
     payload = {
         "user": {
@@ -310,6 +319,7 @@ DASHBOARDS = {
         "description": "Portfolio-wide quality assessment activity plus the EVERSE quality model catalog. Aggregate counts and rates; no software or project names are exposed.",
         "audience": "Open to anonymous visitors. No login required.",
         "rsqkit_url": "",
+        "hide_filters": True,
     },
     "assessments": {
         "title": "Assessments",
@@ -324,6 +334,7 @@ DASHBOARDS = {
         "audience": "Authenticated users only.",
         "rsqkit_url": "",
         "auth_required": True,
+        "hide_filters": True,
     },
 }
 

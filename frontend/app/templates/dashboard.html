@@ -7,7 +7,7 @@
 {% block content %}
 <section class="dashboard-embed">
     {% if embedded_uuid %}
-    <div id="dashboard-mount" data-slug="{{ slug }}" data-embedded-uuid="{{ embedded_uuid }}" data-superset-url="{{ superset_external_url }}"></div>
+    <div id="dashboard-mount" data-slug="{{ slug }}" data-embedded-uuid="{{ embedded_uuid }}" data-superset-url="{{ superset_external_url }}" data-hide-filters="{{ '1' if dashboard.hide_filters else '0' }}"></div>
     {% else %}
     <iframe
         id="dashboard-frame"
@@ -35,6 +35,7 @@
         supersetUrl = protocol + '//' + host + ':8088';
     }
     var embeddedUuid = mount.getAttribute('data-embedded-uuid');
+    var hideFilters = mount.getAttribute('data-hide-filters') === '1';
 
     supersetEmbeddedSdk.embedDashboard({
         id: embeddedUuid,
@@ -52,7 +53,9 @@
         dashboardUiConfig: {
             hideTitle: true,
             hideChartControls: false,
-            filters: { expanded: true },
+            filters: hideFilters
+                ? { visible: false, expanded: false }
+                : { expanded: true },
         },
     });
 })();

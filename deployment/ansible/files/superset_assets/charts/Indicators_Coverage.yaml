@@ -20,13 +20,16 @@ params:
     operator: ==
     comparator: Indicators
   color_scheme: supersetColors
+  label_colors:
+    Tested: '#0072B2'
+    Untested: '#999999'
   show_labels: true
   show_labels_threshold: 5
   labels_outside: true
   show_legend: true
   donut: true
-  innerRadius: 45
-  outerRadius: 80
+  innerRadius: 50
+  outerRadius: 90
   label_type: key_percent
   number_format: .0%
 query_context: null

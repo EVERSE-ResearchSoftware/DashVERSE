@@ -14,8 +14,13 @@ params:
   header_font_size: 0.4
   subheader_font_size: 0.15
   subheader: Tested Dimensions
+  color_picker:
+    r: 0
+    g: 114
+    b: 178
+    a: 1
 query_context: null
 cache_timeout: null
 uuid: 62ed109e-b16b-4219-9eb0-58465b16422b
 version: 1.0.0
-dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
