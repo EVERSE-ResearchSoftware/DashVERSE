@@ -55,7 +55,7 @@ position:
   CHART-1:
     id: CHART-1
     meta:
-      width: 3
+      width: 4
       height: 50
       chartId: 100
       sliceName: Total Assessments
@@ -69,7 +69,7 @@ position:
   CHART-2:
     id: CHART-2
     meta:
-      width: 3
+      width: 4
       height: 50
       chartId: 101
       sliceName: Total Software
@@ -83,21 +83,21 @@ position:
   CHART-3:
     id: CHART-3
     meta:
-      width: 3
-      height: 50
+      width: 6
+      height: 65
       chartId: 102
-      sliceName: Pass Rate
+      sliceName: Outcome Distribution
       uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
     type: CHART
     parents:
     - ROOT_ID
     - GRID_ID
-    - ROW-1
+    - ROW-3
     children: []
   CHART-4:
     id: CHART-4
     meta:
-      width: 3
+      width: 4
       height: 50
       chartId: 103
       sliceName: Total Checks
@@ -119,12 +119,11 @@ position:
     children:
     - CHART-1
     - CHART-2
-    - CHART-3
     - CHART-4
   CHART-11:
     id: CHART-11
     meta:
-      width: 12
+      width: 6
       height: 65
       chartId: 110
       sliceName: Catalog Coverage
@@ -145,13 +144,14 @@ position:
     - GRID_ID
     children:
     - CHART-11
+    - CHART-3
   CHART-12:
     id: CHART-12
     meta:
       width: 12
       height: 60
       chartId: 111
-      sliceName: Pass Rate by Dimension
+      sliceName: Outcomes by Dimension
       uuid: 91889633-b07c-44d5-8406-a0ea56abacfc
     type: CHART
     parents:
@@ -375,75 +375,7 @@ metadata:
         - 112
         - 114
   shared_label_colors: {}
-  cross_filters_enabled: true
-  native_filter_configuration:
-  - id: NATIVE_FILTER-dimension
-    name: Quality dimension
-    type: NATIVE_FILTER
-    scope:
-      excluded: []
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: name
-      datasetUuid: 164f117c-f8f7-42df-88d4-445b1159d457
-    filterType: filter_select
-    chartsInScope: &id001
-    - 100
-    - 101
-    - 102
-    - 103
-    - 110
-    - 111
-    - 112
-    - 114
-    - 120
-    controlValues:
-      multiSelect: true
-      inverseSelection: false
-      searchAllOptions: false
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value:
-  - id: NATIVE_FILTER-date
-    name: Assessment date
-    type: NATIVE_FILTER
-    scope:
-      excluded: []
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: assessment_dttm
-      datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
-    filterType: filter_time
-    chartsInScope: *id001
-    controlValues:
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value:
-  - id: NATIVE_FILTER-tool
-    name: Checking tool
-    type: NATIVE_FILTER
-    scope:
-      excluded: []
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: tool
-      datasetUuid: afa52222-59cf-4344-8094-73943f3dcde9
-    filterType: filter_select
-    chartsInScope: *id001
-    controlValues:
-      multiSelect: true
-      inverseSelection: false
-      searchAllOptions: false
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value:
+  cross_filters_enabled: false
+  native_filter_configuration: []
+  show_native_filters: false
 version: 1.0.0

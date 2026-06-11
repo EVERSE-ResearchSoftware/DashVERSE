@@ -6,14 +6,21 @@ certification_details: null
 viz_type: big_number_total
 params:
   metric:
-    label: count
-    expressionType: SQL
-    sqlExpression: COUNT(*)
+    label: assessments
+    expressionType: SIMPLE
+    column:
+      column_name: assessment_id
+    aggregate: COUNT_DISTINCT
   header_font_size: 0.4
   subheader_font_size: 0.15
   subheader: Assessments Completed
+  color_picker:
+    r: 0
+    g: 158
+    b: 115
+    a: 1
 query_context: null
 cache_timeout: null
 uuid: 04a5f0a9-87de-4262-a4c9-19eb93052c5a
 version: 1.0.0
-dataset_uuid: 2e5838cf-b850-4a74-997c-a709e7c36808
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

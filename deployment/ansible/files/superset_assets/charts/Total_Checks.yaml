@@ -12,8 +12,13 @@ params:
   header_font_size: 0.4
   subheader_font_size: 0.15
   subheader: Total Checks Performed
+  color_picker:
+    r: 0
+    g: 158
+    b: 115
+    a: 1
 query_context: null
 cache_timeout: null
 uuid: 659bb956-250c-4d2b-86c3-aa95ad8add7c
 version: 1.0.0
-dataset_uuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

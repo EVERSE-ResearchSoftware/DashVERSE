@@ -1,21 +1,34 @@
-slice_name: Pass Rate KPI
-description: Overall percentage of checks that passed across all assessments. Aim
-  for 80% or higher as a healthy target across the portfolio.
+slice_name: Outcome Distribution
+description: Share of all checks that returned pass, fail, or not applicable
+  across every assessment. The donut shows where the portfolio currently stands
+  on the categorical outcomes; bigger slices on the pass side mean broader
+  catalog compliance.
 certified_by: null
 certification_details: null
-viz_type: big_number_total
+viz_type: pie
 params:
+  groupby:
+  - outcome
   metric:
-    label: pass_rate
-    expressionType: SIMPLE
-    column:
-      column_name: pass_rate
-    aggregate: AVG
-  header_font_size: 0.4
-  subheader_font_size: 0.15
-  subheader: Average Pass Rate %
+    label: checks
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  color_scheme: supersetColors
+  label_colors:
+    Pass: '#0072B2'
+    Fail: '#D55E00'
+    Not applicable: '#999999'
+  show_labels: true
+  show_labels_threshold: 5
+  labels_outside: true
+  show_legend: true
+  donut: true
+  innerRadius: 55
+  outerRadius: 90
+  label_type: key_percent
+  number_format: .0%
 query_context: null
 cache_timeout: null
 uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
 version: 1.0.0
-dataset_uuid: c57303cb-cad4-42f6-9f01-6c7438a03ce3
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

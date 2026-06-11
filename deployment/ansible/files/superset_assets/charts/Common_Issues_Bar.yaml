@@ -1,24 +1,43 @@
-slice_name: Common Issues Bar
-description: Top 15 indicators with the highest failure counts across all assessed
-  software. Tackle the largest bars first for the highest-impact fixes.
+slice_name: Common Issues
+description: Top failing indicators across the portfolio, ranked by how many
+  checks have failed against them. Tackle the longest bars first for the
+  highest-impact fixes.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar
 params:
   x_axis: indicator_name
   metrics:
-  - label: failure_count
+  - label: failures
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  orderby:
+  - - label: failures
+      expressionType: SQL
+      sqlExpression: COUNT(*)
+    - false
+  adhoc_filters:
+  - clause: WHERE
     expressionType: SIMPLE
-    column:
-      column_name: failure_count
-    aggregate: SUM
+    subject: outcome
+    operator: ==
+    comparator: Fail
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: indicator_name
+    operator: IS NOT NULL
+    comparator: ''
   color_scheme: supersetColors
-  row_limit: 15
-  show_value: true
+  label_colors:
+    failures: '#D55E00'
   orientation: horizontal
-  only_total: false
+  show_legend: false
+  show_value: true
+  rich_tooltip: true
+  y_axis_format: ',d'
+  row_limit: 15
 query_context: null
 cache_timeout: null
 uuid: 3df8ccd7-afe1-4365-8e27-d846ed34c8a7
 version: 1.0.0
-dataset_uuid: 4bcfa543-1597-476f-a4a9-ea7dc1c437d2
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

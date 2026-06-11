@@ -1,24 +1,32 @@
 slice_name: Assessment Activity Over Time
-description: Number of assessments submitted each month. Use to spot adoption peaks
-  and lulls, or to correlate spikes with training rounds and release cycles.
+description: Distinct assessments submitted per month. Use to spot adoption
+  peaks and lulls, or to correlate spikes with training rounds and release
+  cycles.
 certified_by: null
 certification_details: null
-viz_type: echarts_timeseries_line
+viz_type: echarts_area
 params:
-  x_axis: month
+  x_axis: assessed_at
+  time_grain_sqla: P1M
   metrics:
   - label: assessments
     expressionType: SIMPLE
     column:
-      column_name: assessments
-    aggregate: SUM
+      column_name: assessment_id
+    aggregate: COUNT_DISTINCT
   color_scheme: supersetColors
+  label_colors:
+    assessments: '#0072B2'
   show_legend: false
   rich_tooltip: true
+  area: true
+  smoothLine: true
   markerEnabled: true
-  markerSize: 6
+  markerSize: 7
+  opacity: 0.35
+  zoomable: true
 query_context: null
 cache_timeout: null
 uuid: 321421a3-b5bf-488e-8fcc-da707f7ceb60
 version: 1.0.0
-dataset_uuid: 80662b12-f989-4498-be68-1afe226d00a2
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
