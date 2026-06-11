@@ -714,7 +714,9 @@ details.expand-json > pre {
             </div>
             <ul class="nav-links">
                 {% for slug, dash in dashboards.items() %}
+                {% if user or not dash.auth_required %}
                 <li><a href="/dashboard/{{ slug }}" {% if current_dashboard == slug %}class="active"{% endif %}>{{ dash.title }}</a></li>
+                {% endif %}
                 {% endfor %}
                 <li class="nav-separator"></li>
                 <li><a href="/concepts" {% if request.url.path == '/concepts' %}class="active"{% endif %}>Concepts</a></li>

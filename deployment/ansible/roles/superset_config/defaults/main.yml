@@ -142,6 +142,7 @@ dashboards:
 embeddable_dashboard_slugs:
   - assessments
   - global
+  - catalog
 
 dashboard_role_keys:
   - policy_maker

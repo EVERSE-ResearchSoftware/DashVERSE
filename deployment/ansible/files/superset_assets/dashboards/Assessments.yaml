@@ -739,7 +739,7 @@ metadata:
         name: software_name
       datasetUuid: 9c2d2e46-92de-4bd1-be23-c3081acd89b5
     filterType: filter_select
-    chartsInScope: &id001
+    chartsInScope:
     - 200
     - 201
     - 202
@@ -749,7 +749,6 @@ metadata:
     - 206
     - 207
     - 208
-    - 209
     - 210
     - 211
     - 213
@@ -775,7 +774,22 @@ metadata:
         name: dimension_name
       datasetUuid: 354c08ce-1f0c-447f-b414-7c8d1885a022
     filterType: filter_select
-    chartsInScope: *id001
+    chartsInScope:
+    - 200
+    - 201
+    - 202
+    - 203
+    - 204
+    - 205
+    - 206
+    - 207
+    - 208
+    - 209
+    - 210
+    - 211
+    - 213
+    - 214
+    - 215
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -796,7 +810,21 @@ metadata:
         name: outcome
       datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
     filterType: filter_select
-    chartsInScope: *id001
+    chartsInScope:
+    - 200
+    - 201
+    - 202
+    - 203
+    - 204
+    - 205
+    - 206
+    - 207
+    - 208
+    - 210
+    - 211
+    - 213
+    - 214
+    - 215
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -817,7 +845,21 @@ metadata:
         name: assessment_dttm
       datasetUuid: 53b08a54-2e42-4412-b4dd-a4f8be57dfab
     filterType: filter_time
-    chartsInScope: *id001
+    chartsInScope:
+    - 200
+    - 201
+    - 202
+    - 203
+    - 204
+    - 205
+    - 206
+    - 207
+    - 208
+    - 210
+    - 211
+    - 213
+    - 214
+    - 215
     controlValues:
       enableEmptyFilter: false
     defaultDataMask:

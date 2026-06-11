@@ -17,6 +17,7 @@
     <h2>Available Dashboards</h2>
     <div class="dashboard-grid">
         {% for slug, dash in dashboards.items() %}
+        {% if user or not dash.auth_required %}
         <div class="dashboard-card">
             <h3>{{ dash.title }}</h3>
             <p class="description">{{ dash.description }}</p>
@@ -28,6 +29,7 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
         {% endfor %}
     </div>
 </section>

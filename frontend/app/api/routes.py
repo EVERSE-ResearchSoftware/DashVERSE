@@ -314,8 +314,16 @@ DASHBOARDS = {
     "assessments": {
         "title": "Assessments",
         "description": "Filter-driven view of every assessment you can see. Per-software KPIs, trend, dimension radar, vs-median, compliance heatmap, improvement targets, failed checks, recent activity, and checking-tool usage.",
-        "audience": "Anyone. The view narrows automatically to the scope you're allowed to see.",
+        "audience": "Authenticated users only. The view narrows automatically to the scope you're allowed to see.",
         "rsqkit_url": "",
+        "auth_required": True,
+    },
+    "catalog": {
+        "title": "Catalog",
+        "description": "Browse the EVERSE quality dimensions and indicators that DashVERSE evaluates against. No assessment data here, just the reference catalog with its current coverage.",
+        "audience": "Authenticated users only.",
+        "rsqkit_url": "",
+        "auth_required": True,
     },
 }
 
@@ -468,6 +476,12 @@ async def dashboard(request: Request, slug: str):
         raise HTTPException(status_code=404, detail="Dashboard not found")
 
     dashboard_info = DASHBOARDS[slug]
+    user = current_user(request)
+    if dashboard_info.get("auth_required") and not user:
+        return RedirectResponse(
+            url=f"/login?next={urllib.parse.quote('/dashboard/' + slug, safe='')}",
+            status_code=302,
+        )
 
     superset_base = settings.superset_external_url or ""
     embed_url = f"{superset_base}/superset/dashboard/{slug}/?standalone=2" if superset_base else ""
@@ -476,7 +490,7 @@ async def dashboard(request: Request, slug: str):
         "dashboard.html",
         {
             "request": request,
-            "user": current_user(request),
+            "user": user,
             "slug": slug,
             "dashboard": dashboard_info,
             "embed_url": embed_url,
