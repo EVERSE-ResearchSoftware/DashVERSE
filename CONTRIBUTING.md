@@ -25,9 +25,9 @@ See [`docs/README.dev.md`](docs/README.dev.md) for the full setup. Short version
 
 1. Install OpenTofu, kubectl, helm, minikube, ansible, and Docker or Podman. If you have Nix, `nix develop` provides everything.
 2. Start minikube: `minikube start --cpus='4' --memory='8g'`
-3. Deploy: `just env=local deploy`
+3. Deploy: `just deploy` (the `env` variable defaults to `local`; use `just env=production deploy` for a real target)
 4. Port-forward in a separate terminal: `just port-forward`
-5. Configure dashboards: `just env=local setup-dashboards`
+5. Configure dashboards: `just setup-dashboards`
 6. Optional sample data: `just seed-data`
 
 Tear down with `just destroy`, or `minikube delete` for a full reset.
@@ -49,7 +49,7 @@ Tear down with `just destroy`, or `minikube delete` for a full reset.
 1. Push your branch and open a PR against `main` describing what changed and why.
 2. Link related issues with `Closes #NN`.
 3. If your change affects dashboards, include a before/after screenshot or a list of affected charts.
-4. CI is still being set up; until it lands, please confirm at least that `just env=local deploy` succeeds end-to-end on a clean minikube.
+4. CI is still being set up; until it lands, please confirm at least that `just deploy` succeeds end-to-end on a clean minikube.
 5. Be patient with review. Maintainers triage on a best-effort basis.
 
 ## Code style

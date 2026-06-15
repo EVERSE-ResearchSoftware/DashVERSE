@@ -1,0 +1,44 @@
+slice_name: Software Improvement Visual
+description: |
+  Treemap of failing indicators for the selected software, grouped by
+  quality dimension. Tile area is the number of failures -- bigger
+  tiles are the highest-impact targets. Pair with the table below for
+  the indicator links.
+certified_by: null
+certification_details: null
+viz_type: treemap_v2
+params:
+  groupby:
+  - dimension_name
+  - indicator_name
+  metric:
+    label: failures
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: outcome
+    operator: ==
+    comparator: Fail
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: software_name
+    operator: IS NOT NULL
+    comparator: ''
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: dimension_name
+    operator: IS NOT NULL
+    comparator: ''
+  color_scheme: supersetColors
+  show_labels: true
+  show_upper_labels: true
+  label_type: key_value
+  number_format: ',d'
+  row_limit: 100
+query_context: null
+cache_timeout: null
+uuid: 7df64705-8129-41be-babc-db0ff8ec062f
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156

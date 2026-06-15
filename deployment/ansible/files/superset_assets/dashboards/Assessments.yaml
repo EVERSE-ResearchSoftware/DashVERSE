@@ -49,6 +49,7 @@ position:
     - ROW-7
     - ROW-8
     - ROW-9
+    - ROW-SW-IMPR-VIZ
     - ROW-10
     - ROW-11
   ROOT_ID:
@@ -456,6 +457,30 @@ position:
     - GRID_ID
     children:
     - CHART-OUTCOME-TREND
+  ROW-SW-IMPR-VIZ:
+    id: ROW-SW-IMPR-VIZ
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-SW-IMPR-VIZ
+  CHART-SW-IMPR-VIZ:
+    id: CHART-SW-IMPR-VIZ
+    meta:
+      width: 12
+      height: 60
+      chartId: 222
+      sliceName: Software Improvement Visual
+      uuid: 7df64705-8129-41be-babc-db0ff8ec062f
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-SW-IMPR-VIZ
+    children: []
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -474,6 +499,7 @@ metadata:
     '215': true
     '220': true
     '221': true
+    '222': true
   refresh_frequency: 0
   chart_configuration:
     '201':
@@ -493,6 +519,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '202':
       id: 202
       crossFilters:
@@ -510,6 +537,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '203':
       id: 203
       crossFilters:
@@ -527,6 +555,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '205':
       id: 205
       crossFilters:
@@ -544,6 +573,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '208':
       id: 208
       crossFilters:
@@ -561,6 +591,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '209':
       id: 209
       crossFilters:
@@ -578,6 +609,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '210':
       id: 210
       crossFilters:
@@ -595,6 +627,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '211':
       id: 211
       crossFilters:
@@ -612,6 +645,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '213':
       id: 213
       crossFilters:
@@ -629,6 +663,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '214':
       id: 214
       crossFilters:
@@ -646,6 +681,7 @@ metadata:
         - 215
         - 220
         - 221
+        - 222
     '215':
       id: 215
       crossFilters:
@@ -663,6 +699,7 @@ metadata:
         - 214
         - 220
         - 221
+        - 222
     '220':
       id: 220
       crossFilters:
@@ -680,6 +717,7 @@ metadata:
         - 214
         - 215
         - 221
+        - 222
     '221':
       id: 221
       crossFilters:
@@ -696,6 +734,25 @@ metadata:
         - 213
         - 214
         - 215
+        - 222
+    '222':
+      id: 222
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 201
+        - 202
+        - 203
+        - 205
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
+        - 214
+        - 215
+        - 220
+        - 221
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:

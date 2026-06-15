@@ -42,8 +42,12 @@ TLDR:
 1. Deploy the services locally
 
    ```shell
-   just env=local deploy
+   just deploy
    ```
+
+   `env` defaults to `local`; nothing to pass for a local minikube
+   deploy. For a real production target set it explicitly:
+   `just env=production deploy`.
 
 1. Verify pods are running
 
@@ -61,7 +65,7 @@ TLDR:
 1. Deploy preconfigured dashboards
 
    ```shell
-   just env=local setup-dashboards
+   just setup-dashboards
    ```
 
 1. Access services
