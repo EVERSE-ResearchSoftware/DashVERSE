@@ -86,7 +86,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 2rem;
+    padding: 0.4rem 2rem;
 }
 
 .nav-brand a {
@@ -95,7 +95,7 @@ nav {
 }
 
 .nav-brand .logo {
-    height: 42px;
+    height: 32px;
     width: auto;
 }
 
@@ -169,16 +169,44 @@ main {
     margin-bottom: 1.5rem;
 }
 
+/* when only one card is visible (anonymous viewer), centre it and
+   constrain its width so it doesn't stretch across the full row */
+.dashboard-grid-single {
+    grid-template-columns: minmax(280px, 480px);
+    justify-content: center;
+}
+
 @media (max-width: 1000px) {
-    .dashboard-grid {
+    .dashboard-grid:not(.dashboard-grid-single) {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 650px) {
-    .dashboard-grid {
+    .dashboard-grid:not(.dashboard-grid-single) {
         grid-template-columns: 1fr;
     }
+}
+
+.dashboards-locked-note {
+    margin-top: 1.25rem;
+    padding: 0.85rem 1rem;
+    background: rgba(124, 58, 237, 0.06);
+    border: 1px dashed rgba(124, 58, 237, 0.35);
+    border-radius: 10px;
+    color: var(--color-text-muted);
+    text-align: center;
+    font-size: 0.92rem;
+}
+
+.dashboards-locked-note a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.dashboards-locked-note a:hover {
+    text-decoration: underline;
 }
 
 .dashboard-card {
@@ -315,53 +343,46 @@ body.embed .dashboard-embed iframe {
     min-height: 0;
 }
 
-/* footer */
+/* footer: one slim row, centered, with separator dots between items */
 footer {
     background: var(--color-dark);
     color: rgba(255, 255, 255, 0.85);
-    padding: 1rem 1.5rem;
+    padding: 0.55rem 1.5rem;
+    font-size: 0.85rem;
 }
 
 .footer-content {
     max-width: 1400px;
     margin: 0 auto;
-    text-align: center;
-}
-
-.footer-main {
-    margin-bottom: 0.5rem;
-}
-
-.footer-main p {
-    margin-bottom: 0.25rem;
-}
-
-.footer-funding {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0.5rem;
-}
-
-.footer-links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    align-items: center;
+    gap: 0.4rem 1.1rem;
+    line-height: 1.4;
 }
 
-.footer-links a {
+.footer-content span,
+.footer-content a {
     color: var(--color-blue);
     text-decoration: none;
-    font-size: 0.9rem;
 }
 
-.footer-links a:hover {
+.footer-content a:hover {
     text-decoration: underline;
 }
 
-footer a {
-    color: var(--color-blue);
+.footer-content .footer-text {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-content .footer-text strong {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+}
+
+.footer-sep {
+    color: rgba(255, 255, 255, 0.25);
 }
 
 /* concepts page */
@@ -1021,22 +1042,13 @@ details.expand-json > pre {
 
     <footer>
         <div class="footer-content">
-            <div class="footer-main">
-                <p>
-                    <strong>DashVERSE</strong> is being developed as part of the
-                    <a href="https://everse.software" target="_blank">EVERSE</a> project.
-                </p>
-            </div>
-            <div class="footer-funding">
-                <p>
-                    EVERSE is funded by the European Commission
-                    <a href="https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/horizon-infra-2023-eosc-01-02" target="_blank">HORIZON-INFRA-2023-EOSC-01-02</a>.
-                </p>
-            </div>
-            <div class="footer-links">
-                <a href="https://everse.software/about/consortium/" target="_blank">Consortium</a>
-                <a href="https://everse.software/privacy/" target="_blank">Privacy Policy</a>
-            </div>
+            <span class="footer-text"><strong>DashVERSE</strong> &middot; part of <a href="https://everse.software" target="_blank">EVERSE</a></span>
+            <span class="footer-sep">|</span>
+            <span class="footer-text">funded by <a href="https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/horizon-infra-2023-eosc-01-02" target="_blank">HORIZON-INFRA-2023-EOSC-01-02</a></span>
+            <span class="footer-sep">|</span>
+            <a href="https://everse.software/about/consortium/" target="_blank">Consortium</a>
+            <span class="footer-sep">|</span>
+            <a href="https://everse.software/privacy/" target="_blank">Privacy Policy</a>
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>

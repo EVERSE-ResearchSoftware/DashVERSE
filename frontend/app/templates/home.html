@@ -6,16 +6,21 @@
 <section class="hero">
     <h1>DashVERSE</h1>
     <p>
-        Explore research software quality assessment dashboards designed for different roles.
-        Each dashboard provides tailored insights based on the
-        <a href="https://everse.software/RSQKit/your_role" target="_blank">RSQKit role definitions</a>.
-        New here? Start with the <a href="{{ url_for('concepts') }}">Concepts</a> page.
+        Visual insights into research software quality assessments. Browse
+        portfolio-wide trends, drill into individual projects, and explore the
+        EVERSE quality model. New here? Start with the
+        <a href="{{ url_for('concepts') }}">Concepts</a> page.
     </p>
 </section>
 
+{% set visible_dashboards = dashboards.items() | selectattr('1.auth_required', 'undefined') | list
+                          + dashboards.items() | selectattr('1.auth_required', 'false') | list %}
+{% set visible_count = namespace(n=0) %}
+{% for slug, dash in dashboards.items() %}{% if user or not dash.auth_required %}{% set visible_count.n = visible_count.n + 1 %}{% endif %}{% endfor %}
+
 <section class="dashboards">
     <h2>Available Dashboards</h2>
-    <div class="dashboard-grid">
+    <div class="dashboard-grid {% if visible_count.n == 1 %}dashboard-grid-single{% endif %}">
         {% for slug, dash in dashboards.items() %}
         {% if user or not dash.auth_required %}
         <div class="dashboard-card">
@@ -32,6 +37,13 @@
         {% endif %}
         {% endfor %}
     </div>
+
+    {% if visible_count.n < dashboards | length %}
+    <p class="dashboards-locked-note">
+        <a href="/login?next={{ request.url.path|urlencode }}">Log in</a> to see
+        per-software, per-project drill-down dashboards and the EVERSE catalog.
+    </p>
+    {% endif %}
 </section>
 
 <section class="about">

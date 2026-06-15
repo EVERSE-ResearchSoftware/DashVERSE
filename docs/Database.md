@@ -116,35 +116,28 @@ Raw assessment data stored as JSONB following the EVERSE JSON-LD format.
 | `assessment_trends` | Monthly assessment statistics |
 | `common_issues` | Frequently failing indicators |
 
-## Derived Metrics
+## Derived Metric: Outcome
 
-The dashboards expose several numbers that are not in the rsqa payload
-directly -- `pass_rate`, `score`, `above_threshold`, `success_rate`. All
-of them are computed in SQL views from two raw payload fields:
-`checks[].output` and `checks[].status.@id`. The derivation chain is:
+The only derived value the dashboards rely on is `outcome`, the
+categorical bucket each check falls into. It is computed at view-time
+from two raw payload fields, `checks[].output` and `checks[].status.@id`,
+by the `check_outcome(check_item)` function in
+`004_create_triggers.sql`:
 
-1. **`check_outcome(check_item)`** (function in
-   `004_create_triggers.sql`) maps the raw `output` and `status` to one
-   of `pass` / `fail` / `not_applicable` / `unknown`. Recognised values:
-   - `pass` <- `true`, `valid`, `pass`, `Pass`, `passed`
-   - `fail` <- `false`, `invalid`, `fail`, `Fail`, `failed`
-   - `not_applicable` <- `n/a`, `na`, `not_applicable`, `NotApplicable`,
-     `NA`, `error`, `Error`, `ERROR` (errored checks are treated as
-     skipped so they don't penalise the pass rate)
-   - falls back to substring matches on `status.@id`
-     (`Pass`, `Fail`, `NotApplicable`)
-2. **`pass_rate`** and `score` (aliased) are computed in each
-   aggregating view as
-   `ROUND(100.0 * COUNT(*) FILTER (WHERE outcome = 'pass') / NULLIF(COUNT(*), 0), 2)`.
-3. **`compliance_status.above_threshold`** = `score >= threshold`. The
-   threshold is configurable via the `app.compliance_threshold`
-   Postgres setting (numeric 0-100, default 75; set to 0 to disable).
-   Apply with `ALTER DATABASE dashverse SET app.compliance_threshold =
-   80;` and reload Superset's pool.
+- `Pass` <- `output` is `true`, `valid`, `pass`, `Pass`, `passed`, or
+  `status.@id` contains `Pass`
+- `Fail` <- `output` is `false`, `invalid`, `fail`, `Fail`, `failed`,
+  or `status.@id` ends with `FailedActionStatus`
+- `Not applicable` <- `output` is `n/a`, `na`, `not_applicable`,
+  `NotApplicable`, `NA`, `error`, `Error`, `ERROR` (errored checks
+  bucket here so a broken plugin isn't counted as a real failure)
+- `Unknown` <- anything else (data-quality signal worth investigating)
 
-The `Quality Score Heatmap` chart (formerly "Technical Debt Heatmap")
-plots `AVG(score)` per (software, dimension) -- there is no separate
-"debt" calculation; it's the same pass-rate score sliced two ways.
+Aggregations are done directly in Superset on top of
+`api.assessment_checks`. Counts and distributions are computed per
+chart via `COUNT(*)` and
+`COUNT(*) FILTER (WHERE outcome = 'Fail')`-style metrics; there is no
+rate, score, or threshold column anywhere in the data layer.
 
 ## Quality Dimensions
 

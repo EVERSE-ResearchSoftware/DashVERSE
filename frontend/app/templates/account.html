@@ -9,13 +9,13 @@
 </section>
 
 {% if error %}
-<section class="about" style="border-left: 4px solid #c0392b; text-align: left;">
+<section class="about" style="text-align: left;">
     <p style="color: #c0392b; margin: 0;">{{ error }}</p>
 </section>
 {% endif %}
 
 {% if new_token %}
-<section class="about" style="border-left: 4px solid var(--color-purple); text-align: left; margin-bottom: 1rem;">
+<section class="about" style="text-align: left; margin-bottom: 1rem;">
     <h2 style="color: var(--color-purple); margin-bottom: 0.5rem;">Your new API token</h2>
     <p style="margin-bottom: 0.75rem;">Copy this now. It will not be shown again.</p>
     <div style="display: flex; gap: 0.5rem; align-items: stretch;">

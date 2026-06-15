@@ -44,16 +44,16 @@ Superset datasets are connected to PostgreSQL tables and views in the `api` sche
 | Latest Assessment Date | assessment_summary | Date of most recent assessment |
 | Average Checks | assessment_summary | Average number of checks per assessment |
 | Unique Indicators | assessment_summary | Number of distinct indicators assessed |
-| Overall Quality Score | software_quality_scores | Aggregate pass rate across all dimensions |
+| Outcome distribution | assessment_checks | Share of Pass / Fail / Not applicable across all checks |
 
 ### Per-Dimension Metrics
 
 | Metric | Source | Description |
 |--------|--------|-------------|
-| Total Checks | dimension_coverage | Number of checks in this dimension |
-| Passed Checks | dimension_coverage | Checks with Pass status |
-| Failed Checks | dimension_coverage | Checks with Fail status |
-| Pass Rate | dimension_coverage | Percentage of passed checks (0-100) |
+| Total Checks | assessment_checks | Number of checks in this dimension |
+| Passed Checks | assessment_checks | Checks with Pass outcome |
+| Failed Checks | assessment_checks | Checks with Fail outcome |
+| Not applicable | assessment_checks | Checks the tool couldn't run or marked n/a |
 
 ### Per-Indicator Metrics
 
@@ -194,10 +194,9 @@ Pass/fail statistics per quality dimension.
 | dimension_name | TEXT    | Dimension name                 |
 | dimension_id   | TEXT    | Dimension identifier           |
 | total_checks   | BIGINT  | Total checks in this dimension |
-| passed         | BIGINT  | Checks with Pass status        |
-| failed         | BIGINT  | Checks with Fail status        |
-| other          | BIGINT  | Checks with other status       |
-| pass_rate      | NUMERIC | Percentage of passed checks    |
+| passed         | BIGINT  | Checks with Pass outcome       |
+| failed         | BIGINT  | Checks with Fail outcome       |
+| not_applicable | BIGINT  | Checks with Not applicable outcome |
 
 ### indicator_results
 
@@ -259,16 +258,16 @@ Use `software_quality_scores` to create:
 
 ### Dimension Analysis
 
-Use `dimension_coverage` to create:
-- Pie charts showing pass/fail distribution per dimension
-- Bar charts comparing dimensions by pass rate
-- Identify which dimensions need improvement
+Use `assessment_checks` to create:
+- Donut charts showing the outcome share per dimension
+- 100% stacked horizontal bars comparing dimensions by outcome mix
+- Identify which dimensions concentrate failures
 
 ### Indicator Deep Dive
 
-Use `indicator_results` and `common_issues` to create:
-- Tables of frequently failing indicators
-- Bar charts showing indicator pass rates
+Use `assessment_checks` to create:
+- Tables of frequently failing indicators (filter `outcome = 'Fail'`)
+- Ranked horizontal bar charts of indicators by failure count
 - Lists of software affected by specific issues
 
 ### Trend Analysis
@@ -299,22 +298,28 @@ Common filter dimensions available:
 
 ## Example Queries
 
-### Top 10 Software by Quality Score
+### Top 10 Software by Passing Indicators
 
 ```sql
-SELECT software_name, AVG(score) as avg_score
-FROM software_quality_scores
+SELECT software_name, COUNT(DISTINCT indicator_id) AS passing_indicators
+FROM api.assessment_checks
+WHERE outcome = 'Pass'
 GROUP BY software_name
-ORDER BY avg_score DESC
+ORDER BY passing_indicators DESC
 LIMIT 10;
 ```
 
-### Dimensions with Lowest Pass Rates
+### Dimensions Ranked by Failure Count
 
 ```sql
-SELECT dimension_name, pass_rate
-FROM dimension_coverage
-ORDER BY pass_rate ASC;
+SELECT dimension_name,
+       COUNT(*) FILTER (WHERE outcome = 'Fail')          AS failures,
+       COUNT(*) FILTER (WHERE outcome = 'Pass')          AS passes,
+       COUNT(*) FILTER (WHERE outcome = 'Not applicable') AS na
+FROM api.assessment_checks
+WHERE dimension_name IS NOT NULL
+GROUP BY dimension_name
+ORDER BY failures DESC;
 ```
 
 ### Most Common Quality Issues
