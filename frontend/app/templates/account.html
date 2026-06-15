@@ -57,16 +57,46 @@
 </script>
 {% endif %}
 
-<section class="dashboards" style="margin-bottom: 1.5rem;">
+<section class="account-section">
     <h2>Profile</h2>
-    <div class="dashboard-card" style="text-align: left; max-width: 720px;">
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        {% if user.is_superuser %}<p><strong>Role:</strong> superuser</p>{% endif %}
+    <div class="profile-grid">
+        <div class="profile-row">
+            <span class="profile-label">Username</span>
+            <span class="profile-value">{{ user.username }}</span>
+        </div>
+        {% if profile.email %}
+        <div class="profile-row">
+            <span class="profile-label">Email</span>
+            <span class="profile-value">{{ profile.email }}</span>
+        </div>
+        {% endif %}
+        {% if profile.id %}
+        <div class="profile-row">
+            <span class="profile-label">User ID</span>
+            <span class="profile-value">{{ profile.id }}</span>
+        </div>
+        {% endif %}
+        <div class="profile-row">
+            <span class="profile-label">Role</span>
+            <span class="profile-value">{{ 'superuser' if user.is_superuser else 'standard user' }}</span>
+        </div>
+        {% if profile.is_active is defined %}
+        <div class="profile-row">
+            <span class="profile-label">Status</span>
+            <span class="profile-value">{{ 'active' if profile.is_active else 'inactive' }}</span>
+        </div>
+        {% endif %}
+        {% if profile.created_at %}
+        <div class="profile-row">
+            <span class="profile-label">Member since</span>
+            <span class="profile-value">{{ profile.created_at[:10] }}</span>
+        </div>
+        {% endif %}
     </div>
 </section>
 
 {% if software %}
-<section class="dashboards" style="margin-bottom: 1.5rem;">
+<section class="account-section">
     <h2>My software</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
         Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments, or override its visibility directly. A per-software setting always wins over the project's visibility.
@@ -86,7 +116,7 @@
             {% set ns = namespace(project_public=false) %}
             {% for p in projects %}{% if p.id == sw.project_id %}{% set ns.project_public = p.is_public %}{% endif %}{% endfor %}
             <tr style="border-top: 1px solid #e2e8f0;">
-                <td style="padding: 0.75rem;">{{ sw.software_name }}</td>
+                <td style="padding: 0.75rem;"><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
                 <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
                 <td style="padding: 0.5rem 0.75rem;">
                     {% if projects | length > 1 %}
@@ -152,7 +182,7 @@
 </section>
 {% endif %}
 
-<section class="dashboards" style="margin-bottom: 1.5rem;">
+<section class="account-section">
     <h2>My projects</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
         Assessments are grouped by project. Public projects are visible to anonymous viewers on Overview and Assessments. Private projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
@@ -173,9 +203,10 @@
             {% set sw_in_project = software | selectattr('project_id', 'equalto', p.id) | list %}
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.5rem 0.75rem;">
-                    <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.5rem;">
-                        <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;" title="Rename">Rename</button>
+                    <a href="/?project={{ p.name|urlencode }}" class="link-pill" title="View assessments in {{ p.name }}" style="display: inline-block; margin-bottom: 0.4rem;">{{ p.name }}</a>
+                    <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.4rem;">
+                        <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.35rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer; font-size: 0.85rem; padding: 0.35rem 0.75rem;" title="Rename">Rename</button>
                     </form>
                 </td>
                 <td style="padding: 0.75rem;">
@@ -230,7 +261,7 @@
     </form>
 </section>
 
-<section class="dashboards">
+<section class="account-section">
     <h2>API tokens</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
         Long-lived bearer tokens for programmatic access (PostgREST, scripts).

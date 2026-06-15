@@ -7,25 +7,9 @@ GRANT ALL ON ALL TABLES IN SCHEMA api TO web_user;
 GRANT INSERT, SELECT ON assessment TO web_user;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA api TO web_user;
 
-GRANT SELECT ON software TO web_anon, web_user;
-GRANT SELECT ON assessments_detailed TO web_anon, web_user;
-GRANT SELECT ON checks_detailed TO web_anon, web_user;
-GRANT SELECT ON dimension_coverage TO web_anon, web_user;
-GRANT SELECT ON software_quality_scores TO web_anon, web_user;
-GRANT SELECT ON assessment_trends TO web_anon, web_user;
-GRANT SELECT ON common_issues TO web_anon, web_user;
-GRANT SELECT ON software_languages TO web_anon, web_user;
-GRANT SELECT ON dimension_trend TO web_anon, web_user;
-GRANT SELECT ON software_history TO web_anon, web_user;
-GRANT SELECT ON tool_reliability TO web_anon, web_user;
-GRANT SELECT ON compliance_status TO web_anon, web_user;
-GRANT SELECT ON per_software_issues TO web_anon, web_user;
-GRANT SELECT ON software_vs_median TO web_anon, web_user;
 GRANT SELECT ON catalog_coverage TO web_anon, web_user;
 GRANT SELECT ON catalog_coverage_breakdown TO web_anon, web_user;
 GRANT SELECT ON indicators_flat TO web_anon, web_user;
-GRANT SELECT ON tools_coverage TO web_anon, web_user;
-GRANT SELECT ON tools_summary TO web_anon, web_user;
 GRANT SELECT ON dimensions_with_links TO web_anon, web_user;
 GRANT SELECT ON assessment_checks TO web_anon, web_user;
 

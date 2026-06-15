@@ -9,7 +9,7 @@ from app.core.lockout import (
     record_failed_login,
     clear_failed_attempts
 )
-from app.api.dependencies import get_client_ip
+from app.api.dependencies import get_client_ip, get_current_user
 from app.models.user import User
 from app.models.token import Token
 from app.models.project import Project
@@ -17,6 +17,11 @@ from app.schemas.user import UserCreate, UserLogin, UserResponse
 from app.schemas.token import TokenWithJWT
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)) -> UserResponse:
+    return UserResponse.model_validate(current_user)
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)

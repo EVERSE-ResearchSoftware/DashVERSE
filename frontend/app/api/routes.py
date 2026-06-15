@@ -168,74 +168,19 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
             uid = None
 
     if uid is not None:
-        project_visibility = f"(is_public OR owner_user_id = {uid})"
-        owner_branch = (
-            f"project_id IN (SELECT id FROM auth.projects WHERE owner_user_id = {uid})"
-        )
-    else:
-        project_visibility = "is_public"
-        owner_branch = None
-
-    public_override = (
-        "(software_name, project_id) IN ("
-        "SELECT sv.software_name, p.id "
-        "FROM auth.software_visibility sv "
-        "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id "
-        "WHERE sv.is_public = TRUE"
-        ")"
-    )
-    no_override = (
-        "(software_name, project_id) NOT IN ("
-        "SELECT sv.software_name, p.id "
-        "FROM auth.software_visibility sv "
-        "JOIN auth.projects p ON p.owner_user_id = sv.owner_user_id"
-        ")"
-    )
-    public_project = (
-        "project_id IN (SELECT id FROM auth.projects WHERE is_public)"
-    )
-
-    software_aware_clause = f"{public_override} OR ({no_override} AND {public_project})"
-    if owner_branch:
-        software_aware_clause = f"({owner_branch}) OR ({software_aware_clause})"
-
-    aggregate_clause = (
-        f"project_id IN (SELECT id FROM auth.projects WHERE {project_visibility})"
-    )
-
-    proj_clause = project_visibility
-
-    if uid is not None:
         checks_clause = f"effective_visibility = 'public' OR author_user_id = {uid}"
+        proj_clause = f"(is_public OR owner_user_id = {uid})"
     else:
         checks_clause = "effective_visibility = 'public'"
+        proj_clause = "is_public"
 
-    SOFTWARE_AWARE = {
-        "assessments_detailed", "checks_detailed", "software",
-        "software_quality_scores", "software_history",
-        "per_software_issues", "compliance_status", "software_vs_median",
-    }
-    AGGREGATE_ONLY = {
-        "dimension_coverage", "assessment_trends", "dimension_trend",
-        "tool_reliability", "common_issues", "tools_summary", "tools_coverage",
-    }
     rls: list[dict] = []
-    for name in SOFTWARE_AWARE:
-        did = _dataset_id_by_name(name, token)
-        if did is not None:
-            rls.append({"dataset": did, "clause": software_aware_clause})
-    for name in AGGREGATE_ONLY:
-        did = _dataset_id_by_name(name, token)
-        if did is not None:
-            rls.append({"dataset": did, "clause": aggregate_clause})
-
-    proj_did = _dataset_id_by_name("projects", token)
-    if proj_did is not None:
-        rls.append({"dataset": proj_did, "clause": proj_clause})
-
     checks_did = _dataset_id_by_name("assessment_checks", token)
     if checks_did is not None:
         rls.append({"dataset": checks_did, "clause": checks_clause})
+    proj_did = _dataset_id_by_name("projects", token)
+    if proj_did is not None:
+        rls.append({"dataset": proj_did, "clause": proj_clause})
 
     payload = {
         "user": {
@@ -290,23 +235,7 @@ def _superset_invalidate_datasets(uuids: list[str]) -> None:
 
 _PROJECT_AWARE_DATASET_UUIDS = [
     "36f136b1-53e0-41c9-9f21-180bdea10683",
-    "2e5838cf-b850-4a74-997c-a709e7c36808",
-    "53b08a54-2e42-4412-b4dd-a4f8be57dfab",
-    "9c2d2e46-92de-4bd1-be23-c3081acd89b5",
-    "7cb6c9c8-2a6c-4c62-85b6-fa557624f2ad",
-    "0df3b836-158c-4563-af46-d1b909dca733",
-    "a272ab14-6e6a-4b02-86e1-17eb77a6d37c",
-    "80662b12-f989-4498-be68-1afe226d00a2",
-    "c57303cb-cad4-42f6-9f01-6c7438a03ce3",
-    "ba5963a1-5b48-41f8-bb4c-f95a10449996",
-    "4017c786-12fc-4753-a436-6df9066b2e14",
-    "4bcfa543-1597-476f-a4a9-ea7dc1c437d2",
-    "9d5bb44d-4773-43fc-8ded-46218c3295ab",
-    "4a73de8d-ab35-4fb1-88ba-1e852d65ab48",
-    "0c1c12cb-19f1-49b5-867c-99327a0ab8e9",
-    "afa52222-59cf-4344-8094-73943f3dcde9",
-    "4372e3b3-6fa2-4369-b068-74204fa4d16f",
-    "3a34e152-6e74-46ce-8f6c-14189a402411",
+    "9ccd1028-35e4-4b23-9d3b-178fac4ed156",
 ]
 
 
@@ -391,10 +320,67 @@ def _software_detail_response(request: Request, name: str):
     )
 
 
+def _project_detail_response(request: Request, name: str):
+    superset_base = settings.superset_external_url or ""
+
+    filter_state = {
+        "NATIVE_FILTER-project": {
+            "id": "NATIVE_FILTER-project",
+            "extraFormData": {
+                "filters": [{"col": "project_name", "op": "IN", "val": [name]}]
+            },
+            "filterState": {"value": [name]},
+        }
+    }
+    permalink_key = _filter_state_key("assessments", filter_state)
+
+    val = name.replace("'", "\\'")
+    rison_filter = (
+        "(NATIVE_FILTER-project:("
+        "id:NATIVE_FILTER-project,"
+        f"filterState:(value:!('{val}')),"
+        f"extraFormData:(filters:!((col:project_name,op:IN,val:!('{val}'))))"
+        "))"
+    )
+    encoded_filter = urllib.parse.quote(rison_filter, safe="")
+
+    embed_url = (
+        f"{superset_base}/superset/dashboard/assessments/?standalone=2"
+        if superset_base else ""
+    )
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "user": current_user(request),
+            "slug": "assessments",
+            "dashboard": {
+                "title": f"Project: {name}",
+                "description": f"Assessments for software in project {name}.",
+                "audience": "Per-project view",
+                "rsqkit_url": "",
+            },
+            "embed_url": embed_url,
+            "encoded_software_filter": encoded_filter,
+            "native_filters_key": permalink_key,
+            "superset_external_url": superset_base,
+            "dashboards": DASHBOARDS,
+            "current_dashboard": "assessments",
+        }
+    )
+
+
 @router.get("/", response_class=HTMLResponse)
-async def home(request: Request, software: str | None = Query(default=None)):
+async def home(
+    request: Request,
+    software: str | None = Query(default=None),
+    project: str | None = Query(default=None),
+):
     if software:
         return _software_detail_response(request, software)
+    if project:
+        return _project_detail_response(request, project)
     return templates.TemplateResponse(
         "home.html",
         {
@@ -410,6 +396,11 @@ async def home(request: Request, software: str | None = Query(default=None)):
 @router.get("/software/{name}", response_class=HTMLResponse)
 async def software_detail(request: Request, name: str):
     return _software_detail_response(request, name)
+
+
+@router.get("/project/{name}", response_class=HTMLResponse)
+async def project_detail(request: Request, name: str):
+    return _project_detail_response(request, name)
 
 
 @router.get("/concepts", response_class=HTMLResponse)
@@ -753,10 +744,11 @@ async def _auth_get_async(client: httpx.AsyncClient, path: str, token: str) -> t
 async def _account_context(request: Request, user: dict, *, new_token: str | None = None, error: str | None = None):
     token = user["token"]
     async with httpx.AsyncClient() as client:
-        tokens_r, projects_r, software_r = await asyncio.gather(
+        tokens_r, projects_r, software_r, me_r = await asyncio.gather(
             _auth_get_async(client, "/api/tokens/", token),
             _auth_get_async(client, "/api/projects/", token),
             _auth_get_async(client, "/api/projects/me/software", token),
+            _auth_get_async(client, "/api/auth/me", token),
         )
     tokens_body, list_error, status = tokens_r
     tokens = (tokens_body or {}).get("tokens", []) if isinstance(tokens_body, dict) else []
@@ -764,9 +756,12 @@ async def _account_context(request: Request, user: dict, *, new_token: str | Non
     projects = (projects_body or {}).get("projects", []) if isinstance(projects_body, dict) else []
     software_body, _, _ = software_r
     software = (software_body or {}).get("software", []) if isinstance(software_body, dict) else []
+    me_body, _, _ = me_r
+    profile = me_body if isinstance(me_body, dict) else {}
     return {
         "request": request,
         "user": user,
+        "profile": profile,
         "dashboards": DASHBOARDS,
         "current_dashboard": None,
         "tokens": tokens,

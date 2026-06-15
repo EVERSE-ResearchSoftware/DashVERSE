@@ -965,6 +965,64 @@ details.expand-json > pre {
     font-size: 0.9rem;
 }
 
+/* account page sections: each block of related controls sits inside a
+   thin-bordered card so the page reads as visually grouped chunks */
+.account-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-card);
+}
+
+.account-section > h2 {
+    margin: 0 0 0.85rem 0;
+    color: var(--color-text);
+    font-size: 1.25rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.65rem 1.5rem;
+}
+
+.profile-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.profile-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.profile-value {
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+/* small inline link that styles a name as a pill-shaped clickable
+   chip (used on Software / Project names in the account tables) */
+.link-pill {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dashed transparent;
+    transition: color 0.15s var(--ease-out), border-color 0.15s var(--ease-out);
+}
+
+.link-pill:hover {
+    color: var(--color-primary-hover);
+    border-bottom-color: var(--color-primary);
+}
+
 /* copy-with-feedback button (used on account page for tokens) */
 .copy-btn-success {
     background: #10b981 !important;
