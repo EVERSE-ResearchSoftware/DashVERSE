@@ -30,10 +30,14 @@
     if (!btn || !pre) return;
     btn.addEventListener('click', function() {
         var text = pre.textContent.trim();
+        var prev = btn.textContent;
         var done = function() {
-            var prev = btn.textContent;
-            btn.textContent = 'Copied';
-            setTimeout(function() { btn.textContent = prev; }, 1500);
+            btn.textContent = 'Copied!';
+            btn.classList.add('copy-btn-success');
+            setTimeout(function() {
+                btn.classList.remove('copy-btn-success');
+                btn.textContent = prev;
+            }, 1800);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(done, function() {

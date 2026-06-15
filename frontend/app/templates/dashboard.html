@@ -5,7 +5,19 @@
 {% block body_class %} class="embed"{% endblock %}
 
 {% block content %}
-<section class="dashboard-embed">
+<section class="dashboard-embed" style="position: relative;">
+    <div id="dashboard-skeleton" class="dashboard-skeleton" aria-hidden="true">
+        <div class="skeleton-row">
+            <div class="skeleton-bar skeleton-kpi"></div>
+            <div class="skeleton-bar skeleton-kpi"></div>
+            <div class="skeleton-bar skeleton-kpi"></div>
+        </div>
+        <div class="skeleton-bar skeleton-chart"></div>
+        <div class="skeleton-row">
+            <div class="skeleton-bar skeleton-chart skeleton-narrow"></div>
+            <div class="skeleton-bar skeleton-chart"></div>
+        </div>
+    </div>
     {% if embedded_uuid %}
     <div id="dashboard-mount" data-slug="{{ slug }}" data-embedded-uuid="{{ embedded_uuid }}" data-superset-url="{{ superset_external_url }}" data-hide-filters="{{ '1' if dashboard.hide_filters else '0' }}"></div>
     {% else %}
@@ -58,6 +70,31 @@
                 : { expanded: true },
         },
     });
+
+    // fade the skeleton once the iframe mounts. the embed sdk doesn't
+    // expose a stable onload hook so wait a moment for the iframe and
+    // then watch its load event.
+    var skel = document.getElementById('dashboard-skeleton');
+    if (skel) {
+        var hideSkeleton = function() {
+            skel.classList.add('hide');
+            setTimeout(function() { skel.style.display = 'none'; }, 600);
+        };
+        var tries = 0;
+        var pollIframe = function() {
+            var iframe = mount.querySelector('iframe');
+            if (iframe) {
+                iframe.addEventListener('load', hideSkeleton);
+                // safety net: hide after 8s regardless
+                setTimeout(hideSkeleton, 8000);
+            } else if (tries++ < 50) {
+                setTimeout(pollIframe, 100);
+            } else {
+                hideSkeleton();
+            }
+        };
+        pollIframe();
+    }
 })();
 </script>
 <style>
@@ -94,6 +131,16 @@
         url += '&native_filters=' + nativeFilters;
     }
     iframe.src = url;
+
+    var skel = document.getElementById('dashboard-skeleton');
+    if (skel) {
+        var hideSkeleton = function() {
+            skel.classList.add('hide');
+            setTimeout(function() { skel.style.display = 'none'; }, 600);
+        };
+        iframe.addEventListener('load', hideSkeleton);
+        setTimeout(hideSkeleton, 8000);
+    }
 })();
 </script>
 {% endif %}
