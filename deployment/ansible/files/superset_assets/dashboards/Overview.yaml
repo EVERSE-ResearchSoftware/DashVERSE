@@ -21,7 +21,7 @@ position:
     id: MARKDOWN-INTRO
     meta:
       width: 12
-      height: 8
+      height: 14
       code: '**Global Overview.** Portfolio-wide quality assessment activity + the EVERSE quality model catalog. Aggregate counts, pass rates, and coverage statistics. Anonymous-safe: no software or project names are exposed. Use the filters above to narrow by dimension, date, or tool. See [RSQKit](https://everse.software/RSQKit) for context.'
     type: MARKDOWN
     parents:

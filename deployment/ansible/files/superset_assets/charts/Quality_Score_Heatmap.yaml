@@ -37,6 +37,8 @@ params:
   xscale_interval: 1
   sort_x_axis: alpha_asc
   sort_y_axis: alpha_asc
+  x_axis_label_rotation: 45
+  bottom_margin: 80
 query_context: null
 cache_timeout: null
 uuid: 557a32e9-c95a-4726-bdcd-c96f49c36fed

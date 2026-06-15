@@ -33,72 +33,27 @@ dashboards:
   - name: "Overview"
     slug: "global"
     description: |
-      Portfolio-wide overview, anonymous-safe. Aggregate counts and rates
-      (no software or project names) plus the EVERSE quality model catalog
-      (dimensions, indicators, tools). Replaces the standalone Catalog
-      dashboard and the anonymous-safe portions of the role dashboards.
-      Filterable by dimension, date range, and checking tool.
+      Portfolio-wide overview, anonymous-safe. Big-number counts of
+      assessments / software / checks, outcome distribution donut, outcomes
+      by dimension, monthly assessment activity, common failing indicators
+      and checking-tool usage. No filter bar.
   - name: "Assessments"
     slug: "assessments"
     description: |
-      Filter-driven view over every assessment the viewer is allowed to see.
-      Picks up Software Detail's per-software KPIs/trend/radar/vs-median and
-      adds compliance heatmap, top performers, improvement targets, failed
-      checks, recent assessments, and checking-tool usage. Filterable by
-      software, dimension, outcome, and date range. Subsumes the Mine,
-      role-specific, and Software Detail dashboards.
-  - name: "Software Detail"
-    slug: "software-detail"
-    description: |
-      Per-software view: KPIs, quality trend, dimension profile, comparison to
-      portfolio median, failed checks, improvement targets with RSQKit links,
-      and assessment history. Pre-filters via the Software native filter
-      (set from the URL or the dropdown).
+      Per-software / per-project explorer over every assessment the viewer
+      is allowed to see. Quality profile (outcomes per dimension + outcome
+      mix + outcome trend), software comparison (rank, project breakdown,
+      outcomes heatmap), improvement targets, failed-check evidence and
+      recent assessments. Filterable by project, software, dimension,
+      outcome and assessment date.
   - name: "Catalog"
     slug: "catalog"
     description: |
-      Reference view of the EVERSE quality model itself: catalog size, how much
-      of it has been exercised by assessments, and the full list of dimensions
-      and indicators with their definitions.
-  - name: "Policy Maker"
-    slug: "policy-maker"
-    description: |
-      Dashboard for policy makers at funding agencies, research institutions, or governmental bodies.
-      Provides high-level metrics on software quality adoption and FAIR compliance across organizations.
-      See: https://everse.software/RSQKit/policy_maker
-  - name: "Principal Investigator"
-    slug: "principal-investigator"
-    description: |
-      Dashboard for Principal Investigators managing projects with software development components.
-      Shows project-level metrics, software management insights, and areas requiring attention.
-      See: https://everse.software/RSQKit/principal_investigator
-  - name: "Research Software Engineer"
-    slug: "research-software-engineer"
-    description: |
-      Dashboard for Research Software Engineers bridging research and software development.
-      Provides technical metrics, code quality indicators, and detailed assessment results.
-      See: https://everse.software/RSQKit/research_software_engineer
-  - name: "Researcher Who Codes"
-    slug: "researcher-who-codes"
-    description: |
-      Dashboard for researchers who develop software as part of their research workflow.
-      Offers practical guidance on quality improvements without requiring deep engineering expertise.
-      See: https://everse.software/RSQKit/researcher_who_codes
-  - name: "Trainer"
-    slug: "trainer"
-    description: |
-      Dashboard for trainers designing courses in research software development and quality.
-      Highlights common issues, skill gaps, and areas where training can have the most impact.
-      See: https://everse.software/RSQKit/trainer
+      Reference view of the EVERSE quality model itself: catalog size, how
+      much of it has been exercised by assessments, coverage per tool, and
+      the full list of dimensions and indicators with their definitions.
 
 embeddable_dashboard_slugs:
   - assessments
   - global
   - catalog
-
-dashboard_role_keys:
-  - policy_maker
-  - principal_investigator
-  - research_software_engineer
-  - researcher_who_codes
-  - trainer

@@ -245,21 +245,21 @@ templates = Jinja2Templates(directory=templates_dir)
 DASHBOARDS = {
     "global": {
         "title": "Overview",
-        "description": "Portfolio-wide quality assessment activity plus the EVERSE quality model catalog. Aggregate counts and rates; no software or project names are exposed.",
+        "description": "Portfolio-wide outcome distribution, monthly assessment activity, top failing indicators and checking-tool usage. Anonymous-safe: no software or project names are exposed.",
         "audience": "Open to anonymous visitors. No login required.",
         "rsqkit_url": "",
         "hide_filters": True,
     },
     "assessments": {
         "title": "Assessments",
-        "description": "Filter-driven view of every assessment you can see. Per-software KPIs, trend, dimension radar, vs-median, compliance heatmap, improvement targets, failed checks, recent activity, and checking-tool usage.",
+        "description": "Quality profile and improvement targets for every assessment you can see. Per-software outcome breakdown, dimension profile, outcomes heatmap, ranked failing indicators, and recent assessments. Filter by project, software, dimension, outcome, or date.",
         "audience": "Authenticated users only. The view narrows automatically to the scope you're allowed to see.",
         "rsqkit_url": "",
         "auth_required": True,
     },
     "catalog": {
         "title": "Catalog",
-        "description": "Browse the EVERSE quality dimensions and indicators that DashVERSE evaluates against. No assessment data here, just the reference catalog with its current coverage.",
+        "description": "Reference view of the EVERSE quality model: catalog size, how much of it has been exercised by assessments, coverage per checking tool, and the full list of dimensions and indicators.",
         "audience": "Authenticated users only.",
         "rsqkit_url": "",
         "auth_required": True,
