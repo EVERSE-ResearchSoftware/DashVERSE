@@ -371,6 +371,23 @@ def _project_detail_response(request: Request, name: str):
     )
 
 
+async def _home_stats(user: dict | None) -> dict:
+    headers = {"Accept": "application/json"}
+    if user and user.get("token"):
+        headers["Authorization"] = f"Bearer {user['token']}"
+    try:
+        async with httpx.AsyncClient(timeout=3) as client:
+            r = await client.get(
+                f"{settings.backend_url.rstrip('/')}/api/stats/home",
+                headers=headers,
+            )
+        if r.status_code == 200:
+            return r.json()
+    except httpx.RequestError as exc:
+        log.warning("home stats fetch failed: %s", exc)
+    return {}
+
+
 @router.get("/", response_class=HTMLResponse)
 async def home(
     request: Request,
@@ -381,11 +398,14 @@ async def home(
         return _software_detail_response(request, software)
     if project:
         return _project_detail_response(request, project)
+    user = current_user(request)
+    stats = await _home_stats(user)
     return templates.TemplateResponse(
         "home.html",
         {
             "request": request,
-            "user": current_user(request),
+            "user": user,
+            "stats": stats,
             "dashboards": DASHBOARDS,
             "superset_url": settings.superset_url,
             "current_dashboard": None,

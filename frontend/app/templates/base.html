@@ -95,8 +95,9 @@ nav {
 }
 
 .nav-brand .logo {
-    height: 32px;
+    height: 36px;
     width: auto;
+    display: block;
 }
 
 .nav-links {
@@ -109,7 +110,10 @@ nav {
     color: var(--color-text-muted);
     text-decoration: none;
     font-size: 0.9rem;
-    padding: 0.5rem 0;
+    padding: 0.45rem 0.6rem;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
     border-bottom: 2px solid transparent;
     transition: color 0.2s, border-color 0.2s;
 }
@@ -479,9 +483,9 @@ footer {
 /* nav separator */
 .nav-separator {
     width: 1px;
-    height: 20px;
+    align-self: stretch;
     background: #e2e8f0;
-    margin: 0 0.5rem;
+    margin: 0.4rem 0.5rem;
 }
 
 /* user menu (avatar + dropdown) */
@@ -501,7 +505,8 @@ footer {
     list-style: none;
     color: var(--color-text-muted);
     font-size: 0.9rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0.45rem 0.6rem;
+    min-height: 36px;
     border-radius: 999px;
     transition: background 0.15s;
 }
@@ -1006,6 +1011,52 @@ details.expand-json > pre {
     font-size: 0.95rem;
     font-weight: 500;
     word-break: break-word;
+}
+
+/* home-page utility blocks: plain typography, no new cards. */
+.snapshot-strip {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.snapshot-strip strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+.quick-actions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+}
+.quick-actions a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.quick-actions a:hover {
+    text-decoration: underline;
+}
+.how-steps {
+    padding-left: 1.2rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+}
+.how-steps li {
+    margin-bottom: 0.35rem;
+}
+.resource-row {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+}
+.resource-row a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+.resource-row a:hover {
+    text-decoration: underline;
 }
 
 /* small inline link that styles a name as a pill-shaped clickable

@@ -16,13 +16,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
-ALTER TABLE software_metadata ENABLE ROW LEVEL SECURITY;
 ALTER TABLE dimensions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE indicators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assessment_raw ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS read_software_metadata ON software_metadata;
-CREATE POLICY read_software_metadata ON software_metadata FOR SELECT TO web_anon, web_user USING (true);
 
 DROP POLICY IF EXISTS read_dimensions ON dimensions;
 CREATE POLICY read_dimensions ON dimensions FOR SELECT TO web_anon, web_user USING (true);
@@ -54,10 +50,6 @@ ALTER TABLE auth.projects ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS read_projects ON auth.projects;
 CREATE POLICY read_projects ON auth.projects FOR SELECT TO web_anon, web_user
   USING (is_public OR (owner_user_id IS NOT NULL AND owner_user_id = api.current_user_id()));
-
-DROP POLICY IF EXISTS write_software_metadata ON software_metadata;
-CREATE POLICY write_software_metadata ON software_metadata FOR ALL TO web_user
-  USING (is_authenticated()) WITH CHECK (is_authenticated());
 
 DROP POLICY IF EXISTS write_dimensions ON dimensions;
 CREATE POLICY write_dimensions ON dimensions FOR ALL TO web_user

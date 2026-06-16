@@ -41,61 +41,6 @@ SELECT
   'https://everse.software/RSQKit/' || d.identifier AS rsqkit_url
 FROM dimensions d;
 
-DROP VIEW IF EXISTS catalog_coverage_breakdown;
-CREATE VIEW catalog_coverage_breakdown AS
-WITH dim_tested AS (
-  SELECT DISTINCT ac.dimension_id AS item_id
-  FROM assessment_checks ac WHERE ac.dimension_id IS NOT NULL
-),
-ind_tested AS (
-  SELECT DISTINCT ac.indicator_id AS item_id
-  FROM assessment_checks ac WHERE ac.indicator_id IS NOT NULL
-)
-SELECT
-  'Dimensions' AS category,
-  CASE WHEN t.item_id IS NOT NULL THEN 'Tested' ELSE 'Untested' END AS status,
-  COUNT(*) AS items
-FROM dimensions d
-LEFT JOIN dim_tested t ON t.item_id = d.id
-GROUP BY 1, 2
-UNION ALL
-SELECT
-  'Indicators',
-  CASE WHEN t.item_id IS NOT NULL THEN 'Tested' ELSE 'Untested' END,
-  COUNT(*)
-FROM indicators i
-LEFT JOIN ind_tested t ON t.item_id = i.id
-GROUP BY 1, 2;
-
-DROP VIEW IF EXISTS catalog_coverage;
-CREATE VIEW catalog_coverage AS
-SELECT
-  ac.software_name,
-  'Dimensions' AS category,
-  ac.dimension_id AS item_id,
-  (SELECT COUNT(*) FROM dimensions) AS catalog_total
-FROM assessment_checks ac
-WHERE ac.dimension_id IS NOT NULL
-UNION ALL
-SELECT
-  ac.software_name,
-  'Indicators',
-  ac.indicator_id,
-  (SELECT COUNT(*) FROM indicators)
-FROM assessment_checks ac
-WHERE ac.indicator_id IS NOT NULL;
-
-CREATE OR REPLACE VIEW projects AS
-SELECT
-  id,
-  name,
-  name AS project_name,
-  owner_user_id,
-  is_public,
-  created_at,
-  updated_at
-FROM auth.projects;
-
 DROP VIEW IF EXISTS assessment_checks;
 CREATE VIEW assessment_checks AS
 SELECT
@@ -197,6 +142,61 @@ LEFT JOIN auth.software_visibility sv
        ON sv.owner_user_id = a.created_by
       AND sv.software_name = a.payload->'assessedSoftware'->>'name';
 
+
+DROP VIEW IF EXISTS catalog_coverage_breakdown;
+CREATE VIEW catalog_coverage_breakdown AS
+WITH dim_tested AS (
+  SELECT DISTINCT ac.dimension_id AS item_id
+  FROM assessment_checks ac WHERE ac.dimension_id IS NOT NULL
+),
+ind_tested AS (
+  SELECT DISTINCT ac.indicator_id AS item_id
+  FROM assessment_checks ac WHERE ac.indicator_id IS NOT NULL
+)
+SELECT
+  'Dimensions' AS category,
+  CASE WHEN t.item_id IS NOT NULL THEN 'Tested' ELSE 'Untested' END AS status,
+  COUNT(*) AS items
+FROM dimensions d
+LEFT JOIN dim_tested t ON t.item_id = d.id
+GROUP BY 1, 2
+UNION ALL
+SELECT
+  'Indicators',
+  CASE WHEN t.item_id IS NOT NULL THEN 'Tested' ELSE 'Untested' END,
+  COUNT(*)
+FROM indicators i
+LEFT JOIN ind_tested t ON t.item_id = i.id
+GROUP BY 1, 2;
+
+DROP VIEW IF EXISTS catalog_coverage;
+CREATE VIEW catalog_coverage AS
+SELECT
+  ac.software_name,
+  'Dimensions' AS category,
+  ac.dimension_id AS item_id,
+  (SELECT COUNT(*) FROM dimensions) AS catalog_total
+FROM assessment_checks ac
+WHERE ac.dimension_id IS NOT NULL
+UNION ALL
+SELECT
+  ac.software_name,
+  'Indicators',
+  ac.indicator_id,
+  (SELECT COUNT(*) FROM indicators)
+FROM assessment_checks ac
+WHERE ac.indicator_id IS NOT NULL;
+
+CREATE OR REPLACE VIEW projects AS
+SELECT
+  id,
+  name,
+  name AS project_name,
+  owner_user_id,
+  is_public,
+  created_at,
+  updated_at
+FROM auth.projects;
 ALTER VIEW catalog_coverage SET (security_invoker = true);
 ALTER VIEW catalog_coverage_breakdown SET (security_invoker = true);
 ALTER VIEW assessment_checks SET (security_invoker = true);

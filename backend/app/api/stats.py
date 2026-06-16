@@ -1,0 +1,92 @@
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Header
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.core.security import decode_access_token
+from app.models.user import User
+
+router = APIRouter(prefix="/api/stats", tags=["Stats"])
+
+
+def _maybe_user(
+    db: Session,
+    authorization: Optional[str],
+) -> Optional[User]:
+    if not authorization or not authorization.lower().startswith("bearer "):
+        return None
+    token = authorization.split(" ", 1)[1].strip()
+    payload = decode_access_token(token)
+    if not payload:
+        return None
+    sub = payload.get("sub")
+    if sub is None:
+        return None
+    try:
+        uid = int(sub)
+    except (TypeError, ValueError):
+        return None
+    return db.query(User).filter(User.id == uid, User.is_active == True).first()
+
+
+@router.get("/home")
+def home_stats(
+    db: Session = Depends(get_db),
+    authorization: Optional[str] = Header(default=None),
+):
+    public = db.execute(text(
+        """
+        SELECT
+          COUNT(DISTINCT assessment_id) AS public_assessments,
+          COUNT(DISTINCT software_name) AS public_software
+        FROM api.assessment_checks
+        WHERE effective_visibility = 'public'
+        """
+    )).first()
+    catalog = db.execute(text(
+        "SELECT (SELECT COUNT(*) FROM api.indicators) AS catalog_indicators,"
+        " (SELECT COUNT(*) FROM api.dimensions)  AS catalog_dimensions"
+    )).first()
+
+    payload = {
+        "public_assessments": public.public_assessments or 0,
+        "public_software": public.public_software or 0,
+        "catalog_indicators": catalog.catalog_indicators or 0,
+        "catalog_dimensions": catalog.catalog_dimensions or 0,
+    }
+
+    user = _maybe_user(db, authorization)
+    if user is None:
+        return payload
+
+    mine = db.execute(
+        text(
+            """
+            SELECT
+              (SELECT COUNT(*) FROM auth.projects
+                WHERE owner_user_id = :uid) AS my_projects,
+              (SELECT COUNT(DISTINCT software_name)
+                FROM api.assessment_checks
+                WHERE author_user_id = :uid)        AS my_software,
+              (SELECT COUNT(DISTINCT assessment_id)
+                FROM api.assessment_checks
+                WHERE author_user_id = :uid)        AS my_assessments,
+              (SELECT MAX(assessed_at)
+                FROM api.assessment_checks
+                WHERE author_user_id = :uid)        AS my_last_assessment_at
+            """
+        ),
+        {"uid": user.id},
+    ).first()
+    payload.update(
+        my_projects=mine.my_projects or 0,
+        my_software=mine.my_software or 0,
+        my_assessments=mine.my_assessments or 0,
+        my_last_assessment_at=(
+            mine.my_last_assessment_at.isoformat()
+            if mine.my_last_assessment_at else None
+        ),
+    )
+    return payload
