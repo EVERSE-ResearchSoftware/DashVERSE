@@ -173,43 +173,38 @@ main {
     margin-bottom: 1.5rem;
 }
 
-/* when only one card is visible (anonymous viewer), centre it and
-   constrain its width so it doesn't stretch across the full row */
-.dashboard-grid-single {
-    grid-template-columns: minmax(280px, 480px);
-    justify-content: center;
-}
-
 @media (max-width: 1000px) {
-    .dashboard-grid:not(.dashboard-grid-single) {
+    .dashboard-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 650px) {
-    .dashboard-grid:not(.dashboard-grid-single) {
+    .dashboard-grid {
         grid-template-columns: 1fr;
     }
 }
 
-.dashboards-locked-note {
+/* hero call-to-action row: two-three primary/secondary buttons below
+   the hero paragraph for anonymous viewers */
+.hero-actions {
     margin-top: 1.25rem;
-    padding: 0.85rem 1rem;
-    background: rgba(124, 58, 237, 0.06);
-    border: 1px dashed rgba(124, 58, 237, 0.35);
-    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.lead-paragraph {
     color: var(--color-text-muted);
-    text-align: center;
-    font-size: 0.92rem;
+    line-height: 1.6;
 }
-
-.dashboards-locked-note a {
+.lead-paragraph a {
     color: var(--color-primary);
-    font-weight: 600;
     text-decoration: none;
+    font-weight: 500;
 }
-
-.dashboards-locked-note a:hover {
+.lead-paragraph a:hover {
     text-decoration: underline;
 }
 
@@ -223,6 +218,12 @@ main {
                 box-shadow 0.3s var(--ease-out),
                 border-color 0.3s var(--ease-out);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-card .card-links {
+    margin-top: auto;
 }
 
 .dashboard-card:hover {
@@ -260,8 +261,9 @@ main {
     padding: 0.6rem 1.25rem;
     border-radius: var(--radius-button);
     text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     display: inline-block;
     transition: transform 0.2s var(--ease-out),
                 background 0.2s var(--ease-out),
@@ -284,12 +286,16 @@ main {
 }
 
 .btn-secondary {
-    background: var(--color-primary-soft);
+    background: #ffffff;
     color: var(--color-primary-hover);
+    border: 1.5px solid var(--color-primary);
+    padding: calc(0.6rem - 1.5px) calc(1.25rem - 1.5px);
 }
 
 .btn-secondary:hover {
-    background: rgba(124, 58, 237, 0.18);
+    background: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
     transform: translateY(-1px) scale(1.02);
 }
 
@@ -1039,13 +1045,167 @@ details.expand-json > pre {
 .quick-actions a:hover {
     text-decoration: underline;
 }
-.how-steps {
-    padding-left: 1.2rem;
+/* short lead-in paragraph immediately under a section heading;
+   muted so the heading reads as the dominant element */
+.section-lead {
     color: var(--color-text-muted);
-    line-height: 1.7;
+    margin-bottom: 1rem;
+    line-height: 1.55;
+    max-width: 720px;
+}
+
+/* anonymous home: feature-tile trio describing what the public
+   Overview offers. uses the existing token set + card pattern but
+   with a violet top-accent stripe to set it apart from card grids */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+}
+.feature-tile {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-top: 3px solid var(--color-primary);
+    border-radius: var(--radius-card);
+    padding: 1.1rem 1.25rem 1.2rem;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+.feature-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+}
+.feature-tile h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--color-primary);
+    font-size: 1.1rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+}
+.feature-tile p {
+    margin: 0;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    font-size: 0.95rem;
+}
+
+/* anonymous home: 3-column explainer for the EVERSE model
+   (dimensions / indicators / outcomes) with a footer link per block */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+}
+.info-block {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+    padding: 1.1rem 1.25rem 1.2rem;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+}
+.info-block h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+}
+.info-block p {
+    margin: 0 0 0.85rem 0;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    font-size: 0.95rem;
+    flex: 1;
+}
+.info-block strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+.info-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-top: auto;
+}
+.info-link:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+.how-steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
 }
 .how-steps li {
-    margin-bottom: 0.35rem;
+    counter-increment: step;
+    position: relative;
+    padding: 1rem 1rem 1rem 3.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 10px;
+    color: var(--color-text);
+    line-height: 1.55;
+    box-shadow: var(--shadow-card);
+}
+.how-steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.28);
+}
+.how-steps li a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.how-steps li a:hover {
+    text-decoration: underline;
+}
+
+/* compact accent panel used for the anonymous "Want to add your own?"
+   call-to-action -- soft violet wash + dashed-violet border so it
+   reads as an action target without looking like a card */
+.action-panel {
+    background: var(--color-primary-soft);
+    border: 1px dashed rgba(124, 58, 237, 0.45);
+    border-radius: 10px;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    color: var(--color-text);
+}
+.action-panel p {
+    margin: 0;
+    flex: 1 1 220px;
+    color: var(--color-text);
+    line-height: 1.5;
+}
+.action-panel .panel-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
 }
 .resource-row {
     color: var(--color-text-muted);

@@ -20,37 +20,28 @@
         <a href="{{ url_for('concepts') }}">Concepts</a> page to learn how the
         numbers are built.
     </p>
+    <p class="hero-actions">
+        <a href="/dashboard/global" class="btn-primary">View public Overview</a>
+        <a href="/register" class="btn-secondary">Register</a>
+    </p>
     {% endif %}
 </section>
 
+{% if user %}
 <section class="dashboards" style="margin-bottom: 1.25rem;">
-    <h2>{% if user %}Your snapshot{% else %}Live snapshot{% endif %}</h2>
+    <h2>Your snapshot</h2>
     <p class="snapshot-strip">
-        {% if user %}
-            <strong>{{ stats.get('my_projects', 0) }}</strong> project{{ '' if stats.get('my_projects') == 1 else 's' }}
-            &middot;
-            <strong>{{ stats.get('my_software', 0) }}</strong> software in your scope
-            &middot;
-            <strong>{{ stats.get('my_assessments', 0) }}</strong> assessment{{ '' if stats.get('my_assessments') == 1 else 's' }} you've authored
-            {% if stats.get('my_last_assessment_at') %}
-            &middot; last on <strong>{{ stats.my_last_assessment_at[:10] }}</strong>
-            {% endif %}
-        {% else %}
-            {% if stats.get('public_assessments', 0) > 0 %}
-            <strong>{{ stats.public_assessments }}</strong> assessment{{ '' if stats.public_assessments == 1 else 's' }} performed
-            &middot;
-            <strong>{{ stats.public_software }}</strong> software project{{ '' if stats.public_software == 1 else 's' }} assessed
-            &middot;
-            {% else %}
-            <em>No public assessments yet.</em>
-            {% endif %}
-            <strong>{{ stats.get('catalog_indicators', 0) }}</strong> indicators across
-            <strong>{{ stats.get('catalog_dimensions', 0) }}</strong> dimensions in the EVERSE catalog
+        <strong>{{ stats.get('my_projects', 0) }}</strong> project{{ '' if stats.get('my_projects') == 1 else 's' }}
+        &middot;
+        <strong>{{ stats.get('my_software', 0) }}</strong> software in your scope
+        &middot;
+        <strong>{{ stats.get('my_assessments', 0) }}</strong> assessment{{ '' if stats.get('my_assessments') == 1 else 's' }} you've authored
+        {% if stats.get('my_last_assessment_at') %}
+        &middot; last on <strong>{{ stats.my_last_assessment_at[:10] }}</strong>
         {% endif %}
     </p>
 </section>
 
-{% if user %}
 <section class="dashboards" style="margin-bottom: 1.25rem;">
     <h2>Quick actions</h2>
     <ul class="quick-actions">
@@ -59,16 +50,11 @@
         <li><a href="http://localhost:8001/docs" target="_blank">Submit a new assessment (API docs)</a></li>
     </ul>
 </section>
-{% endif %}
-
-{% set visible_count = namespace(n=0) %}
-{% for slug, dash in dashboards.items() %}{% if user or not dash.auth_required %}{% set visible_count.n = visible_count.n + 1 %}{% endif %}{% endfor %}
 
 <section class="dashboards">
     <h2>Available Dashboards</h2>
-    <div class="dashboard-grid {% if visible_count.n == 1 %}dashboard-grid-single{% endif %}">
+    <div class="dashboard-grid">
         {% for slug, dash in dashboards.items() %}
-        {% if user or not dash.auth_required %}
         <div class="dashboard-card">
             <h3>{{ dash.title }}</h3>
             <p class="description">{{ dash.description }}</p>
@@ -80,19 +66,79 @@
                 {% endif %}
             </div>
         </div>
-        {% endif %}
         {% endfor %}
     </div>
-
-    {% if visible_count.n < dashboards | length %}
-    <p class="dashboards-locked-note">
-        <a href="/login?next={{ request.url.path|urlencode }}">Log in</a> to see
-        per-software, per-project drill-down dashboards and the EVERSE catalog.
+</section>
+{% else %}
+<section class="dashboards" style="margin-bottom: 1.25rem;">
+    <h2>What you can explore</h2>
+    <p class="section-lead">
+        Three things the public Overview answers without any login or signup.
     </p>
-    {% endif %}
+    <div class="feature-grid">
+        <div class="feature-tile">
+            <h3>Outcome distribution</h3>
+            <p>
+                See the share of passing, failing and not-applicable
+                checks across the whole portfolio. Pinpoint where the
+                community is doing well and where there's headroom.
+            </p>
+        </div>
+        <div class="feature-tile">
+            <h3>Activity over time</h3>
+            <p>
+                Track how many assessments roll in month by month and
+                how outcome categories evolve. Spot adoption peaks and
+                the impact of training rounds.
+            </p>
+        </div>
+        <div class="feature-tile">
+            <h3>Common failing indicators</h3>
+            <p>
+                Ranked bar chart of the indicators that fail most often,
+                with the dimensions they belong to. Useful to plan
+                outreach and tooling improvements.
+            </p>
+        </div>
+    </div>
 </section>
 
-{% if not user %}
+<section class="dashboards" style="margin-bottom: 1.25rem;">
+    <h2>The EVERSE quality model</h2>
+    <div class="info-grid">
+        <div class="info-block">
+            <h3>Dimensions</h3>
+            <p>
+                Broad quality concerns such as <strong>FAIRness</strong>,
+                <strong>Maintainability</strong>, <strong>Security</strong>
+                and <strong>Functional suitability</strong>. They group
+                related indicators together.
+            </p>
+            <a href="https://everse.software/indicators/website/dimensions.html" target="_blank" class="info-link">Browse all dimensions &rarr;</a>
+        </div>
+        <div class="info-block">
+            <h3>Indicators</h3>
+            <p>
+                Concrete, measurable criteria that automated tools can
+                check &mdash; "software has license", "software has
+                citation", "tests pass". Each indicator belongs to one
+                or more dimensions.
+            </p>
+            <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="info-link">Browse all indicators &rarr;</a>
+        </div>
+        <div class="info-block">
+            <h3>Outcomes</h3>
+            <p>
+                Each check resolves to <strong>Pass</strong>,
+                <strong>Fail</strong> or <strong>Not applicable</strong>.
+                The dashboards aggregate these categorical outcomes &mdash;
+                no opaque "quality score", no compliance threshold.
+            </p>
+            <a href="{{ url_for('concepts') }}" class="info-link">Read the Concepts page &rarr;</a>
+        </div>
+    </div>
+</section>
+
 <section class="dashboards" style="margin-bottom: 1.25rem;">
     <h2>How DashVERSE works</h2>
     <ol class="how-steps">
@@ -100,21 +146,26 @@
             <a href="https://github.com/EVERSE-ResearchSoftware/QualityPipelines" target="_blank">QualityPipelines</a>.</li>
         <li>Submit the result via the DashVERSE API using a personal token.</li>
         <li>Your software's outcomes land on the dashboards and feed the
-            portfolio-wide numbers above.</li>
+            portfolio-wide numbers on the Overview.</li>
     </ol>
 </section>
 
 <section class="dashboards" style="margin-bottom: 1.25rem;">
     <h2>Want to add your own?</h2>
-    <p>
-        <a href="/register" class="btn-primary">Register</a>
-        to create projects and submit assessments, or
-        <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank">read the schema</a>
-        first.
-    </p>
+    <div class="action-panel">
+        <p>
+            Create projects, manage software visibility and submit
+            assessments through your personal API token.
+        </p>
+        <div class="panel-actions">
+            <a href="/register" class="btn-primary">Register</a>
+            <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank" class="btn-secondary">Read the schema</a>
+        </div>
+    </div>
 </section>
-{% else %}
-<section class="dashboards" style="margin-bottom: 1.25rem;">
+{% endif %}
+
+<section class="dashboards" style="margin-bottom: 0;">
     <h2>Resources</h2>
     <p class="resource-row">
         <a href="https://everse.software/indicators/website/indicators.html" target="_blank">EVERSE indicators</a>
@@ -128,5 +179,4 @@
         <a href="http://localhost:8001/docs" target="_blank">API docs</a>
     </p>
 </section>
-{% endif %}
 {% endblock %}
