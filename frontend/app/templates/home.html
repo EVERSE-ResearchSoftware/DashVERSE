@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}DashVERSE{% endblock %}
-{% if not user %}
-{% block body_class %} class="home-anon"{% endblock %}
-{% endif %}
+{% block body_class %} class="{{ 'home-anon' if not user else 'home-auth' }}"{% endblock %}
 
 {% block content %}
 <section class="hero">
@@ -50,7 +48,7 @@
     <ul class="quick-actions">
         <li><a href="/account">Manage projects &amp; software</a></li>
         <li><a href="/account#tokens">Generate an API token</a></li>
-        <li><a href="http://localhost:8001/docs" target="_blank">Submit a new assessment (API docs)</a></li>
+        <li><a href="{{ api_docs_url }}" target="_blank">Submit a new assessment (API docs)</a></li>
     </ul>
 </section>
 
@@ -129,7 +127,28 @@
         </p>
         <div class="panel-actions">
             <a href="/register" class="btn-primary">Register</a>
-            <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank" class="btn-secondary">Read the schema</a>
+        </div>
+    </div>
+</section>
+
+<section class="learn-more">
+    <h2>Who is it for?</h2>
+    <div class="audience-row">
+        <div class="audience-item">
+            <strong>Researchers &amp; RSEs</strong>
+            <p>Assess your own software, track quality improvements over time, and demonstrate good practice to funders.</p>
+        </div>
+        <div class="audience-item">
+            <strong>Project leads</strong>
+            <p>Compare quality across the software in your portfolio and surface what needs fixing first.</p>
+        </div>
+        <div class="audience-item">
+            <strong>Policy &amp; funders</strong>
+            <p>Monitor adoption of FAIR and software-quality practices across funded projects without diving into per-repository detail.</p>
+        </div>
+        <div class="audience-item">
+            <strong>Trainers</strong>
+            <p>Spot common knowledge gaps in the community and shape course content with real assessment data.</p>
         </div>
     </div>
 </section>
@@ -146,7 +165,7 @@
         &middot;
         <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank">Schemas</a>
         &middot;
-        <a href="http://localhost:8001/docs" target="_blank">API docs</a>
+        <a href="{{ api_docs_url }}" target="_blank">API docs</a>
     </p>
 </section>
 {% endblock %}

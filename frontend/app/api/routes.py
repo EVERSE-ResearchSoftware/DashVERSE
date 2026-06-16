@@ -408,6 +408,7 @@ async def home(
             "stats": stats,
             "dashboards": DASHBOARDS,
             "superset_url": settings.superset_url,
+            "api_docs_url": settings.backend_docs_external_url,
             "current_dashboard": None,
         }
     )
