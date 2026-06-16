@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}DashVERSE{% endblock %}
+{% if not user %}
+{% block body_class %} class="home-anon"{% endblock %}
+{% endif %}
 
 {% block content %}
 <section class="hero">
@@ -70,36 +73,6 @@
     </div>
 </section>
 {% else %}
-<section class="learn-more">
-    <h2>What you can explore</h2>
-    <div class="concepts-grid">
-        <div class="concept-card">
-            <h2>Outcome distribution</h2>
-            <p class="definition">
-                See the share of passing, failing and not-applicable
-                checks across the whole portfolio. Pinpoint where the
-                community is doing well and where there's headroom.
-            </p>
-        </div>
-        <div class="concept-card">
-            <h2>Activity over time</h2>
-            <p class="definition">
-                Track how many assessments roll in month by month and
-                how outcome categories evolve. Spot adoption peaks and
-                the impact of training rounds.
-            </p>
-        </div>
-        <div class="concept-card">
-            <h2>Common failing indicators</h2>
-            <p class="definition">
-                Ranked bar chart of the indicators that fail most often,
-                with the dimensions they belong to. Useful to plan
-                outreach and tooling improvements.
-            </p>
-        </div>
-    </div>
-</section>
-
 <section class="learn-more">
     <h2>The EVERSE quality model</h2>
     <div class="concepts-grid">

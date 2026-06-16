@@ -12,6 +12,8 @@ class Settings(BaseSettings):
 
     postgrest_url: str = "http://postgrest:3000"
 
+    postgrest_external_url: str = "http://localhost:3000"
+
     backend_url: str = "http://backend:8000"
 
     password_min_length: int = 12

@@ -790,6 +790,7 @@ async def _account_context(request: Request, user: dict, *, new_token: str | Non
         "list_status": status,
         "projects": projects,
         "software": software,
+        "dashverse_api_url": settings.postgrest_external_url,
     }
 
 

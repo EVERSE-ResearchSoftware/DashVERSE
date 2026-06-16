@@ -54,7 +54,6 @@
 
 html {
     height: 100%;
-    scrollbar-gutter: stable;
 }
 
 body {
@@ -194,6 +193,23 @@ main {
     gap: 0.75rem;
     flex-wrap: wrap;
 }
+
+/* anonymous home: trim vertical rhythm so the page fits a typical
+   viewport without forcing a scrollbar. only applies when the
+   <body> carries the .home-anon class (logged-in views unaffected). */
+body.home-anon main { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+body.home-anon .hero { padding: 1.75rem 1.25rem; margin-bottom: 1rem; }
+body.home-anon .hero h1 { font-size: 2rem; margin-bottom: 0.6rem; }
+body.home-anon .hero p { font-size: 0.98rem; }
+body.home-anon .hero-actions { margin-top: 0.9rem; }
+body.home-anon section { margin-bottom: 0.85rem !important; }
+body.home-anon .concepts-grid { gap: 0.85rem; margin-bottom: 0; }
+body.home-anon .concept-card { padding: 1rem 1.1rem; }
+body.home-anon .concept-card h2 { margin-bottom: 0.5rem; }
+body.home-anon .how-steps { gap: 0.85rem; }
+body.home-anon .how-steps li { padding: 0.85rem 1rem 0.85rem 3.1rem; }
+body.home-anon .action-panel { padding: 0.85rem 1.1rem; }
+body.home-anon h2 { margin-bottom: 0.6rem; }
 
 .lead-paragraph {
     color: var(--color-text-muted);
@@ -1168,6 +1184,120 @@ details.expand-json > pre {
 .link-pill:hover {
     color: var(--color-primary-hover);
     border-bottom-color: var(--color-primary);
+}
+
+/* account page "Run an assessment" howto -- tabbed instructions with
+   a dark code container per step. reuses the dark JSON-explorer
+   palette so nothing new is introduced. */
+.run-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--color-border);
+    margin: 0.5rem 0 1rem 0;
+}
+.run-tabs .tab-btn {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-muted);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+    transition: color 0.15s var(--ease-out), border-color 0.15s var(--ease-out);
+    margin-bottom: -1px;
+}
+.run-tabs .tab-btn:hover {
+    color: var(--color-primary);
+}
+.run-tabs .tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-panel.hidden {
+    display: none;
+}
+
+/* highlights the current instance's API URL at the top of each
+   "Run an assessment" tab so the user sees the exact value before
+   reading the steps */
+.instance-url-note {
+    background: var(--color-primary-soft);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    margin: 0 0 1rem 0;
+    color: var(--color-text);
+    font-size: 0.93rem;
+    line-height: 1.5;
+}
+.instance-url-note code {
+    background: #ffffff;
+    color: var(--color-primary-hover);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', "JetBrains Mono", monospace;
+    font-size: 0.88em;
+    font-weight: 600;
+}
+
+.howto-steps {
+    list-style: decimal inside;
+    padding: 0;
+    margin: 0;
+    counter-reset: howto;
+}
+.howto-steps > li {
+    list-style: none;
+    counter-increment: howto;
+    position: relative;
+    padding: 0 0 1rem 2.5rem;
+    color: var(--color-text);
+    line-height: 1.5;
+}
+.howto-steps > li::before {
+    content: counter(howto);
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: 'Outfit', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.howto-steps > li > p {
+    margin: 0 0 0.4rem 0;
+}
+.howto-steps > li > pre {
+    background: #0f172a;
+    color: #f1f5f9;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 0.7rem 0.95rem;
+    margin: 0;
+    font-family: 'Fira Code', "JetBrains Mono", monospace;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    overflow-x: auto;
+    white-space: pre;
+}
+.howto-steps code {
+    background: rgba(124, 58, 237, 0.10);
+    color: var(--color-primary-hover);
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', "JetBrains Mono", monospace;
+    font-size: 0.88em;
 }
 
 /* copy-with-feedback button (used on account page for tokens) */

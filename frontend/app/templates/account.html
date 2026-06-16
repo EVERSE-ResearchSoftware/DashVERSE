@@ -285,10 +285,10 @@
         <label style="min-width: 140px;">
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Lifetime</span>
             <select name="ttl_days" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                <option value="7">7 days</option>
                 <option value="30">30 days</option>
-                <option value="90" selected>90 days</option>
-                <option value="180">180 days</option>
-                <option value="365">365 days</option>
+                <option value="60">60 days</option>
+                <option value="90" selected>90 days (max)</option>
             </select>
         </label>
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>
@@ -346,4 +346,126 @@
     <p style="color: var(--color-text-muted);">No tokens yet.</p>
     {% endif %}
 </section>
+
+<section class="account-section">
+    <h2>Run an assessment</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 0.75rem;">
+        Use <a href="https://github.com/EVERSE-ResearchSoftware/resqui" target="_blank">resqui</a>
+        to assess a repository, then submit the result to DashVERSE.
+        Generate an API token above first; the recipes below assume it's
+        in the <code>DASHVERSE_TOKEN</code> environment variable.
+    </p>
+
+    <div class="run-tabs" role="tablist">
+        <button type="button" class="tab-btn active" data-tab="cli" role="tab" aria-selected="true">Command line</button>
+        <button type="button" class="tab-btn" data-tab="gha" role="tab" aria-selected="false">GitHub Actions</button>
+    </div>
+
+    <div class="tab-panel" id="tab-cli" role="tabpanel">
+        <p class="instance-url-note">
+            This instance's API URL: <code>{{ dashverse_api_url }}</code>
+            &mdash; use it as <code>DASHVERSE_URL</code> below.
+        </p>
+        <ol class="howto-steps">
+            <li>
+                <p>Install resqui from the EVERSE GitHub repository (not on PyPI yet):</p>
+                <pre class="nohljsln">pip install "git+https://github.com/EVERSE-ResearchSoftware/resqui.git"</pre>
+            </li>
+            <li>
+                <p>Export your DashVERSE token and the API URL for this instance:</p>
+                <pre class="nohljsln">export DASHVERSE_TOKEN="paste-your-api-token"
+export DASHVERSE_URL="{{ dashverse_api_url }}"</pre>
+            </li>
+            <li>
+                <p>Assess a local repository:</p>
+                <pre class="nohljsln">resqui assess /path/to/your/software --output assessment.json</pre>
+            </li>
+            <li>
+                <p>Submit the result to DashVERSE:</p>
+                <pre class="nohljsln">curl -X POST "$DASHVERSE_URL/assessment" \
+    -H "Authorization: Bearer $DASHVERSE_TOKEN" \
+    -H "Content-Type: application/json" \
+    --data-binary @assessment.json</pre>
+            </li>
+        </ol>
+        <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
+            A <code>201 Created</code> response means the assessment landed; refresh the
+            <a href="/dashboard/assessments">Assessments dashboard</a> to see it.
+        </p>
+    </div>
+
+    <div class="tab-panel hidden" id="tab-gha" role="tabpanel">
+        <p class="instance-url-note">
+            This instance's API URL: <code>{{ dashverse_api_url }}</code>
+            &mdash; use it as the <code>DASHVERSE_URL</code> repository secret.
+        </p>
+        <ol class="howto-steps">
+            <li>
+                <p>
+                    Add two repository secrets at
+                    <strong>Settings &rarr; Secrets and variables &rarr; Actions</strong>:
+                </p>
+                <ul style="margin: 0.4rem 0 0.6rem 1.25rem; color: var(--color-text);">
+                    <li><code>DASHVERSE_URL</code> &mdash; <code>{{ dashverse_api_url }}</code>
+                        (the API URL of this DashVERSE instance).</li>
+                    <li><code>DASHVERSE_TOKEN</code> &mdash; the API token you generated above.</li>
+                </ul>
+            </li>
+            <li>
+                <p>Drop this workflow at <code>.github/workflows/dashverse.yml</code>:</p>
+{% raw %}<pre class="nohljsln">name: DashVERSE assessment
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  assess:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install "git+https://github.com/EVERSE-ResearchSoftware/resqui.git"
+      - run: resqui assess . --output assessment.json
+      - name: submit to DashVERSE
+        env:
+          DASHVERSE_URL: ${{ secrets.DASHVERSE_URL }}
+          DASHVERSE_TOKEN: ${{ secrets.DASHVERSE_TOKEN }}
+        run: |
+          curl -fsS -X POST "$DASHVERSE_URL/assessment" \
+            -H "Authorization: Bearer $DASHVERSE_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data-binary @assessment.json
+</pre>{% endraw %}
+            </li>
+            <li>
+                <p>Push to <code>main</code> (or trigger the workflow manually).
+                    Each run uploads one assessment for the repository.</p>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<script>
+(function() {
+    var buttons = document.querySelectorAll('.run-tabs .tab-btn');
+    var panels  = document.querySelectorAll('.tab-panel');
+    buttons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var target = btn.getAttribute('data-tab');
+            buttons.forEach(function(b) {
+                var active = (b === btn);
+                b.classList.toggle('active', active);
+                b.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+            panels.forEach(function(p) {
+                p.classList.toggle('hidden', p.id !== 'tab-' + target);
+            });
+        });
+    });
+})();
+</script>
 {% endblock %}

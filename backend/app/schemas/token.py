@@ -17,8 +17,8 @@ class TokenCreate(TokenBase):
     ttl_days: Optional[int] = Field(
         None,
         ge=1,
-        le=365,
-        description="Token lifetime in days (1-365). Defaults to the system-wide JWT expiry when omitted.",
+        le=90,
+        description="Token lifetime in days (1-90). Defaults to the system-wide JWT expiry when omitted.",
     )
 
 
