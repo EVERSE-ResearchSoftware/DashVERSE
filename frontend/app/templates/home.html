@@ -72,6 +72,28 @@
 </section>
 {% else %}
 <section class="learn-more">
+    <h2>Who is it for?</h2>
+    <div class="audience-row">
+        <div class="audience-item">
+            <strong>Researchers &amp; RSEs</strong>
+            <p>Assess your own software, track quality improvements over time, and demonstrate good practice to funders.</p>
+        </div>
+        <div class="audience-item">
+            <strong>Project leads</strong>
+            <p>Compare quality across the software in your portfolio and surface what needs fixing first.</p>
+        </div>
+        <div class="audience-item">
+            <strong>Policy &amp; funders</strong>
+            <p>Monitor adoption of FAIR and software-quality practices across funded projects without diving into per-repository detail.</p>
+        </div>
+        <div class="audience-item">
+            <strong>Trainers</strong>
+            <p>Spot common knowledge gaps in the community and shape course content with real assessment data.</p>
+        </div>
+    </div>
+</section>
+
+<section class="learn-more">
     <h2>The EVERSE quality model</h2>
     <div class="concepts-grid">
         <div class="concept-card">
@@ -82,7 +104,7 @@
                 and <strong>Functional suitability</strong>. They group
                 related indicators together.
             </p>
-            <a href="https://everse.software/indicators/website/dimensions.html" target="_blank" class="info-link">Browse all dimensions &rarr;</a>
+            <a href="https://everse.software/indicators/website/dimensions.html" target="_blank" class="info-link">Browse all dimensions</a>
         </div>
         <div class="concept-card">
             <h2>Indicators</h2>
@@ -92,7 +114,7 @@
                 citation", "tests pass". Each indicator belongs to one
                 or more dimensions.
             </p>
-            <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="info-link">Browse all indicators &rarr;</a>
+            <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="info-link">Browse all indicators</a>
         </div>
         <div class="concept-card">
             <h2>Outcomes</h2>
@@ -102,7 +124,7 @@
                 The dashboards aggregate these categorical outcomes &mdash;
                 no opaque "quality score", no compliance threshold.
             </p>
-            <a href="{{ url_for('concepts') }}" class="info-link">Read the Concepts page &rarr;</a>
+            <a href="{{ url_for('concepts') }}" class="info-link">Read the Concepts page</a>
         </div>
     </div>
 </section>
@@ -131,27 +153,6 @@
     </div>
 </section>
 
-<section class="learn-more">
-    <h2>Who is it for?</h2>
-    <div class="audience-row">
-        <div class="audience-item">
-            <strong>Researchers &amp; RSEs</strong>
-            <p>Assess your own software, track quality improvements over time, and demonstrate good practice to funders.</p>
-        </div>
-        <div class="audience-item">
-            <strong>Project leads</strong>
-            <p>Compare quality across the software in your portfolio and surface what needs fixing first.</p>
-        </div>
-        <div class="audience-item">
-            <strong>Policy &amp; funders</strong>
-            <p>Monitor adoption of FAIR and software-quality practices across funded projects without diving into per-repository detail.</p>
-        </div>
-        <div class="audience-item">
-            <strong>Trainers</strong>
-            <p>Spot common knowledge gaps in the community and shape course content with real assessment data.</p>
-        </div>
-    </div>
-</section>
 {% endif %}
 
 <section class="dashboards" style="margin-bottom: 0;">

@@ -1165,12 +1165,37 @@ body.home-auth .quick-actions a { padding: 0.5rem 1.1rem; font-size: 0.95rem; }
     text-decoration: none;
     font-weight: 600;
     font-size: 0.92rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     margin-top: 0.5rem;
+}
+.concept-card .info-link::after {
+    content: "→";
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--color-primary);
+    font-weight: 700;
+    transition: transform 0.2s var(--ease-out);
 }
 .concept-card .info-link:hover {
     color: var(--color-primary-hover);
     text-decoration: underline;
+}
+.concept-card .info-link:hover::after {
+    transform: translateX(3px);
+    color: var(--color-primary-hover);
+}
+
+/* inline breadcrumb separator (used on /account "Settings › ... ›
+   Actions" navigation hint). a small angle-quote in the muted-text
+   colour reads as a nav-step indicator without competing with the
+   surrounding text. */
+.breadcrumb-sep {
+    color: var(--color-text-muted);
+    font-weight: 400;
+    padding: 0 0.15rem;
+    font-size: 0.95em;
 }
 
 .how-steps {

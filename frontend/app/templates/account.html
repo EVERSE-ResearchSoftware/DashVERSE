@@ -368,48 +368,71 @@
         </p>
         <ol class="howto-steps">
             <li>
-                <p>Install resqui from the EVERSE GitHub repository (not on PyPI yet):</p>
-                <pre class="nohljsln">pip install "git+https://github.com/EVERSE-ResearchSoftware/resqui.git"</pre>
+                <p>Install resqui from the
+                    <a href="https://github.com/EVERSE-ResearchSoftware/QualityPipelines" target="_blank">QualityPipelines</a>
+                    repository (not on PyPI yet):</p>
+                <pre class="nohljsln">pip install "git+https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git"</pre>
             </li>
             <li>
-                <p>Export your DashVERSE token and the API URL for this instance:</p>
-                <pre class="nohljsln">export DASHVERSE_TOKEN="paste-your-api-token"
-export DASHVERSE_URL="{{ dashverse_api_url }}"</pre>
+                <p>Export your DashVERSE token, the API URL of this instance,
+                    and a personal
+                    <a href="https://github.com/settings/tokens" target="_blank">GitHub API token</a>
+                    (any token with the <code>public_repo</code> scope is fine):</p>
+                <pre class="nohljsln">export DASHVERSE_TOKEN="paste-your-dashverse-api-token"
+export DASHVERSE_URL="{{ dashverse_api_url }}"
+export RESQUI_GITHUB_TOKEN="paste-your-github-token"</pre>
             </li>
             <li>
-                <p>Assess a local repository:</p>
-                <pre class="nohljsln">resqui assess /path/to/your/software --output assessment.json</pre>
-            </li>
-            <li>
-                <p>Submit the result to DashVERSE:</p>
-                <pre class="nohljsln">curl -X POST "$DASHVERSE_URL/assessment" \
-    -H "Authorization: Bearer $DASHVERSE_TOKEN" \
-    -H "Content-Type: application/json" \
-    --data-binary @assessment.json</pre>
+                <p>Run resqui against a remote repository (or omit <code>-u</code>
+                    to assess the current directory). The
+                    <code>-d</code> flag publishes the result directly to DashVERSE:</p>
+                <pre class="nohljsln">resqui \
+    -u https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git \
+    -c configurations/basic.json \
+    -v \
+    -t $RESQUI_GITHUB_TOKEN \
+    -d $DASHVERSE_TOKEN</pre>
             </li>
         </ol>
+        <details class="expand-json" style="margin-top: 0.85rem;">
+            <summary>Show example output</summary>
+            <pre>$ resqui -u https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git -c configurations/basic.json -v -t $RESQUI_GITHUB_TOKEN -d $DASHVERSE_TOKEN
+Loading configuration from 'configurations/basic.json'.
+GitHub API token ✔
+Repository URL: https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git
+Project name: QualityPipelines
+Author: Tamas Gal
+Email: himself@tamasgal.com
+Version: v0.1.6
+Branch, tag or commit hash: dea5fe13df68e0f4541c4425823752f4b33f4b7e
+Checking indicators ...
+  has_license/HowFairIs (0.9s):
+    Found license file: 'LICENSE'.✔
+  has_citation/CFFConvert (0.3s):
+    Found valid CITATION.cff file in repository root.✔
+Summary has been written to resqui_summary.json
+Publishing summary ✔</pre>
+        </details>
         <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
-            A <code>201 Created</code> response means the assessment landed; refresh the
-            <a href="/dashboard/assessments">Assessments dashboard</a> to see it.
+            Refresh the <a href="/dashboard/assessments">Assessments dashboard</a>
+            to see the new assessment.
         </p>
     </div>
 
     <div class="tab-panel hidden" id="tab-gha" role="tabpanel">
         <p class="instance-url-note">
-            This instance's API URL: <code>{{ dashverse_api_url }}</code>
-            &mdash; use it as the <code>DASHVERSE_URL</code> repository secret.
+            Uses the official
+            <a href="https://github.com/EVERSE-ResearchSoftware/resqui-github-action" target="_blank">resqui-github-action</a>.
+            The action assesses the repo and uploads the result when a
+            <code>dashverse_token</code> is provided.
         </p>
         <ol class="howto-steps">
             <li>
                 <p>
-                    Add two repository secrets at
-                    <strong>Settings &rarr; Secrets and variables &rarr; Actions</strong>:
+                    Add a <code>DASHVERSE_TOKEN</code> secret at
+                    <strong>Settings <span class="breadcrumb-sep">&rsaquo;</span> Secrets and variables <span class="breadcrumb-sep">&rsaquo;</span> Actions</strong>
+                    with the API token you generated above.
                 </p>
-                <ul style="margin: 0.4rem 0 0.6rem 1.25rem; color: var(--color-text);">
-                    <li><code>DASHVERSE_URL</code> &mdash; <code>{{ dashverse_api_url }}</code>
-                        (the API URL of this DashVERSE instance).</li>
-                    <li><code>DASHVERSE_TOKEN</code> &mdash; the API token you generated above.</li>
-                </ul>
             </li>
             <li>
                 <p>Drop this workflow at <code>.github/workflows/dashverse.yml</code>:</p>
@@ -425,25 +448,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Run resqui
+        uses: EVERSE-ResearchSoftware/resqui-github-action@main
         with:
-          python-version: '3.12'
-      - run: pip install "git+https://github.com/EVERSE-ResearchSoftware/resqui.git"
-      - run: resqui assess . --output assessment.json
-      - name: submit to DashVERSE
-        env:
-          DASHVERSE_URL: ${{ secrets.DASHVERSE_URL }}
-          DASHVERSE_TOKEN: ${{ secrets.DASHVERSE_TOKEN }}
-        run: |
-          curl -fsS -X POST "$DASHVERSE_URL/assessment" \
-            -H "Authorization: Bearer $DASHVERSE_TOKEN" \
-            -H "Content-Type: application/json" \
-            --data-binary @assessment.json
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dashverse_token: ${{ secrets.DASHVERSE_TOKEN }}
 </pre>{% endraw %}
             </li>
             <li>
                 <p>Push to <code>main</code> (or trigger the workflow manually).
-                    Each run uploads one assessment for the repository.</p>
+                    Each run assesses the repository and uploads one
+                    assessment to DashVERSE.</p>
             </li>
         </ol>
     </div>

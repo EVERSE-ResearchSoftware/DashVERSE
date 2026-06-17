@@ -165,10 +165,10 @@ resource "kubernetes_deployment" "backend" {
           }
 
           security_context {
-            run_as_non_root             = true
-            run_as_user                 = 1000
-            allow_privilege_escalation  = false
-            read_only_root_filesystem   = false
+            run_as_non_root            = true
+            run_as_user                = 1000
+            allow_privilege_escalation = false
+            read_only_root_filesystem  = false
             capabilities {
               drop = ["ALL"]
             }

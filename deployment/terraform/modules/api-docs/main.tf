@@ -60,7 +60,7 @@ resource "kubernetes_deployment" "api_docs" {
           }
 
           env {
-            name  = "API_REFERENCE_CONFIG"
+            name = "API_REFERENCE_CONFIG"
             value = jsonencode({
               theme = var.theme
             })
