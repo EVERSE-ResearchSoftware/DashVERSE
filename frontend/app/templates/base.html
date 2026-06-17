@@ -136,18 +136,19 @@ main {
 
 .hero {
     text-align: center;
-    padding: 2.75rem 1.25rem;
+    padding: 1.5rem 1.25rem 1.35rem;
     background: #f5f3ff;
     border: 1px solid var(--color-border-soft);
     border-radius: var(--radius-hero);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.1rem;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 }
 
 .hero h1 {
-    font-size: 2.5rem;
+    font-size: 1.95rem;
     color: var(--color-purple);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.15;
 }
 
 .hero p {
@@ -547,10 +548,12 @@ footer {
     list-style: none;
     color: var(--color-text-muted);
     font-size: 0.9rem;
-    padding: 0.45rem 0.6rem;
+    padding: 0.35rem 0.7rem 0.35rem 0.4rem;
     min-height: 36px;
+    border: 1px solid var(--color-border-soft);
     border-radius: 999px;
-    transition: background 0.15s;
+    background: var(--color-surface);
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 .user-menu summary::-webkit-details-marker {
@@ -559,10 +562,13 @@ footer {
 
 .user-menu summary:hover {
     background: var(--color-light-bg);
+    border-color: var(--color-border);
 }
 
 .user-menu details[open] summary {
     background: var(--color-light-bg);
+    border-color: var(--color-purple);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
 }
 
 .user-menu .avatar {
@@ -1440,8 +1446,247 @@ body.home-auth .quick-actions a { padding: 0.5rem 1.1rem; font-size: 0.95rem; }
 .explanation strong {
     font-family: "Fira Code", monospace;
 }
+
+/* two-column auth layout shared by /login and /register. on desktop
+   the form sits left, value-prop panel right -- on narrow screens the
+   side panel drops below the form so the primary action stays above
+   the fold. */
+.auth-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.75rem;
+    margin: 1.5rem auto;
+    max-width: 980px;
+    align-items: stretch;
+}
+@media (max-width: 760px) {
+    .auth-layout {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+.auth-panel-form {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+    padding: 2rem 2rem 1.75rem;
+    box-shadow: var(--shadow-card);
+}
+.auth-panel-form h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.65rem;
+    color: var(--color-text);
+}
+.auth-tagline {
+    color: var(--color-text-muted);
+    margin: 0 0 1.4rem;
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+.auth-error {
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    color: #9b2c20;
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    margin: 0 0 1rem;
+    font-size: 0.92rem;
+}
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.auth-field {
+    display: flex;
+    flex-direction: column;
+}
+.auth-field-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.35rem;
+}
+.auth-form input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 0.97rem;
+    font-family: inherit;
+    color: var(--color-text);
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
+}
+.auth-field-hint {
+    margin-top: 0.3rem;
+    font-size: 0.83rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+.auth-form button.btn-primary {
+    margin-top: 0.4rem;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    border: 0;
+    cursor: pointer;
+}
+.auth-switch {
+    margin: 1.25rem 0 0;
+    font-size: 0.93rem;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+.auth-switch a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* a quiet informational aside next to the auth form -- intentionally
+   not a card and not feature-styled. it just nudges the visitor toward
+   the parts of the site that don't need an account. */
+.auth-aside {
+    align-self: center;
+    padding: 0.25rem 0.5rem 0.25rem 1.5rem;
+    border-left: 2px solid var(--color-border-soft);
+}
+@media (max-width: 760px) {
+    .auth-aside {
+        border-left: 0;
+        border-top: 1px solid var(--color-border-soft);
+        padding: 1rem 0 0;
+    }
+}
+.auth-aside h2 {
+    margin: 0 0 0.7rem;
+    font-size: 1.05rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+.auth-aside p {
+    margin: 0 0 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    font-size: 0.94rem;
+}
+.auth-aside p:last-child {
+    margin-bottom: 0;
+}
+.auth-aside a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth-aside a:hover {
+    text-decoration: underline;
+}
+
+/* vertically centre the auth-layout in the viewport -- subtracting a
+   rough header+footer allowance so the form lands near the middle of
+   the visible area instead of clinging to the top. */
+body.auth-page main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 13rem);
+}
+
+/* one-time "your new API token" card. shown directly under the
+   Generate-token form in /account so it lands where the user just
+   clicked instead of bouncing them to the page top. amber accent +
+   masked-by-default value make it read as a one-shot secret. */
+.new-token-card {
+    margin: 1rem 0 1.5rem;
+    background: #fff8ed;
+    border: 1px solid #f6c97a;
+    border-left: 4px solid #d97706;
+    border-radius: 10px;
+    padding: 1rem 1.15rem 0.85rem;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.08);
+}
+.new-token-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.65rem;
+}
+.new-token-badge {
+    background: #d97706;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+}
+.new-token-warn {
+    color: #7a4406;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+.new-token-body {
+    display: flex;
+    gap: 0.6rem;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+.new-token-value {
+    flex: 1 1 320px;
+    margin: 0;
+    background: #fff;
+    border: 1px solid #f0d8a8;
+    border-radius: 6px;
+    padding: 0.7rem 0.85rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--color-text);
+    word-break: break-all;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    min-width: 0;
+}
+.new-token-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.new-token-btn {
+    border: 0;
+    cursor: pointer;
+    min-width: 6.5rem;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.92rem;
+}
+.new-token-meta {
+    margin: 0.6rem 0 0;
+    color: #7a4406;
+    font-size: 0.85rem;
+}
+@media (max-width: 560px) {
+    .new-token-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .new-token-btn {
+        flex: 1 1 auto;
+    }
+}
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
+    <link rel="stylesheet" href="/static/vendor/highlightjs/github.min.css">
 </head>
 <body{% block body_class %}{% endblock %}>
     <header>
@@ -1497,8 +1742,8 @@ body.home-auth .quick-actions a { padding: 0.5rem 1.1rem; font-size: 0.95rem; }
             <a href="https://everse.software/privacy/" target="_blank">Privacy Policy</a>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></script>
+    <script src="/static/vendor/highlightjs/highlight.min.js"></script>
+    <script src="/static/vendor/highlightjs/highlightjs-line-numbers.min.js"></script>
     <script>
         hljs.highlightAll();
         hljs.initLineNumbersOnLoad();
