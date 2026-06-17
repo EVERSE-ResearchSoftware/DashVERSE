@@ -14,48 +14,6 @@
 </section>
 {% endif %}
 
-{% if new_token %}
-<section class="about" style="text-align: left; margin-bottom: 1rem;">
-    <h2 style="color: var(--color-purple); margin-bottom: 0.5rem;">Your new API token</h2>
-    <p style="margin-bottom: 0.75rem;">Copy this now. It will not be shown again.</p>
-    <div style="display: flex; gap: 0.5rem; align-items: stretch;">
-        <pre id="new-token-value" style="flex: 1; background: var(--color-light-bg); padding: 0.75rem; border-radius: 4px; word-break: break-all; white-space: pre-wrap; font-family: 'Fira Code', monospace; font-size: 0.85rem; margin-bottom: 0;">{{ new_token }}</pre>
-        <button type="button" id="copy-new-token" class="btn-primary" style="border: 0; cursor: pointer; align-self: flex-start; white-space: nowrap;">Copy</button>
-    </div>
-</section>
-<script>
-(function() {
-    var btn = document.getElementById('copy-new-token');
-    var pre = document.getElementById('new-token-value');
-    if (!btn || !pre) return;
-    btn.addEventListener('click', function() {
-        var text = pre.textContent.trim();
-        var prev = btn.textContent;
-        var done = function() {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copy-btn-success');
-            setTimeout(function() {
-                btn.classList.remove('copy-btn-success');
-                btn.textContent = prev;
-            }, 1800);
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(done, function() {
-                btn.textContent = 'Copy failed';
-            });
-        } else {
-            var range = document.createRange();
-            range.selectNodeContents(pre);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-            try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Copy failed'; }
-            sel.removeAllRanges();
-        }
-    });
-})();
-</script>
-{% endif %}
 
 <section class="account-section">
     <h2>Profile</h2>
@@ -293,6 +251,108 @@
         </label>
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>
     </form>
+
+    {% if new_token %}
+    <div id="new-token" class="new-token-card" role="status" aria-live="polite">
+        <div class="new-token-head">
+            <span class="new-token-badge">New token</span>
+            <span class="new-token-warn">
+                Copy it now: this is the only time it will be shown.
+            </span>
+        </div>
+        <div class="new-token-body">
+            <pre id="new-token-value" class="new-token-value nohljsln" data-masked="1">{{ new_token }}</pre>
+            <div class="new-token-actions">
+                <button type="button" id="reveal-new-token" class="btn-secondary new-token-btn">Reveal</button>
+                <button type="button" id="copy-new-token" class="btn-primary new-token-btn">Copy</button>
+            </div>
+        </div>
+        <p id="new-token-meta" class="new-token-meta"></p>
+    </div>
+    <script>
+    (function() {
+        var card = document.getElementById('new-token');
+        var pre  = document.getElementById('new-token-value');
+        var copy = document.getElementById('copy-new-token');
+        var rev  = document.getElementById('reveal-new-token');
+        var meta = document.getElementById('new-token-meta');
+        if (!card || !pre) return;
+
+        // store the real token and render a masked placeholder so the
+        // raw JWT isn't visible at rest. Reveal swaps the displayed text;
+        // Copy always copies the real token.
+        var real = pre.textContent.trim();
+        var maskText = function(s) {
+            if (s.length <= 12) return '••••••••';
+            return s.slice(0, 6) + ' ' + '•'.repeat(40) + ' ' + s.slice(-6);
+        };
+        pre.textContent = maskText(real);
+
+        rev.addEventListener('click', function() {
+            var masked = pre.dataset.masked === '1';
+            if (masked) {
+                pre.textContent = real;
+                pre.dataset.masked = '0';
+                rev.textContent = 'Hide';
+            } else {
+                pre.textContent = maskText(real);
+                pre.dataset.masked = '1';
+                rev.textContent = 'Reveal';
+            }
+        });
+
+        copy.addEventListener('click', function() {
+            var prev = copy.textContent;
+            var done = function() {
+                copy.textContent = 'Copied!';
+                copy.classList.add('copy-btn-success');
+                setTimeout(function() {
+                    copy.classList.remove('copy-btn-success');
+                    copy.textContent = prev;
+                }, 1800);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(real).then(done, function() {
+                    copy.textContent = 'Copy failed';
+                });
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = real;
+                ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); done(); }
+                catch (e) { copy.textContent = 'Copy failed'; }
+                document.body.removeChild(ta);
+            }
+        });
+
+        // pull the JWT's exp claim so the user sees when this expires
+        // without having to scroll down to the table.
+        try {
+            var parts = real.split('.');
+            if (parts.length === 3) {
+                var pad = parts[1].length % 4;
+                var b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/') + (pad ? '='.repeat(4 - pad) : '');
+                var claims = JSON.parse(atob(b64));
+                if (claims.exp) {
+                    var exp = new Date(claims.exp * 1000);
+                    var days = Math.round((exp - Date.now()) / 86400000);
+                    var iso = exp.toISOString().slice(0, 10);
+                    meta.textContent = 'Expires ' + iso + ' (' + days + ' days)';
+                }
+            }
+        } catch (e) { /* metadata is nice-to-have, ignore parse errors */ }
+
+        // scroll the new-token card into view; the page reload after the
+        // form POST otherwise lands the user at the top of the document.
+        setTimeout(function() {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 60);
+    })();
+    </script>
+    {% endif %}
+
     {% else %}
     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; color: var(--color-text-muted);">
         You need at least one project before you can generate an API token. Create one in the <strong>My projects</strong> section below.
@@ -359,12 +419,13 @@
     <div class="run-tabs" role="tablist">
         <button type="button" class="tab-btn active" data-tab="cli" role="tab" aria-selected="true">Command line</button>
         <button type="button" class="tab-btn" data-tab="gha" role="tab" aria-selected="false">GitHub Actions</button>
+        <button type="button" class="tab-btn" data-tab="custom" role="tab" aria-selected="false">Custom upload</button>
     </div>
 
     <div class="tab-panel" id="tab-cli" role="tabpanel">
         <p class="instance-url-note">
-            This instance's API URL: <code>{{ dashverse_api_url }}</code>
-            &mdash; use it as <code>DASHVERSE_URL</code> below.
+            This instance's API URL: <code>{{ dashverse_api_url }}</code>.
+            Use it as <code>DASHVERSE_URL</code> below.
         </p>
         <ol class="howto-steps">
             <li>
@@ -461,6 +522,78 @@ jobs:
                     assessment to DashVERSE.</p>
             </li>
         </ol>
+    </div>
+
+    <div class="tab-panel hidden" id="tab-custom" role="tabpanel">
+        <p class="instance-url-note">
+            For when your own application, CI job or measurement service
+            already produces quality data. Format it as an EVERSE
+            assessment JSON and POST it. resqui is not involved here.
+        </p>
+        <ol class="howto-steps">
+            <li>
+                <p>Produce an assessment JSON that conforms to the
+                    <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank">EVERSE rsqa schema</a>.
+                    The DashVERSE API validates the payload at insert time.
+                    The minimum it needs:
+                </p>
+                <ul style="margin-top: 0.4rem; padding-left: 1.2rem; line-height: 1.55; font-size: 0.95rem;">
+                    <li><code>@context</code> referencing the rsqa schema (must contain <code>rsqa/</code>)</li>
+                    <li><code>@type</code> equal to <code>"SoftwareQualityAssessment"</code></li>
+                    <li><code>dateCreated</code>, <code>assessedSoftware.name</code>, and a <code>creator.name</code> (or legacy <code>author.name</code>)</li>
+                    <li>A non-empty <code>checks</code> array; each entry needs <code>assessesIndicator.@id</code>, <code>status.@id</code>, and <code>output</code></li>
+                </ul>
+                <p style="margin-top: 0.55rem;">A minimal payload that passes validation:</p>
+                <pre class="nohljsln">{
+  "@context": "https://w3id.org/everse/rsqa/0.0.1/",
+  "@type": "SoftwareQualityAssessment",
+  "dateCreated": "2026-05-29T10:00:00Z",
+  "creator": {
+    "name": "my-internal-quality-service",
+    "version": "1.4.0"
+  },
+  "assessedSoftware": {
+    "name": "my-tool",
+    "codeRepository": "https://github.com/your-org/your-repo"
+  },
+  "checks": [
+    {
+      "@type": "CheckResult",
+      "assessesIndicator": {
+        "@id": "https://w3id.org/everse/i/indicators/has_license"
+      },
+      "status": {
+        "@id": "schema:CompletedActionStatus"
+      },
+      "output": "pass"
+    }
+  ]
+}</pre>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.4rem;">
+                    <code>output</code> accepts <code>pass</code> / <code>fail</code> /
+                    <code>not_applicable</code> (also <code>true</code> / <code>false</code> /
+                    <code>error</code>). Add an <code>evidence</code> string per check if you
+                    want the dashboards to show your reasoning. Pick indicator <code>@id</code>s
+                    from the
+                    <a href="https://everse.software/indicators/website/indicators.html" target="_blank">EVERSE indicators</a>.
+                </p>
+            </li>
+            <li>
+                <p>POST it to <code>/assessment</code> with your DashVERSE token:</p>
+                <pre class="nohljsln">curl -X POST {{ dashverse_api_url }}/assessment \
+    -H "Authorization: Bearer $DASHVERSE_TOKEN" \
+    -H "Content-Type: application/json" \
+    --data @assessment.json</pre>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
+                    <code>201 Created</code> on success. The assessment lands
+                    in the project the token was issued for.
+                </p>
+            </li>
+        </ol>
+        <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.75rem;">
+            Refresh the <a href="/dashboard/assessments">Assessments dashboard</a>
+            to see the new assessment.
+        </p>
     </div>
 </section>
 
