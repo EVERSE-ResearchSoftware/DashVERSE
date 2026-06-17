@@ -1,32 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Sign up - DashVERSE{% endblock %}
+{% block title %}Create account - DashVERSE{% endblock %}
+{% block body_class %} class="auth-page"{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Create an account</h1>
-    <p>Register to publish assessments and see your own contributions on Mine.</p>
-</section>
+<section class="auth-layout">
+    <div class="auth-panel-form">
+        <h1>Create an account</h1>
+        <p class="auth-tagline">
+            Free, no email verification. You'll get a personal scope to
+            track your own software and publish assessments.
+        </p>
 
-<section class="dashboards">
-    <form method="post" action="/register" style="max-width: 380px; margin: 0 auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
         {% if error %}
-        <p style="color: #c0392b; margin-bottom: 1rem;">{{ error }}</p>
+        <p class="auth-error">{{ error }}</p>
         {% endif %}
-        <label style="display: block; margin-bottom: 0.75rem;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Username</span>
-            <input name="username" required autofocus value="{{ username or '' }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-        </label>
-        <label style="display: block; margin-bottom: 0.75rem;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Email</span>
-            <input name="email" type="email" required value="{{ email or '' }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-        </label>
-        <label style="display: block; margin-bottom: 1rem;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Password <span style="color: var(--color-text-muted); font-weight: normal;">(at least {{ password_min_length }} characters)</span></span>
-            <input name="password" type="password" required minlength="{{ password_min_length }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-        </label>
-        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Create account</button>
-        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">Already have an account? <a href="/login" style="color: var(--color-blue);">Sign in</a></p>
-    </form>
+
+        <form class="auth-form" method="post" action="/register">
+            <div class="auth-field">
+                <label for="username" class="auth-field-label">Username</label>
+                <input id="username" name="username" required autofocus autocomplete="username" value="{{ username or '' }}">
+            </div>
+            <div class="auth-field">
+                <label for="email" class="auth-field-label">Email</label>
+                <input id="email" name="email" type="email" required autocomplete="email" value="{{ email or '' }}">
+                <span class="auth-field-hint">Only used for account recovery. We don't send marketing.</span>
+            </div>
+            <div class="auth-field">
+                <label for="password" class="auth-field-label">Password</label>
+                <input id="password" name="password" type="password" required minlength="{{ password_min_length }}" autocomplete="new-password">
+                <span class="auth-field-hint">At least {{ password_min_length }} characters.</span>
+            </div>
+            <button type="submit" class="btn-primary">Create account</button>
+        </form>
+
+        <p class="auth-switch">Already registered? <a href="/login">Sign in</a></p>
+    </div>
+
+    <aside class="auth-aside">
+        <h2>Not sure yet?</h2>
+        <p>
+            Most of DashVERSE is open. The
+            <a href="/dashboard/global">public Overview</a> and the
+            <a href="{{ url_for('concepts') }}">Concepts</a> page work
+            without an account. Have a look around first.
+        </p>
+        <p>
+            Registering only matters if you want to publish your own
+            assessments or group software into a project.
+        </p>
+        <p>
+            DashVERSE uses the community-defined
+            <a href="https://everse.software/indicators/website/indicators.html" target="_blank">EVERSE
+            indicators</a>, not a compliance checklist.
+        </p>
+    </aside>
 </section>
 {% endblock %}

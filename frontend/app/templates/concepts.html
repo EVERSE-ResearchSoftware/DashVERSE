@@ -7,7 +7,7 @@
     <h1>Key Concepts</h1>
     <p>
         Understanding the terminology used in DashVERSE dashboards helps you interpret
-        the quality metrics and assessment results effectively.
+        the quality metrics and assessment results.
     </p>
 </section>
 
@@ -75,7 +75,7 @@
         <h2>Schema</h2>
         <p class="definition">
             A formal data structure for quality assessment results. Schemas define the
-            shape of the data, ensuring consistency and interoperability. Assessment data
+            shape of the data so results stay consistent across tools. Assessment data
             is generated using the
             <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank">assessment schema</a>.
         </p>
@@ -132,15 +132,15 @@
     <div class="explanation">
         <h4>The three outcomes</h4>
         <ul>
-            <li><strong>Pass</strong> &mdash; <code>output</code> is one of
+            <li><strong>Pass</strong>: <code>output</code> is one of
                 <code>true</code>, <code>valid</code>, <code>pass</code>,
                 <code>Pass</code>, <code>passed</code>, or
                 <code>status.@id</code> contains <code>Pass</code>.</li>
-            <li><strong>Fail</strong> &mdash; <code>output</code> is one of
+            <li><strong>Fail</strong>: <code>output</code> is one of
                 <code>false</code>, <code>invalid</code>, <code>fail</code>,
                 <code>Fail</code>, <code>failed</code>, or
                 <code>status.@id</code> ends with <code>FailedActionStatus</code>.</li>
-            <li><strong>Not applicable</strong> &mdash; <code>output</code> is
+            <li><strong>Not applicable</strong>: <code>output</code> is
                 <code>n/a</code>, <code>na</code>, <code>not_applicable</code>,
                 <code>NotApplicable</code>, <code>NA</code>, or
                 <code>error</code> (errored checks are bucketed here so a
@@ -153,8 +153,8 @@
             Every chart on the dashboards is a different aggregation of the
             same outcome column: total counts on big-number cards, share-by-
             dimension stacked bars, the outcome distribution donut, the failing-
-            indicator ranked bars. There is no single "score" or "rate"
-            &mdash; the bigger the blue (Pass) slice in any aggregation, the
+            indicator ranked bars. There is no single "score" or "rate".
+            The bigger the blue (Pass) slice in any aggregation, the
             stronger the picture; the bigger the orange (Fail), the more work
             to do.
         </p>
@@ -166,9 +166,8 @@
 <section class="example-assessment">
     <h2>Example Assessment</h2>
     <p>
-        This JSON object represents a complete software quality assessment for a project,
-        detailing various checks against quality indicators. Each assessment includes metadata
-        about the software, its creator, and the results of automated checks.
+        An assessment bundles the metadata about the software, who ran the
+        checks, and each check's result.
     </p>
     <p>
         Below is a simplified example of an assessment for "CFFinit v2.3.1",

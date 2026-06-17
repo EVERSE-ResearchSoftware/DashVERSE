@@ -1,29 +1,52 @@
 {% extends "base.html" %}
 
 {% block title %}Sign in - DashVERSE{% endblock %}
+{% block body_class %} class="auth-page"{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Sign in</h1>
-    <p>Sign in to see your assessments and contribute new ones.</p>
-</section>
+<section class="auth-layout">
+    <div class="auth-panel-form">
+        <h1>Sign in</h1>
+        <p class="auth-tagline">
+            Pick up where you left off: your projects, assessments
+            and personalised dashboards.
+        </p>
 
-<section class="dashboards">
-    <form method="post" action="/login" style="max-width: 380px; margin: 0 auto; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
-        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
         {% if error %}
-        <p style="color: #c0392b; margin-bottom: 1rem;">{{ error }}</p>
+        <p class="auth-error">{{ error }}</p>
         {% endif %}
-        <label style="display: block; margin-bottom: 0.75rem;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Username</span>
-            <input name="username" required autofocus style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-        </label>
-        <label style="display: block; margin-bottom: 1rem;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Password</span>
-            <input name="password" type="password" required style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-        </label>
-        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Sign in</button>
-        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">No account yet? <a href="/register" style="color: var(--color-blue);">Sign up</a></p>
-    </form>
+
+        <form class="auth-form" method="post" action="/login">
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+            <div class="auth-field">
+                <label for="username" class="auth-field-label">Username</label>
+                <input id="username" name="username" required autofocus autocomplete="username">
+            </div>
+            <div class="auth-field">
+                <label for="password" class="auth-field-label">Password</label>
+                <input id="password" name="password" type="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-primary">Sign in</button>
+        </form>
+
+        <p class="auth-switch">No account yet? <a href="/register">Create one</a></p>
+    </div>
+
+    <aside class="auth-aside">
+        <h2>Just looking around?</h2>
+        <p>
+            The <a href="/dashboard/global">public Overview</a> shows
+            the portfolio-wide numbers without a sign-in.
+        </p>
+        <p>
+            New to the EVERSE quality model? The
+            <a href="{{ url_for('concepts') }}">Concepts</a> page covers
+            how dimensions, indicators and outcomes fit together.
+        </p>
+        <p>
+            Forgotten your username? There's no email-based reset;
+            the instance admin can re-issue credentials.
+        </p>
+    </aside>
 </section>
 {% endblock %}
