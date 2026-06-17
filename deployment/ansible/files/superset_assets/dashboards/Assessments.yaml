@@ -1,9 +1,9 @@
 dashboard_title: Assessments
-description:
+description: null
 css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n/* heatmap charts: leave breathing room below the canvas so x-axis labels stay visible when the description banner is shown */\n#chart-id-207 .chart-container,\n#chart-id-215 .chart-container {\n    padding-bottom: 18px;\n}\n"
 slug: assessments
-certified_by:
-certification_details:
+certified_by: null
+certification_details: null
 published: true
 uuid: 1820539b-3d1e-4eb6-ae9a-ce9b7ac2be64
 position:
@@ -22,7 +22,7 @@ position:
     meta:
       width: 12
       height: 14
-      code: "**Assessments Explorer.** Single filter-driven dashboard for exploring assessment data at any scope. With no filters set you see everything you can access; pick a Software to drill into one project, a Dimension to focus on one quality area, an Outcome to narrow to passes or failures, or a Date range to scope by time. Some charts (vs Portfolio Median, Compliance Heatmap) only render under specific filter combinations -- that's intentional."
+      code: '**Assessments Explorer.** Single filter-driven dashboard for exploring assessment data at any scope. With no filters set you see everything you can access; pick a Software to drill into one project, a Dimension to focus on one quality area, an Outcome to narrow to passes or failures, or a Date range to scope by time. Some charts (vs Portfolio Median, Compliance Heatmap) only render under specific filter combinations -- that''s intentional.'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -44,8 +44,10 @@ position:
     - ROW-HEADER-MD-SECTION-COMPARE
     - ROW-5
     - ROW-HEADER-MD-SECTION-IMPROVE
+    - ROW-IMPR-PROFILE
     - ROW-6
     - ROW-HEADER-MD-SECTION-DETAIL
+    - ROW-FAILED-PROFILE
     - ROW-7
     - ROW-8
     - ROW-9
@@ -352,7 +354,7 @@ position:
     meta:
       width: 12
       height: 18
-      code: "<div style=\"background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;\"><h2 style=\"margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;\">Detail and evidence</h2><p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Drill into the underlying checks: failing-check evidence and the timeline of recent assessment submissions.</p></div>"
+      code: '<div style="background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;"><h2 style="margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;">Detail and evidence</h2><p style="margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;">Drill into the underlying checks: failing-check evidence and the timeline of recent assessment submissions.</p></div>'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -374,7 +376,7 @@ position:
     meta:
       width: 12
       height: 18
-      code: "<div style=\"background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;\"><h2 style=\"margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;\">What to fix</h2><p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Failing indicators ranked by frequency. Orange cells flag the highest-impact targets to tackle first.</p></div>"
+      code: '<div style="background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;"><h2 style="margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;">What to fix</h2><p style="margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;">Failing indicators ranked by frequency. Orange cells flag the highest-impact targets to tackle first.</p></div>'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -396,7 +398,7 @@ position:
     meta:
       width: 12
       height: 18
-      code: "<div style=\"background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;\"><h2 style=\"margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;\">Compare projects</h2><p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Rank projects, compare outcomes side by side, and spot software-by-dimension hot-spots in the heatmap.</p></div>"
+      code: '<div style="background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;"><h2 style="margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;">Compare projects</h2><p style="margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;">Rank projects, compare outcomes side by side, and spot software-by-dimension hot-spots in the heatmap.</p></div>'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -418,7 +420,7 @@ position:
     meta:
       width: 12
       height: 18
-      code: "<div style=\"background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;\"><h2 style=\"margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;\">Quality profile</h2><p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">Outcomes over time, per dimension, and an overall outcome mix. Pick a software in the filters to focus the view.</p></div>"
+      code: '<div style="background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;"><h2 style="margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;">Quality profile</h2><p style="margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;">Outcomes over time, per dimension, and an overall outcome mix. Pick a software in the filters to focus the view.</p></div>'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -440,7 +442,7 @@ position:
     meta:
       width: 12
       height: 18
-      code: "<div style=\"background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;\"><h2 style=\"margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;\">Overview</h2><p style=\"margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;\">At-a-glance counts of assessments, software in scope, and the date of the most recent submission.</p></div>"
+      code: '<div style="background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.35); border-left: 4px solid #7C3AED; border-radius: 10px; padding: 0.7rem 1rem;"><h2 style="margin: 0 0 0.25em 0; font-size: 1.5em; font-weight: 700; color: #7C3AED; line-height: 1.2;">Overview</h2><p style="margin: 0; color: #5a6270; font-size: 0.95em; line-height: 1.3;">At-a-glance counts of assessments, software in scope, and the date of the most recent submission.</p></div>'
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -481,6 +483,54 @@ position:
     - GRID_ID
     - ROW-SW-IMPR-VIZ
     children: []
+  CHART-IMPR-PROFILE:
+    id: CHART-IMPR-PROFILE
+    meta:
+      width: 12
+      height: 65
+      chartId: 231
+      sliceName: Improvement Targets by Indicator
+      uuid: 75c59cb8-3dec-4073-8c64-1e42e61a48a0
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-IMPR-PROFILE
+    children: []
+  CHART-FAILED-PROFILE:
+    id: CHART-FAILED-PROFILE
+    meta:
+      width: 12
+      height: 65
+      chartId: 230
+      sliceName: Failed Checks by Software
+      uuid: 8368b886-5ed1-4c0d-9425-236d888dd12c
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-FAILED-PROFILE
+    children: []
+  ROW-IMPR-PROFILE:
+    id: ROW-IMPR-PROFILE
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-IMPR-PROFILE
+  ROW-FAILED-PROFILE:
+    id: ROW-FAILED-PROFILE
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-FAILED-PROFILE
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -500,6 +550,8 @@ metadata:
     '220': true
     '221': true
     '222': true
+    '230': true
+    '231': true
   refresh_frequency: 0
   chart_configuration:
     '201':
@@ -520,6 +572,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '202':
       id: 202
       crossFilters:
@@ -538,6 +592,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '203':
       id: 203
       crossFilters:
@@ -556,6 +612,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '205':
       id: 205
       crossFilters:
@@ -574,6 +632,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '208':
       id: 208
       crossFilters:
@@ -592,6 +652,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '209':
       id: 209
       crossFilters:
@@ -610,6 +672,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '210':
       id: 210
       crossFilters:
@@ -628,6 +692,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '211':
       id: 211
       crossFilters:
@@ -646,6 +712,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '213':
       id: 213
       crossFilters:
@@ -664,6 +732,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '214':
       id: 214
       crossFilters:
@@ -682,6 +752,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '215':
       id: 215
       crossFilters:
@@ -700,6 +772,8 @@ metadata:
         - 220
         - 221
         - 222
+        - 230
+        - 231
     '220':
       id: 220
       crossFilters:
@@ -718,6 +792,8 @@ metadata:
         - 215
         - 221
         - 222
+        - 230
+        - 231
     '221':
       id: 221
       crossFilters:
@@ -735,6 +811,8 @@ metadata:
         - 214
         - 215
         - 222
+        - 230
+        - 231
     '222':
       id: 222
       crossFilters:
@@ -753,6 +831,48 @@ metadata:
         - 215
         - 220
         - 221
+        - 230
+        - 231
+    '230':
+      id: 230
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 201
+        - 202
+        - 203
+        - 205
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
+        - 214
+        - 215
+        - 220
+        - 221
+        - 222
+        - 231
+    '231':
+      id: 231
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 201
+        - 202
+        - 203
+        - 205
+        - 208
+        - 209
+        - 210
+        - 211
+        - 213
+        - 214
+        - 215
+        - 220
+        - 221
+        - 222
+        - 230
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -780,6 +900,8 @@ metadata:
     - 213
     - 214
     - 215
+    - 230
+    - 231
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -787,7 +909,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value:
+        value: null
   - id: NATIVE_FILTER-software
     name: Software
     type: NATIVE_FILTER
@@ -811,6 +933,8 @@ metadata:
     - 213
     - 214
     - 215
+    - 230
+    - 231
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -818,7 +942,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value:
+        value: null
   - id: NATIVE_FILTER-dimension
     name: Dimension
     type: NATIVE_FILTER
@@ -843,6 +967,8 @@ metadata:
     - 213
     - 214
     - 215
+    - 230
+    - 231
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -850,7 +976,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value:
+        value: null
   - id: NATIVE_FILTER-outcome
     name: Outcome
     type: NATIVE_FILTER
@@ -874,6 +1000,8 @@ metadata:
     - 213
     - 214
     - 215
+    - 230
+    - 231
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -881,7 +1009,7 @@ metadata:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value:
+        value: null
   - id: NATIVE_FILTER-date
     name: Assessment date
     type: NATIVE_FILTER
@@ -905,9 +1033,11 @@ metadata:
     - 213
     - 214
     - 215
+    - 230
+    - 231
     controlValues:
       enableEmptyFilter: false
     defaultDataMask:
       filterState:
-        value:
+        value: null
 version: 1.0.0

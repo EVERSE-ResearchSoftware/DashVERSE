@@ -1,0 +1,45 @@
+slice_name: Improvement Targets by Indicator
+description: |
+  Failing indicators ranked by frequency, coloured by quality dimension.
+  Use the chart for a quick read on the most impactful indicators to
+  tackle first; the ranked table below gives the linked references.
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_bar
+params:
+  x_axis: indicator_name
+  groupby:
+  - dimension_name
+  metrics:
+  - label: failures
+    expressionType: SQL
+    sqlExpression: COUNT(*)
+  orderby:
+  - - label: failures
+      expressionType: SQL
+      sqlExpression: COUNT(*)
+    - false
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: outcome
+    operator: ==
+    comparator: Fail
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: indicator_name
+    operator: IS NOT NULL
+    comparator: ''
+  color_scheme: supersetColors
+  orientation: horizontal
+  stack: Stack
+  show_legend: true
+  show_value: true
+  rich_tooltip: true
+  y_axis_format: ',d'
+  row_limit: 25
+query_context: null
+cache_timeout: null
+uuid: 75c59cb8-3dec-4073-8c64-1e42e61a48a0
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
