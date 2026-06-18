@@ -73,12 +73,27 @@ configOverrides:
         # render advanced_data_type: url columns as clickable links in tables
         "ENABLE_ADVANCED_DATA_TYPES": True
     }
-  no_data_cache: |
-    # Skip the chart-data cache so dashboard edits show up on the next
-    # page load without waiting for /superset/refresh. Filter-state and
-    # explore-form caches stay on because the native_filters_key
-    # permalink path uses them.
-    DATA_CACHE_CONFIG = {"CACHE_TYPE": "NullCache"}
+  data_cache: |
+    # Redis-backed chart-data cache. Without it every chart on a dashboard
+    # round-trips through superset, sqlalchemy and postgres on every load,
+    # which is the dominant latency for the prod /dashboard pages (~1s per
+    # chart with 9+ charts loaded in parallel). The frontend's
+    # /superset/refresh endpoint invalidates the project-aware datasets
+    # after bulk loads (see _superset_invalidate_datasets in routes.py), so
+    # newly ingested assessments still appear immediately. Ad-hoc chart
+    # config edits made directly in the Superset UI won't be visible until
+    # CACHE_DEFAULT_TIMEOUT expires or /superset/refresh is called.
+    CACHE_REDIS_HOST = "superset-redis-headless"
+    CACHE_REDIS_PORT = 6379
+    CACHE_REDIS_DB = 1
+    DATA_CACHE_CONFIG = {
+        "CACHE_TYPE": "RedisCache",
+        "CACHE_DEFAULT_TIMEOUT": 300,
+        "CACHE_KEY_PREFIX": "superset_data_",
+        "CACHE_REDIS_HOST": CACHE_REDIS_HOST,
+        "CACHE_REDIS_PORT": CACHE_REDIS_PORT,
+        "CACHE_REDIS_DB": CACHE_REDIS_DB,
+    }
   anon_list_lockout: |
     # The Public role still has Gamma's read permission on Chart, Dashboard
     # and Dataset REST APIs (needed by the embedded SDK for chart-config

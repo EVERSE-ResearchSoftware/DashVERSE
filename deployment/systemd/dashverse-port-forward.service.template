@@ -1,0 +1,24 @@
+[Unit]
+Description=DashVERSE kubectl port-forwards
+Documentation=man:kubectl-port-forward
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@PROJECT_DIR@
+# PATH and friends are captured from the install-time shell so binaries from
+# nix-shell / dev shells stay resolvable when systemd starts the unit with a
+# fresh, login-less environment.
+Environment=PATH=@PATH@
+Environment=HOME=@HOME@
+Environment=KUBECONFIG=@KUBECONFIG@
+ExecStart=@JUST_BIN@ --justfile @PROJECT_DIR@/justfile --working-directory @PROJECT_DIR@ port-forward
+Restart=always
+RestartSec=10
+# limit churn during a sustained outage (pod crashloop, minikube paused, etc.)
+StartLimitIntervalSec=300
+StartLimitBurst=20
+
+[Install]
+WantedBy=default.target
