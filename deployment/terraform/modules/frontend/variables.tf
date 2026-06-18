@@ -92,6 +92,12 @@ variable "postgrest_external_url" {
   default     = ""
 }
 
+variable "api_docs_external_url" {
+  description = "External URL for the user-visible API docs (e.g. https://apidocs.dashverse.cloud). Surfaced as the {{ api_docs_url }} template variable."
+  type        = string
+  default     = ""
+}
+
 variable "backend_url" {
   description = "Internal cluster URL for backend (used server-side for /api/auth/login proxying)"
   type        = string

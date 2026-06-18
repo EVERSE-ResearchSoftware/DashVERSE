@@ -94,6 +94,11 @@ resource "kubernetes_deployment" "frontend" {
           }
 
           env {
+            name  = "API_DOCS_EXTERNAL_URL"
+            value = var.api_docs_external_url
+          }
+
+          env {
             name  = "BACKEND_URL"
             value = var.backend_url
           }

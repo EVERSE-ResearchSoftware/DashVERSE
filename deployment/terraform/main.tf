@@ -122,6 +122,7 @@ module "frontend" {
   jwt_secret_key         = "jwt-secret"
   postgrest_url          = "http://postgrest:3000"
   postgrest_external_url = var.postgrest_external_url
+  api_docs_external_url  = var.api_docs_external_url
 }
 
 module "postgrest_docs" {

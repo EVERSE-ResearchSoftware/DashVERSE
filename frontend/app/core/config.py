@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     postgrest_external_url: str = "http://localhost:3000"
 
-    backend_docs_external_url: str = "http://localhost:8001"
+    api_docs_external_url: str = "http://localhost:3001"
 
     backend_url: str = "http://backend:8000"
 

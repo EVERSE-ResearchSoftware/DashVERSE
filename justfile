@@ -52,9 +52,20 @@ deploy: check-deps check-minikube build-backend build-frontend
     @just port-forward-install || echo "warning: skipped systemd port-forward install (no systemd-user available)"
     @echo "waiting for superset deployment to roll out..."
     @kubectl -n {{ns}} rollout status deploy/superset --timeout=5m
-    @echo "letting port-forward catch up..."
-    @sleep 5
+    @just wait-superset
     @just setup-dashboards
+
+wait-superset:
+    #!/usr/bin/env bash
+    echo "waiting for superset to respond on localhost:8088 ..."
+    for i in $(seq 1 90); do
+        if curl -sf -o /dev/null http://localhost:8088/health 2>/dev/null; then
+            echo "  superset is responding (after ${i} attempts)"
+            exit 0
+        fi
+        sleep 2
+    done
+    echo "warning: superset did not respond within 3 min -- continuing anyway" >&2
 
 destroy: check-deps check-minikube
     cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve

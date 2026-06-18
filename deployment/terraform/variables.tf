@@ -82,3 +82,9 @@ variable "superset_external_url" {
   type        = string
   default     = ""
 }
+
+variable "api_docs_external_url" {
+  description = "Public URL of the user-visible API docs page (e.g. https://apidocs.dashverse.cloud)"
+  type        = string
+  default     = ""
+}
