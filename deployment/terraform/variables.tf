@@ -10,6 +10,18 @@ variable "environment" {
   default     = "local"
 }
 
+variable "kube_config_path" {
+  description = "Path to kubeconfig used by the kubernetes and helm providers"
+  type        = string
+  default     = "~/.kube/config"
+}
+
+variable "kube_context" {
+  description = "Kube context to target. Leave empty to use kubeconfig current-context."
+  type        = string
+  default     = ""
+}
+
 variable "common_labels" {
   type = map(string)
   default = {
@@ -57,4 +69,16 @@ variable "superset_admin_user" {
 variable "superset_admin_email" {
   type    = string
   default = "admin@example.com"
+}
+
+variable "postgrest_external_url" {
+  description = "Public URL of the PostgREST API the assessment client sees (e.g. https://api.dashverse.cloud)"
+  type        = string
+  default     = ""
+}
+
+variable "superset_external_url" {
+  description = "Public URL of the Superset dashboard frame (e.g. https://dashverse.cloud)"
+  type        = string
+  default     = ""
 }

@@ -1,5 +1,6 @@
-environment = "local"
-namespace   = "dashverse"
+environment  = "local"
+namespace    = "dashverse"
+kube_context = "minikube"
 
 postgres_image        = "postgres:17-alpine"
 postgres_db           = "dashverse"

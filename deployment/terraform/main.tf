@@ -1,11 +1,13 @@
 
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path    = var.kube_config_path
+  config_context = var.kube_context != "" ? var.kube_context : null
 }
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    config_path    = var.kube_config_path
+    config_context = var.kube_context != "" ? var.kube_context : null
   }
 }
 
@@ -91,15 +93,35 @@ module "backend" {
   module_depends_on = [module.postgresql]
 }
 
+module "schema_apply" {
+  source = "./modules/db-schema-apply"
+
+  namespace      = module.namespace.name
+  labels         = var.common_labels
+  postgres_image = var.postgres_image
+  secret_name    = module.secrets.secret_name
+  db_user        = var.postgres_user
+  db_name        = var.postgres_db
+  init_configmap = module.db_init.configmap_name
+  schema_hash    = module.db_init.schema_hash
+
+  depends_on = [
+    module.postgresql,
+    module.backend,
+  ]
+}
+
 module "frontend" {
   source = "./modules/frontend"
 
-  namespace_name = module.namespace.name
-  common_labels  = var.common_labels
-  superset_url   = "http://${module.superset.service_name}:${module.superset.port}"
-  secret_name    = module.secrets.secret_name
-  jwt_secret_key = "jwt-secret"
-  postgrest_url  = "http://postgrest:3000"
+  namespace_name         = module.namespace.name
+  common_labels          = var.common_labels
+  superset_url           = "http://${module.superset.service_name}:${module.superset.port}"
+  superset_external_url  = var.superset_external_url
+  secret_name            = module.secrets.secret_name
+  jwt_secret_key         = "jwt-secret"
+  postgrest_url          = "http://postgrest:3000"
+  postgrest_external_url = var.postgrest_external_url
 }
 
 module "postgrest_docs" {

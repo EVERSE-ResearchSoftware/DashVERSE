@@ -86,6 +86,12 @@ variable "postgrest_url" {
   default     = "http://postgrest:3000"
 }
 
+variable "postgrest_external_url" {
+  description = "External URL for PostgREST (what the assessment-submitting client sees, e.g. https://api.dashverse.cloud)"
+  type        = string
+  default     = ""
+}
+
 variable "backend_url" {
   description = "Internal cluster URL for backend (used server-side for /api/auth/login proxying)"
   type        = string

@@ -89,6 +89,11 @@ resource "kubernetes_deployment" "frontend" {
           }
 
           env {
+            name  = "POSTGREST_EXTERNAL_URL"
+            value = var.postgrest_external_url
+          }
+
+          env {
             name  = "BACKEND_URL"
             value = var.backend_url
           }
