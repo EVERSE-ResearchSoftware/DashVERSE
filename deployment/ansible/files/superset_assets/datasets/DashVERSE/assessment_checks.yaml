@@ -266,16 +266,16 @@ columns:
   description:
   python_date_format:
   extra:
-- column_name: project_is_public
-  verbose_name: Project public
+- column_name: project_visibility
+  verbose_name: Project visibility
   is_dttm: false
   is_active: true
-  type: BOOLEAN
+  type: TEXT
   advanced_data_type:
   groupby: true
   filterable: true
   expression:
-  description:
+  description: private | authenticated | public
   python_date_format:
   extra:
 - column_name: effective_visibility

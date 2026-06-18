@@ -28,11 +28,35 @@ check-deps:
     fi
     echo "ok: all required tools on PATH ($(printf '%s ' "${required[@]}") + container runtime)"
 
-deploy: check-deps build-backend build-frontend
+check-minikube:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    if [ "${SKIP_MINIKUBE:-0}" = "1" ]; then
+        echo "skip: SKIP_MINIKUBE=1, not touching minikube"
+        exit 0
+    fi
+    if ! command -v minikube >/dev/null 2>&1; then
+        echo "error: minikube not found on PATH" >&2
+        echo "  install it, or run inside 'nix develop', or set SKIP_MINIKUBE=1" >&2
+        exit 1
+    fi
+    if minikube status >/dev/null 2>&1; then
+        echo "ok: minikube cluster running"
+    else
+        echo "minikube is not running -- starting it..."
+        minikube start
+    fi
+
+deploy: check-deps check-minikube build-backend build-frontend
     cd deployment/terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve
     @just port-forward-install || echo "warning: skipped systemd port-forward install (no systemd-user available)"
+    @echo "waiting for superset deployment to roll out..."
+    @kubectl -n {{ns}} rollout status deploy/superset --timeout=5m
+    @echo "letting port-forward catch up..."
+    @sleep 5
+    @just setup-dashboards
 
-destroy: check-deps
+destroy: check-deps check-minikube
     cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve
 
 destroy-all: destroy
@@ -111,12 +135,16 @@ port-forward-install:
     systemctl --user daemon-reload
     systemctl --user enable --now dashverse-port-forward.service
     echo "installed ${UNIT_PATH}"
-    echo
     sleep 1
-    systemctl --user status dashverse-port-forward.service --no-pager || true
+    state=$(systemctl --user is-active dashverse-port-forward.service 2>/dev/null || true)
+    enabled=$(systemctl --user is-enabled dashverse-port-forward.service 2>/dev/null || true)
+    echo "  dashverse-port-forward.service: ${state:-unknown} (enabled: ${enabled:-unknown})"
 
 port-forward-status:
-    systemctl --user status dashverse-port-forward.service --no-pager || true
+    #!/usr/bin/env bash
+    state=$(systemctl --user is-active dashverse-port-forward.service 2>/dev/null || true)
+    enabled=$(systemctl --user is-enabled dashverse-port-forward.service 2>/dev/null || true)
+    echo "dashverse-port-forward.service: ${state:-unknown} (enabled: ${enabled:-unknown})"
 
 port-forward-logs:
     journalctl --user -u dashverse-port-forward.service -f
@@ -166,20 +194,12 @@ jwt username password:
         | jq -r .access_token
 
 build-backend:
-    if [ "{{env}}" = "local" ]; then \
-        minikube image build -t dashverse/backend:latest backend/; \
-    else \
-        docker build -t dashverse/backend:latest backend/; \
-    fi
+    minikube image build -t dashverse/backend:latest backend/
 
 build-frontend:
-    if [ "{{env}}" = "local" ]; then \
-        minikube image build -t dashverse/frontend:latest frontend/; \
-    else \
-        docker build -t dashverse/frontend:latest frontend/; \
-    fi
+    minikube image build -t dashverse/frontend:latest frontend/
 
-setup-dashboards: check-deps
+setup-dashboards: check-deps check-minikube
     cd deployment/ansible && \
     DATABASE_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.postgres-password}' | base64 -d) \
     SUPERSET_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.superset-admin-password}' | base64 -d) \
