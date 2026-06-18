@@ -10,6 +10,7 @@ locals {
     "05-rls.sql"         = file("${local.sql_path}/005_setup_rls.sql")
     "06-views.sql"       = file("${local.sql_path}/006_create_views.sql")
     "07-permissions.sql" = file("${local.sql_path}/007_grant_permissions.sql")
+    "08-visibility.sql"  = file("${local.sql_path}/008_visibility_migration.sql")
   }
 }
 

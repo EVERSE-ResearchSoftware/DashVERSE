@@ -25,4 +25,5 @@ GRANT EXECUTE ON FUNCTION current_user_id() TO web_anon, web_user;
 GRANT EXECUTE ON FUNCTION is_authenticated() TO web_anon, web_user;
 GRANT EXECUTE ON FUNCTION check_outcome(jsonb) TO web_anon, web_user;
 GRANT EXECUTE ON FUNCTION resolve_dimension_id(VARCHAR) TO web_anon, web_user;
-GRANT EXECUTE ON FUNCTION is_project_public(BIGINT) TO web_anon, web_user;
+GRANT EXECUTE ON FUNCTION project_visibility(BIGINT) TO web_anon, web_user;
+GRANT EXECUTE ON FUNCTION assessment_visibility(TEXT, BIGINT) TO web_anon, web_user;

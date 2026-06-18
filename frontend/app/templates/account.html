@@ -57,7 +57,7 @@
 <section class="account-section">
     <h2>My software</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments, or override its visibility directly. A per-software setting always wins over the project's visibility.
+        Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments, or override its visibility directly. Three tiers: <strong>private</strong> (only you), <strong>authenticated</strong> (any logged-in user), <strong>public</strong> (anyone). A per-software setting always wins over the project's tier.
     </p>
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
         <thead style="background: var(--color-light-bg);">
@@ -71,8 +71,8 @@
         </thead>
         <tbody>
             {% for sw in software %}
-            {% set ns = namespace(project_public=false) %}
-            {% for p in projects %}{% if p.id == sw.project_id %}{% set ns.project_public = p.is_public %}{% endif %}{% endfor %}
+            {% set ns = namespace(project_visibility='private') %}
+            {% for p in projects %}{% if p.id == sw.project_id %}{% set ns.project_visibility = p.visibility %}{% endif %}{% endfor %}
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.75rem;"><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
                 <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
@@ -85,7 +85,7 @@
                             <option value="" selected disabled>(unassigned)</option>
                             {% endif %}
                             {% for p in projects %}
-                            <option value="{{ p.id }}" {% if p.id == sw.project_id %}selected{% endif %}>{{ p.name }}{% if p.is_public %} (public){% else %} (private){% endif %}</option>
+                            <option value="{{ p.id }}" {% if p.id == sw.project_id %}selected{% endif %}>{{ p.name }} ({{ p.visibility }})</option>
                             {% endfor %}
                         </select>
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Move</button>
@@ -101,28 +101,19 @@
                     {% endif %}
                 </td>
                 <td style="padding: 0.5rem 0.75rem;">
+                    {% set vis_color = {'public': '#2f855a', 'authenticated': '#1d4ed8', 'private': '#c0392b'} %}
+                    {% set effective = sw.visibility if sw.visibility else ns.project_visibility %}
                     <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">
-                        {% if sw.is_public is none %}
-                            {% if ns.project_public %}
-                            <span style="color: #2f855a;">Public</span>
-                            {% else %}
-                            <span style="color: #c0392b;">Private</span>
-                            {% endif %}
-                            <span style="color: var(--color-text-muted);">(via project)</span>
-                        {% elif sw.is_public %}
-                            <span style="color: #2f855a;">Public</span>
-                            <span style="color: var(--color-text-muted);">(override)</span>
-                        {% else %}
-                            <span style="color: #c0392b;">Private</span>
-                            <span style="color: var(--color-text-muted);">(override)</span>
-                        {% endif %}
+                        <span style="color: {{ vis_color[effective] }};">{{ effective|capitalize }}</span>
+                        <span style="color: var(--color-text-muted);">{% if sw.visibility %}(override){% else %}(via project){% endif %}</span>
                     </div>
                     <form method="post" action="/account/software/visibility" style="display: flex; gap: 0.3rem;">
                         <input type="hidden" name="software_name" value="{{ sw.software_name }}">
                         <select name="visibility" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
-                            <option value="clear" {% if sw.is_public is none %}selected{% endif %}>Inherit from project</option>
-                            <option value="public" {% if sw.is_public is not none and sw.is_public %}selected{% endif %}>Public</option>
-                            <option value="private" {% if sw.is_public is not none and not sw.is_public %}selected{% endif %}>Private</option>
+                            <option value="clear" {% if not sw.visibility %}selected{% endif %}>Inherit from project</option>
+                            <option value="private" {% if sw.visibility == 'private' %}selected{% endif %}>Private (only me)</option>
+                            <option value="authenticated" {% if sw.visibility == 'authenticated' %}selected{% endif %}>Authenticated (logged-in users)</option>
+                            <option value="public" {% if sw.visibility == 'public' %}selected{% endif %}>Public (anyone)</option>
                         </select>
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Set</button>
                     </form>
@@ -143,7 +134,7 @@
 <section class="account-section">
     <h2>My projects</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Assessments are grouped by project. Public projects are visible to anonymous viewers on Overview and Assessments. Private projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
+        Assessments are grouped by project. <strong>Public</strong> projects are visible to anonymous viewers on Overview and Assessments; <strong>Authenticated</strong> projects are visible only to logged-in users; <strong>Private</strong> projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
     </p>
     {% if projects %}
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
@@ -168,11 +159,8 @@
                     </form>
                 </td>
                 <td style="padding: 0.75rem;">
-                    {% if p.is_public %}
-                    <span style="color: #2f855a;">Public</span>
-                    {% else %}
-                    <span style="color: #c0392b;">Private</span>
-                    {% endif %}
+                    {% set vis_color = {'public': '#2f855a', 'authenticated': '#1d4ed8', 'private': '#c0392b'} %}
+                    <span style="color: {{ vis_color[p.visibility] }};">{{ p.visibility|capitalize }}</span>
                 </td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">
                     {% if sw_in_project %}
@@ -183,12 +171,13 @@
                 </td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
-                    <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline;">
-                        {% if p.is_public %}
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Make private</button>
-                        {% else %}
-                        <button type="submit" name="is_public" value="on" class="btn-secondary" style="border: 0; cursor: pointer;">Make public</button>
-                        {% endif %}
+                    <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline-flex; gap: 0.3rem;">
+                        <select name="visibility" style="padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
+                            <option value="private" {% if p.visibility == 'private' %}selected{% endif %}>Private</option>
+                            <option value="authenticated" {% if p.visibility == 'authenticated' %}selected{% endif %}>Authenticated</option>
+                            <option value="public" {% if p.visibility == 'public' %}selected{% endif %}>Public</option>
+                        </select>
+                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Set</button>
                     </form>
                     {% if sw_in_project %}
                     <button type="button" class="btn-secondary" style="border: 0; cursor: not-allowed; opacity: 0.5;" title="Cannot delete: {{ sw_in_project|length }} software still assigned. Move or delete them first." disabled>Delete</button>
@@ -211,9 +200,13 @@
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">New project name</span>
             <input name="name" required maxlength="255" placeholder="e.g. data-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
         </label>
-        <label style="display: flex; align-items: center; gap: 0.4rem; padding-bottom: 0.5rem;">
-            <input type="checkbox" name="is_public" value="on">
-            <span style="color: var(--color-text-muted);">Public</span>
+        <label style="display: flex; flex-direction: column; min-width: 180px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Visibility</span>
+            <select name="visibility" style="padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                <option value="private" selected>Private (only me)</option>
+                <option value="authenticated">Authenticated (logged-in users)</option>
+                <option value="public">Public (anyone)</option>
+            </select>
         </label>
         <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Create project</button>
     </form>
@@ -236,7 +229,7 @@
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Project</span>
             <select name="project_id" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
                 {% for p in projects %}
-                <option value="{{ p.id }}">{{ p.name }}{% if p.is_public %} (public){% else %} (private){% endif %}</option>
+                <option value="{{ p.id }}">{{ p.name }} ({{ p.visibility }})</option>
                 {% endfor %}
             </select>
         </label>

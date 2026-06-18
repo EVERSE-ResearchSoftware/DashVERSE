@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -18,11 +18,11 @@ class Project(Base):
         nullable=False,
         index=True,
     )
-    is_public = Column(Boolean, default=False, nullable=False)
+    visibility = Column(String(20), nullable=False, default="private")
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     owner = relationship("User", backref="projects")
 
     def __repr__(self):
-        return f"<Project(id={self.id}, name='{self.name}', owner_user_id={self.owner_user_id})>"
+        return f"<Project(id={self.id}, name='{self.name}', owner_user_id={self.owner_user_id}, visibility='{self.visibility}')>"

@@ -168,11 +168,17 @@ def _superset_guest_token_for(slug: str, user: dict | None) -> str | None:
             uid = None
 
     if uid is not None:
-        checks_clause = f"effective_visibility = 'public' OR author_user_id = {uid}"
-        proj_clause = f"(is_public OR owner_user_id = {uid})"
+        checks_clause = (
+            "effective_visibility IN ('public', 'authenticated') "
+            f"OR author_user_id = {uid}"
+        )
+        proj_clause = (
+            "visibility IN ('public', 'authenticated') "
+            f"OR owner_user_id = {uid}"
+        )
     else:
         checks_clause = "effective_visibility = 'public'"
-        proj_clause = "is_public"
+        proj_clause = "visibility = 'public'"
 
     rls: list[dict] = []
     checks_did = _dataset_id_by_name("assessment_checks", token)
@@ -926,12 +932,10 @@ async def account_software_visibility(
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
 
-    if visibility == "public":
-        is_public: bool | None = True
-    elif visibility == "private":
-        is_public = False
+    if visibility in ("private", "authenticated", "public"):
+        vis_payload: str | None = visibility
     elif visibility == "clear":
-        is_public = None
+        vis_payload = None
     else:
         return templates.TemplateResponse(
             "account.html",
@@ -943,7 +947,7 @@ async def account_software_visibility(
         "PUT",
         "/api/projects/me/software/visibility",
         user["token"],
-        {"software_name": software_name, "is_public": is_public},
+        {"software_name": software_name, "visibility": vis_payload},
     )
     if status == 401:
         return _stale_session_redirect("/account")
@@ -959,7 +963,7 @@ async def account_software_visibility(
 async def account_project_create(
     request: Request,
     name: str = Form(...),
-    is_public: str = Form(default=""),
+    visibility: str = Form(default="private"),
 ):
     user = current_user(request)
     if not user:
@@ -971,11 +975,13 @@ async def account_project_create(
             await _account_context(request, user, error="Project name is required."),
             status_code=400,
         )
+    if visibility not in ("private", "authenticated", "public"):
+        visibility = "private"
     _, error, status = _auth_request(
         "POST",
         "/api/projects/",
         user["token"],
-        {"name": name, "is_public": bool(is_public)},
+        {"name": name, "visibility": visibility},
     )
     if status == 401:
         return _stale_session_redirect("/account")
@@ -988,15 +994,21 @@ async def account_project_create(
 
 
 @router.post("/account/projects/{project_id}/visibility", response_class=HTMLResponse)
-async def account_project_visibility(request: Request, project_id: int, is_public: str = Form(default="")):
+async def account_project_visibility(request: Request, project_id: int, visibility: str = Form(...)):
     user = current_user(request)
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
+    if visibility not in ("private", "authenticated", "public"):
+        return templates.TemplateResponse(
+            "account.html",
+            await _account_context(request, user, error="Unknown visibility value."),
+            status_code=400,
+        )
     _, error, status = _auth_request(
         "PATCH",
         f"/api/projects/{project_id}",
         user["token"],
-        {"is_public": bool(is_public)},
+        {"visibility": visibility},
     )
     if status == 401:
         return _stale_session_redirect("/account")

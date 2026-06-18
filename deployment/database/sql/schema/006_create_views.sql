@@ -87,15 +87,9 @@ SELECT
   a.project_id                                             AS project_id,
   p.name                                                   AS project_name,
   p.owner_user_id                                          AS project_owner_user_id,
-  p.is_public                                              AS project_is_public,
+  p.visibility                                             AS project_visibility,
 
-  CASE
-    WHEN sv.is_public IS TRUE  THEN 'public'
-    WHEN sv.is_public IS FALSE THEN 'private'
-    WHEN p.is_public  IS TRUE  THEN 'public'
-    WHEN p.is_public  IS FALSE THEN 'private'
-    ELSE 'public'
-  END                                                      AS effective_visibility,
+  COALESCE(sv.visibility, p.visibility, 'public')          AS effective_visibility,
 
   a.payload->'license'->>'@id'                             AS assessment_license,
 
@@ -193,7 +187,7 @@ SELECT
   name,
   name AS project_name,
   owner_user_id,
-  is_public,
+  visibility,
   created_at,
   updated_at
 FROM auth.projects;

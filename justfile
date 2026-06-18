@@ -7,11 +7,32 @@ forward_address := "127.0.0.1"
 default:
     @just --list
 
-deploy: build-backend build-frontend
+check-deps:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    required=(tofu kubectl helm minikube ansible-playbook curl jq base64)
+    missing=()
+    for cmd in "${required[@]}"; do
+        command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
+    done
+    if ! command -v docker >/dev/null 2>&1 && ! command -v podman >/dev/null 2>&1; then
+        missing+=("docker or podman")
+    fi
+    if [ "${#missing[@]}" -gt 0 ]; then
+        echo "missing required tools:" >&2
+        for m in "${missing[@]}"; do echo "  - $m" >&2; done
+        echo >&2
+        echo "install them and re-run; if you use the project flake, try:" >&2
+        echo "  nix develop --command just <recipe>" >&2
+        exit 1
+    fi
+    echo "ok: all required tools on PATH ($(printf '%s ' "${required[@]}") + container runtime)"
+
+deploy: check-deps build-backend build-frontend
     cd deployment/terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve
     @just port-forward-install || echo "warning: skipped systemd port-forward install (no systemd-user available)"
 
-destroy:
+destroy: check-deps
     cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve
 
 destroy-all: destroy
@@ -90,8 +111,9 @@ port-forward-install:
     systemctl --user daemon-reload
     systemctl --user enable --now dashverse-port-forward.service
     echo "installed ${UNIT_PATH}"
-    echo "status:  just port-forward-status"
-    echo "logs:    just port-forward-logs"
+    echo
+    sleep 1
+    systemctl --user status dashverse-port-forward.service --no-pager || true
 
 port-forward-status:
     systemctl --user status dashverse-port-forward.service --no-pager || true
@@ -157,7 +179,7 @@ build-frontend:
         docker build -t dashverse/frontend:latest frontend/; \
     fi
 
-setup-dashboards:
+setup-dashboards: check-deps
     cd deployment/ansible && \
     DATABASE_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.postgres-password}' | base64 -d) \
     SUPERSET_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.superset-admin-password}' | base64 -d) \

@@ -52,6 +52,7 @@ variable "schema_files" {
     "02-tables.sql",
     "03-indexes.sql",
     "04-triggers.sql",
+    "08-visibility.sql",
     "05-rls.sql",
     "06-views.sql",
     "07-permissions.sql",

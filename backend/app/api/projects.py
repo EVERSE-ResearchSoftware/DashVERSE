@@ -97,7 +97,7 @@ def create_project(
     project = Project(
         name=payload.name,
         owner_user_id=current_user.id,
-        is_public=payload.is_public,
+        visibility=payload.visibility,
     )
     db.add(project)
     db.commit()
@@ -113,8 +113,8 @@ def update_project(
     db: Session = Depends(get_db),
 ) -> ProjectResponse:
     project = _owned_project(db, current_user, project_id)
-    if payload.is_public is not None:
-        project.is_public = payload.is_public
+    if payload.visibility is not None:
+        project.visibility = payload.visibility
     if payload.name is not None:
         project.name = payload.name
     db.commit()
@@ -186,8 +186,8 @@ def list_my_software(
         for p in db.query(Project).filter(Project.owner_user_id == current_user.id).all()
     }
 
-    visibility_lookup: dict[str, bool] = {
-        sv.software_name: sv.is_public
+    visibility_lookup: dict[str, str] = {
+        sv.software_name: sv.visibility
         for sv in db.query(SoftwareVisibility)
         .filter(SoftwareVisibility.owner_user_id == current_user.id)
         .all()
@@ -199,7 +199,7 @@ def list_my_software(
             assessment_count=int(row.assessment_count),
             project_id=row.project_id,
             project_name=project_lookup.get(row.project_id) if row.project_id is not None else None,
-            is_public=visibility_lookup.get(row.software_name),
+            visibility=visibility_lookup.get(row.software_name),
         )
         for row in rows
     ]
@@ -284,7 +284,7 @@ def set_software_visibility(
         )
         .first()
     )
-    if payload.is_public is None:
+    if payload.visibility is None:
         if existing:
             db.delete(existing)
             db.commit()
@@ -292,17 +292,17 @@ def set_software_visibility(
         return {"message": "No override to clear", "software_name": payload.software_name}
 
     if existing:
-        existing.is_public = payload.is_public
+        existing.visibility = payload.visibility
     else:
         existing = SoftwareVisibility(
             software_name=payload.software_name,
             owner_user_id=current_user.id,
-            is_public=payload.is_public,
+            visibility=payload.visibility,
         )
         db.add(existing)
     db.commit()
     return {
         "message": "Override set",
         "software_name": payload.software_name,
-        "is_public": existing.is_public,
+        "visibility": existing.visibility,
     }

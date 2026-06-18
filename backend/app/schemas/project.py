@@ -1,6 +1,9 @@
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
-from typing import List
+from typing import List, Literal
+
+
+Visibility = Literal["private", "authenticated", "public"]
 
 
 class ProjectResponse(BaseModel):
@@ -8,7 +11,7 @@ class ProjectResponse(BaseModel):
     id: int
     name: str
     owner_user_id: int
-    is_public: bool
+    visibility: Visibility
     created_at: datetime
     updated_at: datetime
 
@@ -24,12 +27,12 @@ class ProjectListResponse(BaseModel):
 class ProjectCreate(BaseModel):
 
     name: str = Field(..., min_length=1, max_length=255)
-    is_public: bool = Field(default=False)
+    visibility: Visibility = Field(default="private")
 
 
 class ProjectUpdate(BaseModel):
 
-    is_public: bool | None = Field(None, description="Public visibility flag")
+    visibility: Visibility | None = Field(None, description="Project visibility tier")
     name: str | None = Field(None, min_length=1, max_length=255)
 
 
@@ -39,7 +42,7 @@ class SoftwareEntry(BaseModel):
     assessment_count: int
     project_id: int | None
     project_name: str | None
-    is_public: bool | None = None
+    visibility: Visibility | None = None
 
 
 class SoftwareListResponse(BaseModel):
@@ -54,10 +57,10 @@ class AssignSoftwareRequest(BaseModel):
 class SetSoftwareVisibilityRequest(BaseModel):
 
     software_name: str = Field(..., min_length=1, max_length=255)
-    is_public: bool | None = Field(
+    visibility: Visibility | None = Field(
         None,
         description=(
-            "TRUE = public override; FALSE = private override; "
-            "null = clear override and inherit from project."
+            "'private' | 'authenticated' | 'public' set the override; "
+            "null clears the override and inherits the project's tier."
         ),
     )

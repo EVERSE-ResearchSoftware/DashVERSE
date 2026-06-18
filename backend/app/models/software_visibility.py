@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 
 from app.core.database import Base
@@ -16,7 +16,7 @@ class SoftwareVisibility(Base):
         primary_key=True,
         index=True,
     )
-    is_public = Column(Boolean, nullable=False, default=False)
+    visibility = Column(String(20), nullable=False, default="private")
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -32,5 +32,5 @@ class SoftwareVisibility(Base):
     def __repr__(self):
         return (
             f"<SoftwareVisibility(software_name='{self.software_name}', "
-            f"owner_user_id={self.owner_user_id}, is_public={self.is_public})>"
+            f"owner_user_id={self.owner_user_id}, visibility='{self.visibility}')>"
         )
