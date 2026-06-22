@@ -56,7 +56,8 @@ SELECT
   a.created_at                                             AS ingested_at,
 
   a.payload->'assessedSoftware'->>'@type'                  AS software_type,
-  a.payload->'assessedSoftware'->>'name'                   AS software_name,
+  COALESCE(a.payload->'assessedSoftware'->>'name',
+           '(unknown software)')                           AS software_name,
   a.payload->'assessedSoftware'->>'softwareVersion'        AS software_version,
   a.payload->'assessedSoftware'->>'url'                    AS software_url,
   a.payload->'assessedSoftware'->'schema:identifier'->>'@id'
@@ -106,11 +107,11 @@ SELECT
 
   i.id                                                     AS indicator_id,
   i.identifier                                             AS indicator_identifier,
-  i.name                                                   AS indicator_name,
+  COALESCE(i.name, '(unmapped indicator)')                 AS indicator_name,
   i.description                                            AS indicator_description,
   d.id                                                     AS dimension_id,
   d.identifier                                             AS dimension_identifier,
-  d.name                                                   AS dimension_name,
+  COALESCE(d.name, '(unmapped dimension)')                 AS dimension_name,
   d.description                                            AS dimension_description,
   CASE
     WHEN d.identifier IS NOT NULL
