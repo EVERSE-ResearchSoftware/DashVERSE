@@ -40,14 +40,20 @@ TLDR -- single command from a fresh host:
 ```
 just deploy                  # local minikube
 just env=production deploy   # production VM
+
+# add VERBOSE=1 to see the full output of every sub-step (tofu plan,
+# ansible recap, kubectl rollouts) instead of just the step headers:
+VERBOSE=1 just deploy
 ```
 
-The recipe runs preflight checks (`check-deps`, `check-minikube`), builds
-images straight into minikube, applies Terraform (including the
-schema-apply Job that reconciles all SQL files), installs the port-forward
-systemd unit, polls Superset's `/health`, triggers a one-shot sync of the
-EVERSE indicators/dimensions, and finally hands off to Ansible to import
-dashboards + flush the chart cache.
+The recipe runs 10 numbered steps. By default only the step headers print
+(`==> [N/10] description`); the rest is captured to per-step log files
+under `/tmp/dashverse-deploy-*` and only surfaced on failure (last 60
+lines). The steps cover: preflight checks, image builds, Terraform apply
+(including the schema-apply Job that reconciles all SQL files), the
+port-forward systemd unit, two waits for Superset readiness, a one-shot
+sync of the EVERSE indicators/dimensions catalog, and finally the Ansible
+import of dashboards + chart-cache flush.
 
 Standalone helpers if you need to run individual phases:
 

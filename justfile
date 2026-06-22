@@ -47,29 +47,108 @@ check-minikube:
         minikube start
     fi
 
-deploy: check-deps check-minikube build-backend build-frontend
-    cd deployment/terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve
-    @just port-forward-install || echo "warning: skipped systemd port-forward install (no systemd-user available)"
-    @echo "waiting for superset deployment to roll out..."
-    @kubectl -n {{ns}} rollout status deploy/superset --timeout=5m
-    @just wait-superset
-    @just trigger-sync
-    @just setup-dashboards
+deploy:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    TOTAL=10
+    VERBOSE="${VERBOSE:-0}"
+    LOG_DIR="$(mktemp -d /tmp/dashverse-deploy-XXXXXX)"
+    trap 'rm -rf "$LOG_DIR"' EXIT
+    STEP_START=0
+
+    step() {
+        local n=$1; local desc=$2
+        echo
+        echo "==> [$n/$TOTAL] $desc"
+        STEP_START=$(date +%s)
+    }
+
+    done_ok() {
+        local elapsed=$(( $(date +%s) - STEP_START ))
+        echo "    [ok] (${elapsed}s)"
+    }
+
+    fail_step() {
+        local elapsed=$(( $(date +%s) - STEP_START ))
+        echo "    [failed] after ${elapsed}s" >&2
+    }
+
+    run() {
+        local label=$1; shift
+        local log="$LOG_DIR/${label}.log"
+        if [ "$VERBOSE" = "1" ]; then
+            if ! "$@"; then fail_step; return 1; fi
+        else
+            if ! "$@" >"$log" 2>&1; then
+                fail_step
+                echo "    last 60 lines of $log:" >&2
+                tail -n 60 "$log" >&2
+                return 1
+            fi
+        fi
+        done_ok
+    }
+
+    step 1 "Verifying required tools are on PATH"
+    run check-deps just check-deps
+
+    step 2 "Verifying minikube cluster (starting it if necessary)"
+    run check-minikube just check-minikube
+
+    step 3 "Building backend image into minikube's runtime"
+    run build-backend just build-backend
+
+    step 4 "Building frontend image into minikube's runtime"
+    run build-frontend just build-frontend
+
+    step 5 "Applying Terraform infrastructure (databases, services, schema-apply Job)"
+    if [ "$VERBOSE" = "1" ]; then
+        ( cd deployment/terraform && tofu init && tofu apply -var-file="environments/{{env}}.tfvars" -auto-approve ) || { fail_step; exit 1; }
+        done_ok
+    else
+        if ! ( cd deployment/terraform && tofu init -no-color && tofu apply -no-color -var-file="environments/{{env}}.tfvars" -auto-approve ) > "$LOG_DIR/tofu.log" 2>&1; then
+            fail_step
+            echo "    last 60 lines of $LOG_DIR/tofu.log:" >&2
+            tail -n 60 "$LOG_DIR/tofu.log" >&2
+            exit 1
+        fi
+        done_ok
+    fi
+
+    step 6 "Installing systemd-user unit that keeps kubectl port-forwards alive"
+    run port-forward-install just port-forward-install || echo "    warning: no systemd-user available, skipping"
+
+    step 7 "Waiting for Superset deployment rollout"
+    run superset-rollout kubectl -n {{ns}} rollout status deploy/superset --timeout=5m
+
+    step 8 "Waiting for Superset HTTP /health to respond"
+    run wait-superset just wait-superset
+
+    step 9 "Syncing EVERSE indicators and dimensions catalog into PostgreSQL"
+    run trigger-sync just trigger-sync
+
+    step 10 "Importing Superset dashboards, charts and datasets (Ansible)"
+    run setup-dashboards just setup-dashboards
+
+    echo
+    echo "==> deploy complete. Visit the frontend (e.g. http://localhost:8080 or your prod URL)."
 
 trigger-sync:
     #!/usr/bin/env bash
+    set -uo pipefail
     job_name="sync-bootstrap-$(date +%s)"
-    echo "creating one-shot sync job: $job_name"
-    if ! kubectl -n {{ns}} create job "$job_name" --from=cronjob/everse-sync 2>&1; then
-        echo "warning: could not create sync job -- catalog may stay empty" >&2
+    echo "    syncing EVERSE indicators and dimensions catalog from upstream"
+    echo "    one-shot job: $job_name"
+    if ! kubectl -n {{ns}} create job "$job_name" --from=cronjob/everse-sync >/dev/null 2>&1; then
+        echo "    warning: could not create sync job -- catalog may stay empty" >&2
         exit 0
     fi
-    echo "waiting for sync to complete (timeout 5m)..."
-    if ! kubectl -n {{ns}} wait --for=condition=complete --timeout=5m "job/$job_name" 2>&1; then
-        echo "warning: sync did not finish in 5m; check 'kubectl -n {{ns}} logs job/$job_name'" >&2
+    if ! kubectl -n {{ns}} wait --for=condition=complete --timeout=5m "job/$job_name" >/dev/null 2>&1; then
+        echo "    warning: sync did not finish in 5m; check 'kubectl -n {{ns}} logs job/$job_name'" >&2
         exit 0
     fi
-    echo "  sync complete"
+    echo "    sync complete"
 
 wait-superset:
     #!/usr/bin/env bash
@@ -83,11 +162,124 @@ wait-superset:
     done
     echo "warning: superset did not respond within 3 min -- continuing anyway" >&2
 
-destroy: check-deps check-minikube
-    cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve
+destroy:
+    #!/usr/bin/env bash
+    set -euo pipefail
 
-destroy-all: destroy
-    minikube delete --all
+    TOTAL=3
+    VERBOSE="${VERBOSE:-0}"
+    LOG_DIR="$(mktemp -d /tmp/dashverse-destroy-XXXXXX)"
+    trap 'rm -rf "$LOG_DIR"' EXIT
+    STEP_START=0
+
+    step() {
+        local n=$1; local desc=$2
+        echo
+        echo "==> [$n/$TOTAL] $desc"
+        STEP_START=$(date +%s)
+    }
+    done_ok()    { echo "    [ok] ($(( $(date +%s) - STEP_START ))s)"; }
+    fail_step()  { echo "    [failed] after $(( $(date +%s) - STEP_START ))s" >&2; }
+
+    run() {
+        local label=$1; shift
+        local log="$LOG_DIR/${label}.log"
+        if [ "$VERBOSE" = "1" ]; then
+            if ! "$@"; then fail_step; return 1; fi
+        else
+            if ! "$@" >"$log" 2>&1; then
+                fail_step
+                echo "    last 60 lines of $log:" >&2
+                tail -n 60 "$log" >&2
+                return 1
+            fi
+        fi
+        done_ok
+    }
+
+    step 1 "Verifying required tools are on PATH"
+    run check-deps just check-deps
+
+    step 2 "Verifying minikube cluster is reachable"
+    run check-minikube just check-minikube
+
+    step 3 "Destroying Terraform-managed resources"
+    if [ "$VERBOSE" = "1" ]; then
+        ( cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve ) || { fail_step; exit 1; }
+        done_ok
+    else
+        if ! ( cd deployment/terraform && tofu destroy -no-color -var-file="environments/{{env}}.tfvars" -auto-approve ) > "$LOG_DIR/tofu.log" 2>&1; then
+            fail_step
+            echo "    last 60 lines of $LOG_DIR/tofu.log:" >&2
+            tail -n 60 "$LOG_DIR/tofu.log" >&2
+            exit 1
+        fi
+        done_ok
+    fi
+
+    echo
+    echo "==> destroy complete."
+
+destroy-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    TOTAL=4
+    VERBOSE="${VERBOSE:-0}"
+    LOG_DIR="$(mktemp -d /tmp/dashverse-destroy-all-XXXXXX)"
+    trap 'rm -rf "$LOG_DIR"' EXIT
+    STEP_START=0
+
+    step() {
+        local n=$1; local desc=$2
+        echo
+        echo "==> [$n/$TOTAL] $desc"
+        STEP_START=$(date +%s)
+    }
+    done_ok()   { echo "    [ok] ($(( $(date +%s) - STEP_START ))s)"; }
+    fail_step() { echo "    [failed] after $(( $(date +%s) - STEP_START ))s" >&2; }
+
+    run() {
+        local label=$1; shift
+        local log="$LOG_DIR/${label}.log"
+        if [ "$VERBOSE" = "1" ]; then
+            if ! "$@"; then fail_step; return 1; fi
+        else
+            if ! "$@" >"$log" 2>&1; then
+                fail_step
+                echo "    last 60 lines of $log:" >&2
+                tail -n 60 "$log" >&2
+                return 1
+            fi
+        fi
+        done_ok
+    }
+
+    step 1 "Verifying required tools are on PATH"
+    run check-deps just check-deps
+
+    step 2 "Verifying minikube cluster is reachable"
+    run check-minikube just check-minikube
+
+    step 3 "Destroying Terraform-managed resources"
+    if [ "$VERBOSE" = "1" ]; then
+        ( cd deployment/terraform && tofu destroy -var-file="environments/{{env}}.tfvars" -auto-approve ) || { fail_step; exit 1; }
+        done_ok
+    else
+        if ! ( cd deployment/terraform && tofu destroy -no-color -var-file="environments/{{env}}.tfvars" -auto-approve ) > "$LOG_DIR/tofu.log" 2>&1; then
+            fail_step
+            echo "    last 60 lines of $LOG_DIR/tofu.log:" >&2
+            tail -n 60 "$LOG_DIR/tofu.log" >&2
+            exit 1
+        fi
+        done_ok
+    fi
+
+    step 4 "Deleting minikube cluster"
+    run minikube-delete minikube delete --all
+
+    echo
+    echo "==> destroy-all complete."
 
 status:
     kubectl get all -n {{ns}}

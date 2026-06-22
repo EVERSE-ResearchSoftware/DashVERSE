@@ -87,6 +87,7 @@ $$;
 
 def _run_visibility_migration() -> None:
     with engine.begin() as conn:
+        conn.execute(text("SELECT pg_advisory_xact_lock(7726334)"))
         conn.execute(text(_VISIBILITY_MIGRATION_SQL))
 
 
