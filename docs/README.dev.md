@@ -64,6 +64,55 @@ just trigger-sync            # one-shot dimensions/indicators sync
 just setup-dashboards        # Ansible: dataset + chart + dashboard imports + cache flush
 ```
 
+### Pinning upstream dependencies
+
+DashVERSE depends on two external repositories whose contents flow into
+the running stack:
+
+| Upstream | Used by | Default | How to pin |
+|---|---|---|---|
+| [EVERSE-ResearchSoftware/indicators](https://github.com/EVERSE-ResearchSoftware/indicators) | The `everse-sync` CronJob populates the `dimensions` + `indicators` reference tables. | Tracks `main` | Set `indicators_ref` in `production.tfvars` (or any tfvars) to a commit SHA, then `just env=production deploy`. The next sync run fetches catalog files at exactly that ref. |
+| [EVERSE-ResearchSoftware/QualityPipelines](https://github.com/EVERSE-ResearchSoftware/QualityPipelines) (`resqui`) | The assessment-runner script installs and runs `resqui` against repositories. | Latest commit on `main` | Set `RESQUI_SPEC` in `scripts/.env` (or as a shell env var) to a `git+https://...QualityPipelines.git@<sha>` URL. The script reinstalls `resqui` from that pinned ref in the venv it builds. |
+
+Example: pin both for the next prod deploy.
+
+```hcl
+# deployment/terraform/environments/production.tfvars
+indicators_ref = "9c7f4b3a3e10..."   # replace with a verified SHA
+```
+
+```bash
+# scripts/.env
+RESQUI_SPEC="git+https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git@a1b2c3d4..."
+```
+
+Why this matters: upstream is free to rename indicators, change identifier
+slugs, restructure JSON layouts, or remove items entirely. Without a pin
+the next `everse-sync` run can suddenly make dashboards empty for
+indicators the catalog no longer publishes, and `resqui` can change its
+plugin set or output shape and silently break ingest. Pinning lets you
+verify a release against a known catalog/runner before adopting it.
+
+To upgrade: bump the SHA, deploy to a staging env (or your local
+minikube), watch for `(unmapped indicator)` / `(unmapped dimension)`
+buckets on the Catalog dashboard, and only when those are absent or
+acceptable promote the SHA to `production.tfvars`.
+
+# Just the port-forward step, bound to all interfaces:
+just forward_address=0.0.0.0 port-forward
+
+# Full deploy (re-installs the systemd unit with the 0.0.0.0 bind):
+just forward_address=0.0.0.0 env=production deploy
+
+# Reinstall just the port-forward systemd unit with the new bind address:
+just forward_address=0.0.0.0 port-forward-install
+```
+
+Once the systemd-user unit has been installed with a given
+`forward_address`, the unit captures that value at install time --
+reinstall (or call `port-forward-install` again with the new value) to
+change it.
+
 Tear it all down:
 
 ```

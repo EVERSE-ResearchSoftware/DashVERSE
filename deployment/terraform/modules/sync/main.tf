@@ -12,19 +12,25 @@ resource "kubernetes_config_map" "sync_scripts" {
       # install curl and jq
       apk add --no-cache curl jq >/dev/null 2>&1
 
-      GITHUB_RAW="https://raw.githubusercontent.com/EVERSE-ResearchSoftware/indicators/main"
+      # Pinned via var.indicators_ref: 'main' tracks upstream live, a commit SHA
+      # locks the catalog so an unannounced upstream rename or schema change
+      # can't break the dashboard until we explicitly opt in.
+      GITHUB_REF="${var.indicators_ref}"
+      GITHUB_RAW="https://raw.githubusercontent.com/EVERSE-ResearchSoftware/indicators/$${GITHUB_REF}"
       GITHUB_API="https://api.github.com/repos/EVERSE-ResearchSoftware/indicators/contents"
+      # API uses ?ref=<sha> to scope the contents listing to the pinned ref
+      REF_QUERY="?ref=$${GITHUB_REF}"
       WORKDIR="/tmp/sync"
 
       mkdir -p $WORKDIR/dimensions $WORKDIR/indicators
 
-      echo "Fetching dimensions..."
-      for dim in $(curl -sf "$GITHUB_API/dimensions" | jq -r '.[].name | select(endswith(".json"))'); do
+      echo "Fetching dimensions from ref $GITHUB_REF..."
+      for dim in $(curl -sf "$GITHUB_API/dimensions$REF_QUERY" | jq -r '.[].name | select(endswith(".json"))'); do
         curl -sfL "$GITHUB_RAW/dimensions/$dim" -o "$WORKDIR/dimensions/$dim"
       done
 
-      echo "Fetching indicators..."
-      for ind in $(curl -sf "$GITHUB_API/indicators" | jq -r '.[].name | select(endswith(".json"))'); do
+      echo "Fetching indicators from ref $GITHUB_REF..."
+      for ind in $(curl -sf "$GITHUB_API/indicators$REF_QUERY" | jq -r '.[].name | select(endswith(".json"))'); do
         curl -sfL "$GITHUB_RAW/indicators/$ind" -o "$WORKDIR/indicators/$ind"
       done
 

@@ -88,3 +88,14 @@ variable "api_docs_external_url" {
   type        = string
   default     = ""
 }
+
+variable "indicators_ref" {
+  description = <<-EOT
+    Git ref of EVERSE-ResearchSoftware/indicators that the everse-sync
+    CronJob pulls dimensions and indicators from. 'main' tracks upstream
+    live; set to a commit SHA in production.tfvars to pin the catalog so
+    an upstream rename or schema change can't break the dashboard.
+  EOT
+  type    = string
+  default = "main"
+}

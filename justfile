@@ -64,14 +64,16 @@ deploy:
         STEP_START=$(date +%s)
     }
 
+    if [ -t 1 ]; then C_OK=$'\033[32m'; C_RESET=$'\033[0m'; else C_OK=""; C_RESET=""; fi
+    if [ -t 2 ]; then C_FAIL=$'\033[31m'; else C_FAIL=""; fi
     done_ok() {
         local elapsed=$(( $(date +%s) - STEP_START ))
-        echo "    [ok] (${elapsed}s)"
+        echo "    ${C_OK}[ok]${C_RESET} (${elapsed}s)"
     }
 
     fail_step() {
         local elapsed=$(( $(date +%s) - STEP_START ))
-        echo "    [failed] after ${elapsed}s" >&2
+        echo "    ${C_FAIL}[failed]${C_RESET} after ${elapsed}s" >&2
     }
 
     run() {
@@ -178,8 +180,10 @@ destroy:
         echo "==> [$n/$TOTAL] $desc"
         STEP_START=$(date +%s)
     }
-    done_ok()    { echo "    [ok] ($(( $(date +%s) - STEP_START ))s)"; }
-    fail_step()  { echo "    [failed] after $(( $(date +%s) - STEP_START ))s" >&2; }
+    if [ -t 1 ]; then C_OK=$'\033[32m'; C_RESET=$'\033[0m'; else C_OK=""; C_RESET=""; fi
+    if [ -t 2 ]; then C_FAIL=$'\033[31m'; else C_FAIL=""; fi
+    done_ok()    { echo "    ${C_OK}[ok]${C_RESET} ($(( $(date +%s) - STEP_START ))s)"; }
+    fail_step()  { echo "    ${C_FAIL}[failed]${C_RESET} after $(( $(date +%s) - STEP_START ))s" >&2; }
 
     run() {
         local label=$1; shift

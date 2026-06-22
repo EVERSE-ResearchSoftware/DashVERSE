@@ -72,11 +72,12 @@ module "superset" {
 module "sync" {
   source = "./modules/sync"
 
-  namespace    = module.namespace.name
-  db_host      = module.postgresql.host
-  db_name      = var.postgres_db
-  db_user      = var.postgres_user
-  secrets_name = module.secrets.secret_name
+  namespace      = module.namespace.name
+  db_host        = module.postgresql.host
+  db_name        = var.postgres_db
+  db_user        = var.postgres_user
+  secrets_name   = module.secrets.secret_name
+  indicators_ref = var.indicators_ref
 }
 
 module "backend" {
