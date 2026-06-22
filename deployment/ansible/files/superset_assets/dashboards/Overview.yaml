@@ -86,7 +86,7 @@ position:
       width: 6
       height: 65
       chartId: 102
-      sliceName: Outcome Distribution
+      sliceName: Pass Rate
       uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
     type: CHART
     parents:
@@ -151,8 +151,8 @@ position:
       width: 12
       height: 60
       chartId: 111
-      sliceName: Outcomes by Dimension
-      uuid: 91889633-b07c-44d5-8406-a0ea56abacfc
+      sliceName: Dimension Profile
+      uuid: 7f71f69e-f937-4297-9f31-018d9d756442
     type: CHART
     parents:
     - ROOT_ID

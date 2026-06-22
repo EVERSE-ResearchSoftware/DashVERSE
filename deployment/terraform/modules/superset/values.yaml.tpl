@@ -88,7 +88,11 @@ configOverrides:
     CACHE_REDIS_DB = 1
     DATA_CACHE_CONFIG = {
         "CACHE_TYPE": "RedisCache",
-        "CACHE_DEFAULT_TIMEOUT": 300,
+        # short TTL so visibility / assessment edits surface within a
+        # minute when the explicit /superset/refresh hook is missed
+        # (e.g. direct DB writes, NOTIFY race). Long enough to absorb
+        # the bursty page-load fan-out of N charts per dashboard.
+        "CACHE_DEFAULT_TIMEOUT": 60,
         "CACHE_KEY_PREFIX": "superset_data_",
         "CACHE_REDIS_HOST": CACHE_REDIS_HOST,
         "CACHE_REDIS_PORT": CACHE_REDIS_PORT,

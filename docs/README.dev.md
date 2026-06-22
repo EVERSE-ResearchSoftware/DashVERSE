@@ -2,16 +2,32 @@
 
 ## Requirements
 
+Tools:
+
 - [just](https://github.com/casey/just)
 - [OpenTofu (1.6+) or Terraform (1.6+)]()
 - [kubectl (1.28+)]()
 - [helm (3.0+)](https://helm.sh/docs/intro/install)
-- [minikube (1.30+)](https://minikube.sigs.k8s.io/docs/start)
+- [minikube (1.30+)](https://minikube.sigs.k8s.io/docs/start) -- both `env=local` and `env=production` run on minikube
 - [Docker](https://docs.docker.com/engine/install) or [Podman](https://podman.io/docs/installation)
 - [Ansible (2.9+)]()
 - [Python](https://www.python.org/downloads)
+- standard shell utils: `curl`, `jq`, `nc`/`netcat`, `base64` (preflight check verifies these are on PATH)
 
-If you have Nix installed, all dependencies are provided via `nix develop`.
+System:
+
+- **Linux with systemd** is required on the host running `just deploy`. The
+  deploy installs a **systemd-user unit** (`dashverse-port-forward.service`)
+  that keeps `kubectl port-forward` alive across pod rollouts. macOS and WSL1
+  hosts skip the unit install with a warning -- you'll need to keep
+  `just port-forward` running in a terminal yourself.
+- On Linux, run `loginctl enable-linger $USER` once so the unit keeps
+  running when you're logged out (the deploy does this automatically if
+  `loginctl` is on PATH).
+- For production, a Cloudflare Tunnel (`cloudflared`) typically routes
+  public hostnames to `localhost` ports -- managed outside this repo.
+
+If you have Nix installed, all the tool dependencies are provided via `nix develop`.
 
 ## Deployment configurations
 
@@ -19,15 +35,34 @@ The deployment settings for both local (testing) and production environments can
 
 ## Deployment
 
-TLDR:
-  just destroy-all          # tear down everything including minikube
-  minikube start            # if needed
-  just deploy               # build images + tofu apply
-  just sync-apply           # download EVERSE indicators/dimensions + import
-  just seed-data            # import sample assessment data
-  just port-forward         # in another terminal -- keep it running
-  just setup-dashboards     # configure Superset (dataset -> chart ->
-  dashboard imports + normalize)
+TLDR -- single command from a fresh host:
+
+```
+just deploy                  # local minikube
+just env=production deploy   # production VM
+```
+
+The recipe runs preflight checks (`check-deps`, `check-minikube`), builds
+images straight into minikube, applies Terraform (including the
+schema-apply Job that reconciles all SQL files), installs the port-forward
+systemd unit, polls Superset's `/health`, triggers a one-shot sync of the
+EVERSE indicators/dimensions, and finally hands off to Ansible to import
+dashboards + flush the chart cache.
+
+Standalone helpers if you need to run individual phases:
+
+```
+just port-forward-install    # (re)install the systemd-user port-forward unit
+just port-forward-status     # one-line state of the unit
+just trigger-sync            # one-shot dimensions/indicators sync
+just setup-dashboards        # Ansible: dataset + chart + dashboard imports + cache flush
+```
+
+Tear it all down:
+
+```
+just destroy-all             # destroy services + delete the minikube cluster
+```
 
 ### Quick Start
 

@@ -1,6 +1,7 @@
-slice_name: Total Software Projects
-description: Count of distinct software projects registered for assessment in DashVERSE.
-  Use as the denominator when interpreting per-project metrics elsewhere on this dashboard.
+slice_name: Total Software
+description: Count of distinct software assessed in DashVERSE (one entry per
+  software name across all assessments). Distinct from DashVERSE "projects",
+  which group software for visibility and ownership.
 certified_by: null
 certification_details: null
 viz_type: big_number_total
@@ -13,7 +14,7 @@ params:
     aggregate: COUNT_DISTINCT
   header_font_size: 0.4
   subheader_font_size: 0.15
-  subheader: Software Projects Registered
+  subheader: Distinct Software Assessed
   color_picker:
     r: 0
     g: 158
