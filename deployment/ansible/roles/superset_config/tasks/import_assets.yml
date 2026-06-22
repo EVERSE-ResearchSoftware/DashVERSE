@@ -48,6 +48,32 @@
   debug:
     var: superset_assets_import.stdout_lines
 
+- name: Invalidate Superset chart-data cache for all DashVERSE datasets
+  shell: |
+    curl -s -X POST "{{ superset_api }}/cachekey/invalidate" \
+      -H "Authorization: Bearer {{ access_token }}" \
+      -H "Cookie: {{ session_cookie }}" \
+      -H "X-CSRFToken: {{ csrf_token }}" \
+      -H "Content-Type: application/json" \
+      -d '{"datasource_uids": [
+        "36f136b1-53e0-41c9-9f21-180bdea10683__table",
+        "9ccd1028-35e4-4b23-9d3b-178fac4ed156__table",
+        "4372e3b3-6fa2-4369-b068-74204fa4d16f__table",
+        "3a34e152-6e74-46ce-8f6c-14189a402411__table",
+        "164f117c-f8f7-42df-88d4-445b1159d457__table",
+        "eacc0b0c-6e6c-4c75-84c2-115ef1ffc527__table",
+        "6ac66a0a-6568-4438-83cf-9ff9e634dab1__table",
+        "354c08ce-1f0c-447f-b414-7c8d1885a022__table"
+      ]}' \
+      -w "\nHTTP_STATUS:%{http_code}\n"
+  register: superset_cache_invalidate
+  changed_when: "'HTTP_STATUS:200' in superset_cache_invalidate.stdout or 'HTTP_STATUS:201' in superset_cache_invalidate.stdout"
+  failed_when: false   # cache bust failing should not fail the whole setup
+
+- name: Show cache invalidation result
+  debug:
+    var: superset_cache_invalidate.stdout_lines
+
 - name: Clean up temp bundles
   file:
     path: "{{ item }}"

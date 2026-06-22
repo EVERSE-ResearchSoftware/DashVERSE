@@ -242,6 +242,8 @@ def _superset_invalidate_datasets(uuids: list[str]) -> None:
 _PROJECT_AWARE_DATASET_UUIDS = [
     "36f136b1-53e0-41c9-9f21-180bdea10683",
     "9ccd1028-35e4-4b23-9d3b-178fac4ed156",
+    "4372e3b3-6fa2-4369-b068-74204fa4d16f",
+    "3a34e152-6e74-46ce-8f6c-14189a402411",
 ]
 
 

@@ -53,7 +53,23 @@ deploy: check-deps check-minikube build-backend build-frontend
     @echo "waiting for superset deployment to roll out..."
     @kubectl -n {{ns}} rollout status deploy/superset --timeout=5m
     @just wait-superset
+    @just trigger-sync
     @just setup-dashboards
+
+trigger-sync:
+    #!/usr/bin/env bash
+    job_name="sync-bootstrap-$(date +%s)"
+    echo "creating one-shot sync job: $job_name"
+    if ! kubectl -n {{ns}} create job "$job_name" --from=cronjob/everse-sync 2>&1; then
+        echo "warning: could not create sync job -- catalog may stay empty" >&2
+        exit 0
+    fi
+    echo "waiting for sync to complete (timeout 5m)..."
+    if ! kubectl -n {{ns}} wait --for=condition=complete --timeout=5m "job/$job_name" 2>&1; then
+        echo "warning: sync did not finish in 5m; check 'kubectl -n {{ns}} logs job/$job_name'" >&2
+        exit 0
+    fi
+    echo "  sync complete"
 
 wait-superset:
     #!/usr/bin/env bash
@@ -102,7 +118,24 @@ port-forward:
         while true; do
             kubectl port-forward --address {{forward_address}} -n {{ns}} \
                 "svc/$svc" "$port:$port" 2>&1 \
-                | sed -u "s/^/[$svc] /" || true
+                | sed -u "s/^/[$svc] /" &
+            local pid=$!
+            local fail=0
+            while kill -0 "$pid" 2>/dev/null; do
+                sleep 10
+                if nc -z {{forward_address}} "$port" 2>/dev/null; then
+                    fail=0
+                else
+                    fail=$((fail+1))
+                    if [ "$fail" -ge 3 ]; then
+                        echo "[$svc] half-dead on {{forward_address}}:$port -- reconnecting"
+                        pkill -TERM -P "$pid" 2>/dev/null || true
+                        kill -TERM "$pid" 2>/dev/null || true
+                        break
+                    fi
+                fi
+            done
+            wait "$pid" 2>/dev/null || true
             echo "[$svc] disconnected -- retrying in 2s"
             sleep 2
         done
@@ -144,7 +177,9 @@ port-forward-install:
         loginctl enable-linger "$(id -un)" >/dev/null 2>&1 || true
     fi
     systemctl --user daemon-reload
-    systemctl --user enable --now dashverse-port-forward.service
+    systemctl --user enable dashverse-port-forward.service
+    pkill -f 'kubectl.*port-forward' 2>/dev/null || true
+    systemctl --user restart dashverse-port-forward.service
     echo "installed ${UNIT_PATH}"
     sleep 1
     state=$(systemctl --user is-active dashverse-port-forward.service 2>/dev/null || true)

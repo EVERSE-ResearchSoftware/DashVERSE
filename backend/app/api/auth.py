@@ -56,7 +56,7 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)) -> UserR
         default_project = Project(
             name=f"{new_user.username}'s project",
             owner_user_id=new_user.id,
-            visibility="private",
+            visibility="public",
         )
         db.add(default_project)
         db.commit()

@@ -20,6 +20,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA api GRANT USAGE, SELECT ON SEQUENCES TO web_u
 GRANT USAGE ON SCHEMA auth TO web_anon, web_user;
 GRANT SELECT ON auth.projects TO web_anon, web_user;
 GRANT SELECT ON projects TO web_anon, web_user;
+GRANT SELECT (id, username) ON auth.users TO web_anon, web_user;
 
 GRANT EXECUTE ON FUNCTION current_user_id() TO web_anon, web_user;
 GRANT EXECUTE ON FUNCTION is_authenticated() TO web_anon, web_user;
