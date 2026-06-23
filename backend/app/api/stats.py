@@ -64,22 +64,35 @@ def home_stats(
     mine = db.execute(
         text(
             """
+            WITH my_checks AS (
+              SELECT outcome
+              FROM api.assessment_checks
+              WHERE author_user_id = :uid
+            )
             SELECT
               (SELECT COUNT(*) FROM auth.projects
-                WHERE owner_user_id = :uid) AS my_projects,
+                WHERE owner_user_id = :uid)              AS my_projects,
               (SELECT COUNT(DISTINCT software_name)
                 FROM api.assessment_checks
-                WHERE author_user_id = :uid)        AS my_software,
+                WHERE author_user_id = :uid)             AS my_software,
               (SELECT COUNT(DISTINCT assessment_id)
                 FROM api.assessment_checks
-                WHERE author_user_id = :uid)        AS my_assessments,
+                WHERE author_user_id = :uid)             AS my_assessments,
               (SELECT MAX(assessed_at)
                 FROM api.assessment_checks
-                WHERE author_user_id = :uid)        AS my_last_assessment_at
+                WHERE author_user_id = :uid)             AS my_last_assessment_at,
+              (SELECT COUNT(*) FROM my_checks)           AS my_checks,
+              (SELECT COUNT(*) FROM my_checks
+                WHERE outcome = 'Pass')                  AS my_passed,
+              (SELECT COUNT(*) FROM my_checks
+                WHERE outcome = 'Fail')                  AS my_failed
             """
         ),
         {"uid": user.id},
     ).first()
+    my_passed = mine.my_passed or 0
+    my_failed = mine.my_failed or 0
+    my_decided = my_passed + my_failed
     payload.update(
         my_projects=mine.my_projects or 0,
         my_software=mine.my_software or 0,
@@ -88,5 +101,9 @@ def home_stats(
             mine.my_last_assessment_at.isoformat()
             if mine.my_last_assessment_at else None
         ),
+        my_checks=mine.my_checks or 0,
+        my_passed=my_passed,
+        my_failed=my_failed,
+        my_pass_rate=(my_passed / my_decided) if my_decided else None,
     )
     return payload

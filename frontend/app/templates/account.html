@@ -8,6 +8,78 @@
     <p>Manage your account and API tokens.</p>
 </section>
 
+{% set s = stats or {} %}
+{% set pass_pct = (s.my_pass_rate * 100) | round(1) if s.my_pass_rate is not none else None %}
+<section class="account-stats" aria-label="Your assessment stats">
+    <div class="stat-card stat-neutral">
+        <div class="stat-value">{{ '{:,}'.format(s.my_assessments | default(0)) }}</div>
+        <div class="stat-label">Assessments</div>
+    </div>
+    <div class="stat-card stat-neutral">
+        <div class="stat-value">{{ '{:,}'.format(s.my_projects | default(0)) }}</div>
+        <div class="stat-label">Projects</div>
+    </div>
+    <div class="stat-card stat-neutral">
+        <div class="stat-value">{{ '{:,}'.format(s.my_software | default(0)) }}</div>
+        <div class="stat-label">Software</div>
+    </div>
+    <div class="stat-card stat-neutral">
+        <div class="stat-value">{{ '{:,}'.format(s.my_checks | default(0)) }}</div>
+        <div class="stat-label">Checks</div>
+    </div>
+    <div class="stat-card stat-positive">
+        <div class="stat-value">{{ '{:,}'.format(s.my_passed | default(0)) }}</div>
+        <div class="stat-label">Passed</div>
+    </div>
+    <div class="stat-card stat-negative">
+        <div class="stat-value">{{ '{:,}'.format(s.my_failed | default(0)) }}</div>
+        <div class="stat-label">Failed</div>
+    </div>
+    <div class="stat-card stat-neutral">
+        <div class="stat-value">{% if pass_pct is none %}&mdash;{% else %}{{ pass_pct }}%{% endif %}</div>
+        <div class="stat-label">Pass Rate</div>
+    </div>
+</section>
+
+<style>
+.account-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+.stat-card {
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+    padding: 0.95rem 1.1rem;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+}
+.stat-value {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+.stat-label {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+.stat-neutral  .stat-value { color: #0072b2; }
+.stat-positive .stat-value { color: #009e73; }
+.stat-negative .stat-value { color: #d55e00; }
+</style>
+
 {% if error %}
 <section class="about" style="text-align: left;">
     <p style="color: #c0392b; margin: 0;">{{ error }}</p>

@@ -1,6 +1,5 @@
 slice_name: Total Checks
-description: Total number of individual quality checks executed across all assessments.
-  Acts as the atomic-unit denominator when interpreting per-check ratios elsewhere.
+description: Total number of individual quality checks executed across all assessments. Acts as the atomic-unit denominator when interpreting per-check ratios elsewhere.
 certified_by: null
 certification_details: null
 viz_type: big_number_total
@@ -14,9 +13,10 @@ params:
   subheader: Total Checks Performed
   color_picker:
     r: 0
-    g: 158
-    b: 115
+    g: 114
+    b: 178
     a: 1
+  number_format: ',d'
 query_context: null
 cache_timeout: null
 uuid: 659bb956-250c-4d2b-86c3-aa95ad8add7c

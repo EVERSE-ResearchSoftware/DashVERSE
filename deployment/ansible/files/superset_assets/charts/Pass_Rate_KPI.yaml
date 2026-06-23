@@ -1,8 +1,5 @@
 slice_name: Pass Rate
-description: Share of checks returning Pass out of the checks that actually
-  produced a Pass or Fail verdict. Not Applicable rows are excluded from
-  the denominator so a plugin that doesn't apply to a project doesn't
-  drag the rate down.
+description: Share of checks returning Pass out of the checks that actually produced a Pass or Fail verdict. Not Applicable rows are excluded from the denominator so a plugin that doesn't apply to a project doesn't drag the rate down.
 certified_by: null
 certification_details: null
 viz_type: big_number_total
@@ -10,8 +7,7 @@ params:
   metric:
     label: pass_rate
     expressionType: SQL
-    sqlExpression: COUNT(*) FILTER (WHERE outcome = 'Pass') * 1.0
-      / NULLIF(COUNT(*) FILTER (WHERE outcome IN ('Pass', 'Fail')), 0)
+    sqlExpression: COUNT(*) FILTER (WHERE outcome = 'Pass') * 1.0 / NULLIF(COUNT(*) FILTER (WHERE outcome IN ('Pass', 'Fail')), 0)
   header_font_size: 0.25
   subheader_font_size: 0.1
   subheader: ''

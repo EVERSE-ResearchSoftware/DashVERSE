@@ -1,7 +1,7 @@
 dashboard_title: Assessments
 description: null
 css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n/* heatmap charts: leave breathing room below the canvas so x-axis labels stay visible when the\
-  \ description banner is shown */\n#chart-id-207 .chart-container,\n#chart-id-215 .chart-container {\n    padding-bottom: 18px;\n}\n"
+  \ description banner is shown */\n#chart-id-207 .chart-container,\n#chart-id-215 .chart-container {\n    padding-bottom: 18px;\n}\n\n/* KPI card chrome: subtle gradient, hover elevation, consistent inner padding */\n.dashboard-component-chart-holder { transition: box-shadow 0.2s, transform 0.2s; }\n.dashboard-component-chart-holder:hover {\n    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);\n    transform: translateY(-1px);\n}\n.chart-container .big-number-total, .chart-container .big_number_total {\n    background: linear-gradient(135deg, #ffffff, #f8fafc);\n    border-radius: 8px;\n    padding: 8px 10px;\n}\n.chart-container .big-number-total .header-line,\n.chart-container .big_number_total .header-line {\n    font-weight: 700;\n    letter-spacing: -0.01em;\n}\n.chart-container .big-number-total .subheader-line,\n.chart-container .big_number_total .subheader-line {\n    color: #5a6270;\n    text-transform: uppercase;\n    letter-spacing: 0.06em;\n    font-weight: 600;\n}\n"
 slug: assessments
 certified_by: null
 certification_details: null
@@ -38,8 +38,6 @@ position:
     children:
     - ROW-INTRO
     - ROW-HEADER-MD-SECTION-OVERVIEW
-    - ROW-1
-    - ROW-1B
     - ROW-HEADER-MD-SECTION-PROFILE
     - ROW-PROFILE-TREND
     - ROW-3
@@ -66,129 +64,6 @@ position:
     meta:
       text: Dashboard
     type: HEADER
-  CHART-2:
-    id: CHART-2
-    meta:
-      width: 3
-      height: 50
-      chartId: 201
-      sliceName: Assessments
-      uuid: 4d2eaf0a-1a0a-4d44-90c2-e2b13d2c6c9c
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1
-    children: []
-  CHART-3:
-    id: CHART-3
-    meta:
-      width: 3
-      height: 50
-      chartId: 202
-      sliceName: Software in scope
-      uuid: 00896a2d-ac2a-4800-a361-dd9838896222
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1
-    children: []
-  CHART-4:
-    id: CHART-4
-    meta:
-      width: 3
-      height: 50
-      chartId: 203
-      sliceName: Last activity
-      uuid: 810b31f2-2e24-4976-adcb-94575dbdca12
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1
-    children: []
-  CHART-PROJECTS:
-    id: CHART-PROJECTS
-    meta:
-      width: 3
-      height: 50
-      chartId: 250
-      sliceName: Total Projects
-      uuid: 2f5d8c7e-7a3a-4c61-9b1c-9e2f6a9e7b41
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1
-    children: []
-  CHART-PASSRATE:
-    id: CHART-PASSRATE
-    meta:
-      width: 4
-      height: 50
-      chartId: 251
-      sliceName: Pass Rate
-      uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1B
-    children: []
-  CHART-PASSED:
-    id: CHART-PASSED
-    meta:
-      width: 4
-      height: 50
-      chartId: 252
-      sliceName: Passed Checks
-      uuid: 7b9e3a40-b1f2-4d8e-9f7c-5d1e6c4a8b22
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1B
-    children: []
-  CHART-FAILED:
-    id: CHART-FAILED
-    meta:
-      width: 4
-      height: 50
-      chartId: 253
-      sliceName: Failed Checks
-      uuid: c4a9f1b3-2d6e-4b85-aaad-3f7e9c1d5a08
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1B
-    children: []
-  ROW-1:
-    id: ROW-1
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-2
-    - CHART-PROJECTS
-    - CHART-3
-    - CHART-4
-  ROW-1B:
-    id: ROW-1B
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-PASSRATE
-    - CHART-PASSED
-    - CHART-FAILED
   CHART-6:
     id: CHART-6
     meta:
@@ -607,9 +482,6 @@ metadata:
   label_colors: {}
   default_filters: '{}'
   expanded_slices:
-    '201': true
-    '202': true
-    '203': true
     '205': true
     '208': true
     '209': true
@@ -623,92 +495,13 @@ metadata:
     '222': true
     '230': true
     '231': true
-    '250': true
-    '251': true
-    '252': true
-    '253': true
   refresh_frequency: 0
   chart_configuration:
-    '201':
-      id: 201
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 202
-        - 203
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 250
-        - 251
-        - 252
-        - 253
-    '202':
-      id: 202
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 203
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 250
-        - 251
-        - 252
-        - 253
-    '203':
-      id: 203
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 202
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '205':
       id: 205
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 208
         - 209
         - 210
@@ -721,18 +514,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '208':
       id: 208
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 209
         - 210
@@ -745,18 +531,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '209':
       id: 209
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 210
@@ -769,18 +548,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '210':
       id: 210
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -793,18 +565,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '211':
       id: 211
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -817,18 +582,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '213':
       id: 213
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -841,18 +599,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '214':
       id: 214
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -865,18 +616,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '215':
       id: 215
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -889,18 +633,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '220':
       id: 220
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -913,18 +650,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '221':
       id: 221
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -936,18 +666,11 @@ metadata:
         - 222
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '222':
       id: 222
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -960,18 +683,11 @@ metadata:
         - 221
         - 230
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '230':
       id: 230
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -984,18 +700,11 @@ metadata:
         - 221
         - 222
         - 231
-        - 250
-        - 251
-        - 252
-        - 253
     '231':
       id: 231
       crossFilters:
         scope: global
         chartsInScope:
-        - 201
-        - 202
-        - 203
         - 205
         - 208
         - 209
@@ -1008,106 +717,6 @@ metadata:
         - 221
         - 222
         - 230
-        - 250
-        - 251
-        - 252
-        - 253
-    '250':
-      id: 250
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 202
-        - 203
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 251
-        - 252
-        - 253
-    '251':
-      id: 251
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 202
-        - 203
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 250
-        - 252
-        - 253
-    '252':
-      id: 252
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 202
-        - 203
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 250
-        - 251
-        - 253
-    '253':
-      id: 253
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 201
-        - 202
-        - 203
-        - 205
-        - 208
-        - 209
-        - 210
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-        - 250
-        - 251
-        - 252
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -1124,9 +733,6 @@ metadata:
       datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 201
-    - 202
-    - 203
     - 205
     - 208
     - 209
@@ -1137,10 +743,6 @@ metadata:
     - 215
     - 230
     - 231
-    - 250
-    - 251
-    - 252
-    - 253
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -1162,9 +764,6 @@ metadata:
       datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 201
-    - 202
-    - 203
     - 205
     - 208
     - 210
@@ -1174,10 +773,6 @@ metadata:
     - 215
     - 230
     - 231
-    - 250
-    - 251
-    - 252
-    - 253
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -1199,9 +794,6 @@ metadata:
       datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 201
-    - 202
-    - 203
     - 205
     - 208
     - 209
@@ -1212,10 +804,6 @@ metadata:
     - 215
     - 230
     - 231
-    - 250
-    - 251
-    - 252
-    - 253
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -1237,9 +825,6 @@ metadata:
       datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 201
-    - 202
-    - 203
     - 205
     - 208
     - 210
@@ -1249,10 +834,6 @@ metadata:
     - 215
     - 230
     - 231
-    - 250
-    - 251
-    - 252
-    - 253
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -1274,9 +855,6 @@ metadata:
       datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_time
     chartsInScope:
-    - 201
-    - 202
-    - 203
     - 205
     - 208
     - 210
@@ -1286,10 +864,6 @@ metadata:
     - 215
     - 230
     - 231
-    - 250
-    - 251
-    - 252
-    - 253
     controlValues:
       enableEmptyFilter: false
     defaultDataMask:
@@ -1308,9 +882,6 @@ metadata:
       datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
     filterType: filter_select
     chartsInScope:
-    - 201
-    - 202
-    - 203
     - 205
     - 208
     - 210
@@ -1320,10 +891,6 @@ metadata:
     - 215
     - 230
     - 231
-    - 250
-    - 251
-    - 252
-    - 253
     controlValues:
       multiSelect: true
       inverseSelection: false

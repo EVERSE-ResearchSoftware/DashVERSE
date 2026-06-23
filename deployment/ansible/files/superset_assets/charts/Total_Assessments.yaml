@@ -1,6 +1,5 @@
 slice_name: Total Assessments
-description: Total quality assessments submitted across all software. Compare against
-  Total Software Projects to gauge how often each project is being reassessed.
+description: Total quality assessments submitted across all software. Compare against Total Software Projects to gauge how often each project is being reassessed.
 certified_by: null
 certification_details: null
 viz_type: big_number_total
@@ -16,9 +15,11 @@ params:
   subheader: Assessments Completed
   color_picker:
     r: 0
-    g: 158
-    b: 115
+    g: 114
+    b: 178
     a: 1
+  number_format: ',d'
+  viz_type: big_number_total
 query_context: null
 cache_timeout: null
 uuid: 04a5f0a9-87de-4262-a4c9-19eb93052c5a

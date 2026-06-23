@@ -1,6 +1,7 @@
 dashboard_title: Overview
 description: null
-css: "/* Friendlier empty-state styling (matches other dashboards) */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n"
+css: "/* Friendlier empty-state styling (matches other dashboards) */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n\n/* KPI card chrome: subtle gradient, hover elevation, consistent inner\
+  \ padding */\n.dashboard-component-chart-holder { transition: box-shadow 0.2s, transform 0.2s; }\n.dashboard-component-chart-holder:hover {\n    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);\n    transform: translateY(-1px);\n}\n.chart-container .big-number-total, .chart-container .big_number_total {\n    background: linear-gradient(135deg, #ffffff, #f8fafc);\n    border-radius: 8px;\n    padding: 8px 10px;\n}\n.chart-container .big-number-total .header-line,\n.chart-container .big_number_total .header-line {\n    font-weight: 700;\n    letter-spacing: -0.01em;\n}\n.chart-container .big-number-total .subheader-line,\n.chart-container .big_number_total .subheader-line {\n    color: #5a6270;\n    text-transform: uppercase;\n    letter-spacing: 0.06em;\n    font-weight: 600;\n}\n"
 slug: global
 certified_by: null
 certification_details: null
@@ -57,7 +58,7 @@ position:
     id: CHART-1
     meta:
       width: 3
-      height: 50
+      height: 40
       chartId: 100
       sliceName: Total Assessments
       uuid: 04a5f0a9-87de-4262-a4c9-19eb93052c5a
@@ -71,7 +72,7 @@ position:
     id: CHART-2
     meta:
       width: 3
-      height: 50
+      height: 40
       chartId: 101
       sliceName: Total Software
       uuid: 00896a2d-ac2a-4800-a361-dd9838896222
@@ -85,7 +86,7 @@ position:
     id: CHART-3
     meta:
       width: 4
-      height: 50
+      height: 40
       chartId: 102
       sliceName: Pass Rate
       uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
@@ -99,7 +100,7 @@ position:
     id: CHART-4
     meta:
       width: 3
-      height: 50
+      height: 40
       chartId: 103
       sliceName: Total Checks
       uuid: 659bb956-250c-4d2b-86c3-aa95ad8add7c
@@ -113,7 +114,7 @@ position:
     id: CHART-5
     meta:
       width: 3
-      height: 50
+      height: 40
       chartId: 104
       sliceName: Total Projects
       uuid: 2f5d8c7e-7a3a-4c61-9b1c-9e2f6a9e7b41
@@ -127,7 +128,7 @@ position:
     id: CHART-6
     meta:
       width: 4
-      height: 50
+      height: 40
       chartId: 105
       sliceName: Passed Checks
       uuid: 7b9e3a40-b1f2-4d8e-9f7c-5d1e6c4a8b22
@@ -141,7 +142,7 @@ position:
     id: CHART-7
     meta:
       width: 4
-      height: 50
+      height: 40
       chartId: 106
       sliceName: Failed Checks
       uuid: c4a9f1b3-2d6e-4b85-aaad-3f7e9c1d5a08

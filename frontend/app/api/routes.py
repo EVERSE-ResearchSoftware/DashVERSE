@@ -787,6 +787,7 @@ async def _account_context(request: Request, user: dict, *, new_token: str | Non
     software = (software_body or {}).get("software", []) if isinstance(software_body, dict) else []
     me_body, _, _ = me_r
     profile = me_body if isinstance(me_body, dict) else {}
+    stats = await _home_stats(user)
     return {
         "request": request,
         "user": user,
@@ -799,6 +800,7 @@ async def _account_context(request: Request, user: dict, *, new_token: str | Non
         "list_status": status,
         "projects": projects,
         "software": software,
+        "stats": stats,
         "dashverse_api_url": settings.postgrest_external_url,
     }
 
