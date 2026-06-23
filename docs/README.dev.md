@@ -74,16 +74,24 @@ the running stack:
 | [EVERSE-ResearchSoftware/indicators](https://github.com/EVERSE-ResearchSoftware/indicators) | The `everse-sync` CronJob populates the `dimensions` + `indicators` reference tables. | Tracks `main` | Set `indicators_ref` in `production.tfvars` (or any tfvars) to a commit SHA, then `just env=production deploy`. The next sync run fetches catalog files at exactly that ref. |
 | [EVERSE-ResearchSoftware/QualityPipelines](https://github.com/EVERSE-ResearchSoftware/QualityPipelines) (`resqui`) | The assessment-runner script installs and runs `resqui` against repositories. | Latest commit on `main` | Set `RESQUI_SPEC` in `scripts/.env` (or as a shell env var) to a `git+https://...QualityPipelines.git@<sha>` URL. The script reinstalls `resqui` from that pinned ref in the venv it builds. |
 
-Example: pin both for the next prod deploy.
+Example -- the values currently in tree (refresh by re-running the
+`curl ... /repos/<repo>/commits/main` checks below when bumping):
 
 ```hcl
 # deployment/terraform/environments/production.tfvars
-indicators_ref = "9c7f4b3a3e10..."   # replace with a verified SHA
+indicators_ref = "5599beb2551a05d0ee2845fcd57c6270b8085e14"
 ```
 
 ```bash
-# scripts/.env
-RESQUI_SPEC="git+https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git@a1b2c3d4..."
+# scripts/.env on the prod VM
+RESQUI_SPEC="git+https://github.com/EVERSE-ResearchSoftware/QualityPipelines.git@a6426f9b3b7abd3de123f8b2a85c34d84d7dfa6f"
+```
+
+To check what the upstream `main` is at right now:
+
+```bash
+curl -sS https://api.github.com/repos/EVERSE-ResearchSoftware/indicators/commits/main         | jq -r '.sha + "  " + .commit.committer.date'
+curl -sS https://api.github.com/repos/EVERSE-ResearchSoftware/QualityPipelines/commits/main   | jq -r '.sha + "  " + .commit.committer.date'
 ```
 
 Why this matters: upstream is free to rename indicators, change identifier

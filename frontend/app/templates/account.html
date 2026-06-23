@@ -119,6 +119,9 @@
                     </form>
                 </td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
+                    <button type="button" class="btn-secondary share-btn" style="border: 0; cursor: pointer;"
+                        data-share-path="/?software={{ sw.software_name|urlencode }}"
+                        data-share-label="{{ sw.software_name }}">Share</button>
                     <form method="post" action="/account/software/delete" style="display: inline;" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
                         <input type="hidden" name="software_name" value="{{ sw.software_name }}">
                         <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete all</button>
@@ -171,6 +174,9 @@
                 </td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
+                    <button type="button" class="btn-secondary share-btn" style="border: 0; cursor: pointer;"
+                        data-share-path="/?project={{ p.name|urlencode }}"
+                        data-share-label="{{ p.name }}">Share</button>
                     <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline-flex; gap: 0.3rem;">
                         <select name="visibility" style="padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
                             <option value="private" {% if p.visibility == 'private' %}selected{% endif %}>Private</option>
@@ -606,6 +612,125 @@ jobs:
                 p.classList.toggle('hidden', p.id !== 'tab-' + target);
             });
         });
+    });
+})();
+</script>
+
+<dialog id="share-dialog" class="share-dialog" aria-labelledby="share-dialog-title">
+    <h3 id="share-dialog-title">Share link</h3>
+    <p class="share-dialog-body">Copy this URL and send it to whoever you want to share with. They will see whatever the current visibility setting allows them to see.</p>
+    <div class="share-dialog-input">
+        <input id="share-url-input" type="text" readonly>
+        <button type="button" id="share-copy-btn" class="btn-primary">Copy</button>
+    </div>
+    <div class="share-dialog-actions">
+        <button type="button" id="share-close-btn" class="btn-secondary">Close</button>
+    </div>
+</dialog>
+
+<style>
+.share-dialog {
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1.5rem;
+    max-width: 560px;
+    min-width: 320px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-dropdown);
+    color: var(--color-text);
+}
+.share-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.4);
+}
+.share-dialog h3 {
+    margin: 0 0 0.45rem;
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+.share-dialog-body {
+    color: var(--color-text-muted);
+    margin: 0 0 0.85rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+.share-dialog-input {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+}
+.share-dialog-input input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.88rem;
+}
+.share-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+.share-btn {
+    margin-right: 0.35rem;
+}
+</style>
+
+<script>
+(function() {
+    var dialog   = document.getElementById('share-dialog');
+    var titleEl  = document.getElementById('share-dialog-title');
+    var input    = document.getElementById('share-url-input');
+    var copyBtn  = document.getElementById('share-copy-btn');
+    var closeBtn = document.getElementById('share-close-btn');
+    if (!dialog) return;
+
+    function resetCopyBtn() {
+        copyBtn.textContent = 'Copy';
+        copyBtn.classList.remove('copy-btn-success');
+    }
+
+    function showFeedback(label) {
+        copyBtn.textContent = label;
+        copyBtn.classList.add('copy-btn-success');
+        setTimeout(resetCopyBtn, 1600);
+    }
+
+    document.querySelectorAll('.share-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var label = btn.dataset.shareLabel || 'this resource';
+            var url   = window.location.origin + btn.dataset.sharePath;
+            titleEl.textContent = 'Share link to ' + label;
+            input.value = url;
+            resetCopyBtn();
+            if (typeof dialog.showModal === 'function') {
+                dialog.showModal();
+            } else {
+                dialog.setAttribute('open', '');
+            }
+            setTimeout(function() { input.select(); }, 30);
+        });
+    });
+
+    copyBtn.addEventListener('click', function() {
+        var done = function() { showFeedback('Copied'); };
+        var fail = function() { copyBtn.textContent = 'Copy failed'; };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(input.value).then(done, function() {
+                // fall back to execCommand if clipboard API was blocked
+                input.select();
+                try { document.execCommand('copy'); done(); } catch (e) { fail(); }
+            });
+        } else {
+            input.select();
+            try { document.execCommand('copy'); done(); } catch (e) { fail(); }
+        }
+    });
+
+    closeBtn.addEventListener('click', function() { dialog.close(); });
+    // close on backdrop click
+    dialog.addEventListener('click', function(ev) {
+        if (ev.target === dialog) { dialog.close(); }
     });
 })();
 </script>
