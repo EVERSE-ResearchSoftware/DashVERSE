@@ -12,8 +12,8 @@ params:
     column:
       column_name: software_name
     aggregate: COUNT_DISTINCT
-  header_font_size: 0.4
-  subheader_font_size: 0.15
+  header_font_size: 0.25
+  subheader_font_size: 0.1
   subheader: Distinct Software Assessed
   color_picker:
     r: 0

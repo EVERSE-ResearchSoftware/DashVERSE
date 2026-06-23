@@ -1,0 +1,25 @@
+slice_name: Failed Checks
+description: Count of checks whose outcome is Fail. Pairs with "Passed
+  Checks" and "Pass Rate" so the headline percentage has its raw
+  components visible alongside it.
+certified_by: null
+certification_details: null
+viz_type: big_number_total
+params:
+  metric:
+    label: failed
+    expressionType: SQL
+    sqlExpression: COUNT(*) FILTER (WHERE outcome = 'Fail')
+  header_font_size: 0.25
+  subheader_font_size: 0.1
+  subheader: Failed
+  color_picker:
+    r: 213
+    g: 94
+    b: 0
+    a: 1
+query_context: null
+cache_timeout: null
+uuid: c4a9f1b3-2d6e-4b85-aaad-3f7e9c1d5a08
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
