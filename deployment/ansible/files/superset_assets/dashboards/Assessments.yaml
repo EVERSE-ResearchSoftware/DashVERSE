@@ -1040,4 +1040,37 @@ metadata:
     defaultDataMask:
       filterState:
         value: null
+  - id: NATIVE_FILTER-author
+    name: Author
+    type: NATIVE_FILTER
+    scope:
+      excluded: []
+      rootPath:
+      - ROOT_ID
+    targets:
+    - column:
+        name: author_full_name
+      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
+    filterType: filter_select
+    chartsInScope:
+    - 201
+    - 202
+    - 203
+    - 205
+    - 208
+    - 210
+    - 211
+    - 213
+    - 214
+    - 215
+    - 230
+    - 231
+    controlValues:
+      multiSelect: true
+      inverseSelection: false
+      searchAllOptions: false
+      enableEmptyFilter: false
+    defaultDataMask:
+      filterState:
+        value: null
 version: 1.0.0

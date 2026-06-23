@@ -88,7 +88,7 @@
                             <option value="{{ p.id }}" {% if p.id == sw.project_id %}selected{% endif %}>{{ p.name }} ({{ p.visibility }})</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Move</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Move</button>
                     </form>
                     {% else %}
                     <span style="color: var(--color-text-muted);">
@@ -115,16 +115,16 @@
                             <option value="authenticated" {% if sw.visibility == 'authenticated' %}selected{% endif %}>Authenticated (logged-in users)</option>
                             <option value="public" {% if sw.visibility == 'public' %}selected{% endif %}>Public (anyone)</option>
                         </select>
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Set</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Set</button>
                     </form>
                 </td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
-                    <button type="button" class="btn-secondary share-btn" style="border: 0; cursor: pointer;"
+                    <button type="button" class="btn-secondary share-btn" style="cursor: pointer;"
                         data-share-path="/?software={{ sw.software_name|urlencode }}"
                         data-share-label="{{ sw.software_name }}">Share</button>
                     <form method="post" action="/account/software/delete" style="display: inline;" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
                         <input type="hidden" name="software_name" value="{{ sw.software_name }}">
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete all</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Delete all</button>
                     </form>
                 </td>
             </tr>
@@ -158,7 +158,7 @@
                     <a href="/?project={{ p.name|urlencode }}" class="link-pill" title="View assessments in {{ p.name }}" style="display: inline-block; margin-bottom: 0.4rem;">{{ p.name }}</a>
                     <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.4rem;">
                         <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.35rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer; font-size: 0.85rem; padding: 0.35rem 0.75rem;" title="Rename">Rename</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer; font-size: 0.85rem; padding: 0.35rem 0.75rem;" title="Rename">Rename</button>
                     </form>
                 </td>
                 <td style="padding: 0.75rem;">
@@ -174,7 +174,7 @@
                 </td>
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
-                    <button type="button" class="btn-secondary share-btn" style="border: 0; cursor: pointer;"
+                    <button type="button" class="btn-secondary share-btn" style="cursor: pointer;"
                         data-share-path="/?project={{ p.name|urlencode }}"
                         data-share-label="{{ p.name }}">Share</button>
                     <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline-flex; gap: 0.3rem;">
@@ -183,13 +183,13 @@
                             <option value="authenticated" {% if p.visibility == 'authenticated' %}selected{% endif %}>Authenticated</option>
                             <option value="public" {% if p.visibility == 'public' %}selected{% endif %}>Public</option>
                         </select>
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Set</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Set</button>
                     </form>
                     {% if sw_in_project %}
-                    <button type="button" class="btn-secondary" style="border: 0; cursor: not-allowed; opacity: 0.5;" title="Cannot delete: {{ sw_in_project|length }} software still assigned. Move or delete them first." disabled>Delete</button>
+                    <button type="button" class="btn-secondary" style="cursor: not-allowed; opacity: 0.5;" title="Cannot delete: {{ sw_in_project|length }} software still assigned. Move or delete them first." disabled>Delete</button>
                     {% else %}
                     <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit='return confirm("Delete project " + {{ p.name|tojson }} + "? This cannot be undone.");'>
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Delete</button>
                     </form>
                     {% endif %}
                 </td>
@@ -214,7 +214,7 @@
                 <option value="public">Public (anyone)</option>
             </select>
         </label>
-        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Create project</button>
+        <button type="submit" class="btn-primary" style="cursor: pointer;">Create project</button>
     </form>
 </section>
 
@@ -248,7 +248,7 @@
                 <option value="90" selected>90 days (max)</option>
             </select>
         </label>
-        <button type="submit" class="btn-primary" style="border: 0; cursor: pointer;">Generate token</button>
+        <button type="submit" class="btn-primary" style="cursor: pointer;">Generate token</button>
     </form>
 
     {% if new_token %}
@@ -389,11 +389,11 @@
                 <td style="padding: 0.75rem; text-align: right;">
                     {% if not token.is_revoked %}
                     <form method="post" action="/account/tokens/{{ token.id }}/revoke" style="display: inline;" onsubmit="return confirm('Revoke this token?');">
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Revoke</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Revoke</button>
                     </form>
                     {% else %}
                     <form method="post" action="/account/tokens/{{ token.id }}/delete" style="display: inline;" onsubmit="return confirm('Permanently delete this revoked token?');">
-                        <button type="submit" class="btn-secondary" style="border: 0; cursor: pointer;">Delete</button>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Delete</button>
                     </form>
                     {% endif %}
                 </td>
@@ -673,6 +673,23 @@ jobs:
 }
 .share-btn {
     margin-right: 0.35rem;
+}
+
+/* Bottom-align every table cell on /account so rows that mix
+   single-button cells with stacked status+form cells look anchored
+   to the same baseline. The default <td> alignment is `middle`
+   which makes lone buttons appear to float at the row's vertical
+   centre while stacked controls fill the cell top-to-bottom. */
+.account-section table tbody td {
+    vertical-align: bottom;
+}
+
+/* Inline forms (visibility / token actions / move-to-project) become
+   inline-flex so their select + button share a baseline rather than
+   stacking. Inline-flex also lets us hand the wrapper a small
+   bottom margin without disturbing inline siblings. */
+.account-section table tbody td > form {
+    vertical-align: bottom;
 }
 </style>
 
