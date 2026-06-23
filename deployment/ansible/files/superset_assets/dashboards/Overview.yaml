@@ -38,7 +38,6 @@ position:
     children:
     - ROW-INTRO
     - ROW-1
-    - ROW-1B
     - ROW-3
     - ROW-4
     - ROW-5
@@ -57,7 +56,7 @@ position:
   CHART-1:
     id: CHART-1
     meta:
-      width: 3
+      width: 4
       height: 40
       chartId: 100
       sliceName: Total Assessments
@@ -71,7 +70,7 @@ position:
   CHART-2:
     id: CHART-2
     meta:
-      width: 3
+      width: 4
       height: 40
       chartId: 101
       sliceName: Total Software
@@ -82,38 +81,10 @@ position:
     - GRID_ID
     - ROW-1
     children: []
-  CHART-3:
-    id: CHART-3
-    meta:
-      width: 4
-      height: 40
-      chartId: 102
-      sliceName: Pass Rate
-      uuid: 8e99c80d-7f72-4715-b6f6-6bb02841a44e
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1B
-    children: []
-  CHART-4:
-    id: CHART-4
-    meta:
-      width: 3
-      height: 40
-      chartId: 103
-      sliceName: Total Checks
-      uuid: 659bb956-250c-4d2b-86c3-aa95ad8add7c
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1
-    children: []
   CHART-5:
     id: CHART-5
     meta:
-      width: 3
+      width: 4
       height: 40
       chartId: 104
       sliceName: Total Projects
@@ -123,34 +94,6 @@ position:
     - ROOT_ID
     - GRID_ID
     - ROW-1
-    children: []
-  CHART-6:
-    id: CHART-6
-    meta:
-      width: 4
-      height: 40
-      chartId: 105
-      sliceName: Passed Checks
-      uuid: 7b9e3a40-b1f2-4d8e-9f7c-5d1e6c4a8b22
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1B
-    children: []
-  CHART-7:
-    id: CHART-7
-    meta:
-      width: 4
-      height: 40
-      chartId: 106
-      sliceName: Failed Checks
-      uuid: c4a9f1b3-2d6e-4b85-aaad-3f7e9c1d5a08
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-1B
     children: []
   ROW-1:
     id: ROW-1
@@ -164,19 +107,6 @@ position:
     - CHART-1
     - CHART-5
     - CHART-2
-    - CHART-4
-  ROW-1B:
-    id: ROW-1B
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-3
-    - CHART-6
-    - CHART-7
   CHART-11:
     id: CHART-11
     meta:
@@ -304,16 +234,12 @@ metadata:
   expanded_slices:
     '100': true
     '101': true
-    '102': true
-    '103': true
     '110': true
     '111': true
     '112': true
     '114': true
     '120': true
     '104': true
-    '105': true
-    '106': true
   refresh_frequency: 0
   chart_configuration:
     '100':
@@ -322,64 +248,24 @@ metadata:
         scope: global
         chartsInScope:
         - 101
-        - 102
-        - 103
         - 110
         - 111
         - 112
         - 114
         - 120
         - 104
-        - 105
-        - 106
     '101':
       id: 101
       crossFilters:
         scope: global
         chartsInScope:
         - 100
-        - 102
-        - 103
         - 110
         - 111
         - 112
         - 114
         - 120
         - 104
-        - 105
-        - 106
-    '102':
-      id: 102
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 100
-        - 101
-        - 103
-        - 110
-        - 111
-        - 112
-        - 114
-        - 120
-        - 104
-        - 105
-        - 106
-    '103':
-      id: 103
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 100
-        - 101
-        - 102
-        - 110
-        - 111
-        - 112
-        - 114
-        - 120
-        - 104
-        - 105
-        - 106
     '110':
       id: 110
       crossFilters:
@@ -387,15 +273,11 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 102
-        - 103
         - 111
         - 112
         - 114
         - 120
         - 104
-        - 105
-        - 106
     '111':
       id: 111
       crossFilters:
@@ -403,15 +285,11 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 102
-        - 103
         - 110
         - 112
         - 114
         - 120
         - 104
-        - 105
-        - 106
     '112':
       id: 112
       crossFilters:
@@ -419,15 +297,11 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 102
-        - 103
         - 110
         - 111
         - 114
         - 120
         - 104
-        - 105
-        - 106
     '114':
       id: 114
       crossFilters:
@@ -435,15 +309,11 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 102
-        - 103
         - 110
         - 111
         - 112
         - 120
         - 104
-        - 105
-        - 106
     '120':
       id: 120
       crossFilters:
@@ -451,15 +321,11 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 102
-        - 103
         - 110
         - 111
         - 112
         - 114
         - 104
-        - 105
-        - 106
     '104':
       id: 104
       crossFilters:
@@ -467,42 +333,6 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 102
-        - 103
-        - 105
-        - 106
-        - 110
-        - 111
-        - 112
-        - 114
-        - 120
-    '105':
-      id: 105
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 100
-        - 101
-        - 102
-        - 103
-        - 104
-        - 106
-        - 110
-        - 111
-        - 112
-        - 114
-        - 120
-    '106':
-      id: 106
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 100
-        - 101
-        - 102
-        - 103
-        - 104
-        - 105
         - 110
         - 111
         - 112
