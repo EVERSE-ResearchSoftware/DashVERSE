@@ -145,7 +145,7 @@
             {% set sw_in_project = software | selectattr('project_id', 'equalto', p.id) | list %}
             <tr style="border-top: 1px solid #e2e8f0;">
                 <td style="padding: 0.5rem 0.75rem;">
-                    <a href="/?project={{ p.name|urlencode }}" class="link-pill" title="View assessments in {{ p.name }}" style="display: inline-block; margin-bottom: 0.4rem;">{{ p.name }}</a>
+                    <a href="/dashboard/assessments?project={{ p.name|urlencode }}" class="link-pill" title="View assessments in {{ p.name }}" style="display: inline-block; margin-bottom: 0.4rem;">{{ p.name }}</a>
                     <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.4rem;">
                         <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.35rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
                         <button type="submit" class="btn-secondary" style="cursor: pointer; font-size: 0.85rem; padding: 0.35rem 0.75rem;" title="Rename">Rename</button>
@@ -165,7 +165,7 @@
                 <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
                 <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
                     <button type="button" class="btn-secondary share-btn" style="cursor: pointer;"
-                        data-share-path="/?project={{ p.name|urlencode }}"
+                        data-share-path="/dashboard/assessments?project={{ p.name|urlencode }}"
                         data-share-label="{{ p.name }}">Share</button>
                     <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline-flex; gap: 0.3rem;">
                         <select name="visibility" style="padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
@@ -261,7 +261,7 @@
                     {% for sw in sw_list %}
                     {% set effective = sw.visibility if sw.visibility else p.visibility %}
                     <tr>
-                        <td><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
+                        <td><a href="/dashboard/assessments?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
                         <td class="muted">{{ sw.assessment_count }}</td>
                         {% if projects | length > 1 %}
                         <td>
@@ -295,7 +295,7 @@
                         <td class="actions-cell">
                             <div class="action-cluster">
                                 <button type="button" class="btn-secondary btn-sm share-btn"
-                                    data-share-path="/?software={{ sw.software_name|urlencode }}"
+                                    data-share-path="/dashboard/assessments?software={{ sw.software_name|urlencode }}"
                                     data-share-label="{{ sw.software_name }}" title="Share link">
                                     {{ icon_share() }} Share
                                 </button>
@@ -335,7 +335,7 @@
             <tbody>
                 {% for sw in _unassigned %}
                 <tr>
-                    <td><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
+                    <td><a href="/dashboard/assessments?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
                     <td class="muted">{{ sw.assessment_count }}</td>
                     {% if projects %}
                     <td>
@@ -353,7 +353,7 @@
                     {% endif %}
                     <td style="text-align: right; white-space: nowrap;">
                         <button type="button" class="btn-secondary btn-sm share-btn"
-                            data-share-path="/?software={{ sw.software_name|urlencode }}"
+                            data-share-path="/dashboard/assessments?software={{ sw.software_name|urlencode }}"
                             data-share-label="{{ sw.software_name }}" title="Share link">
                             {{ icon_share() }} Share
                         </button>
@@ -542,7 +542,7 @@
             {% for r in recent %}
             <tr>
                 <td class="muted">{{ r.assessed_at[:10] if r.assessed_at else '' }}</td>
-                <td><a href="/?software={{ r.software_name|urlencode }}" class="link-pill" title="View assessments for {{ r.software_name }}">{{ r.software_name }}</a></td>
+                <td><a href="/dashboard/assessments?software={{ r.software_name|urlencode }}" class="link-pill" title="View assessments for {{ r.software_name }}">{{ r.software_name }}</a></td>
                 <td style="text-align: right; color: #117733;">{{ r.passed }}</td>
                 <td style="text-align: right; color: #CC3311;">{{ r.failed }}</td>
                 <td style="text-align: right;" class="muted">{{ r.not_applicable }}</td>

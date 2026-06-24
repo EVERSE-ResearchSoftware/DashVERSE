@@ -344,6 +344,34 @@ Filter-state and explore-form caches stay enabled either way -- the
 `?native_filters_key=...` permalink workflow used by `?software=<id>` and
 `/me/assessments` depends on those.
 
+## Shareable dashboard URLs
+
+The Assessments dashboard accepts `?software=<name>` and `?project=<name>` query
+parameters that pre-apply the matching native filter and hide the filter bar.
+Four URL shapes produce the same view (pick whichever feels right for the
+context you're sharing in):
+
+```
+https://dashverse.cloud/dashboard/assessments?software=ESMValTool   (most explicit, default share format)
+https://dashverse.cloud/?software=ESMValTool                        (short)
+https://dashverse.cloud/software/ESMValTool                         (path-style)
+```
+
+The same three shapes exist for projects (`?project=<name>` / `/project/<name>`).
+All four route through the same handler in `frontend/app/api/routes.py`:
+`_software_detail_response()` (or `_project_detail_response()`), which mints a
+Superset filter-state permalink key via the existing `_filter_state_key()` helper
+and embeds the dashboard with the filter pre-applied and the filter bar hidden.
+
+Row-level security still applies. An anonymous viewer following a shareable link
+to a private project's dashboard sees an empty page; an authenticated viewer who
+is not the owner sees per-visibility data; the owner sees everything. So
+shareable links are RLS-safe -- the URL is a navigation hint, not a backdoor.
+
+The Share button on `/account` (for each project and each piece of software) now
+generates the `/dashboard/assessments?...` form. Inline link-pills on the page
+use the same long form for consistency.
+
 ## Documentation
 
 - `docs/developer/codebase.md` - the entry point for new contributors: how the pieces fit, where things live, and the per-component rationale.

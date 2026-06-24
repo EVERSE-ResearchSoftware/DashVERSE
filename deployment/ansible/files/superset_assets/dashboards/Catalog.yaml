@@ -195,6 +195,7 @@ position:
     - ROOT_ID
     children:
     - ROW-1
+    - ROW-CATCOV
     - ROW-2
     - ROW-2B
     - ROW-3
@@ -259,6 +260,30 @@ position:
     - GRID_ID
     - ROW-COV-TOOL
     children: []
+  CHART-CATCOV:
+    id: CHART-CATCOV
+    meta:
+      width: 12
+      height: 60
+      chartId: 110
+      sliceName: Catalog Coverage
+      uuid: 81c3c9a0-eff6-4fa2-bfca-e515dc3d59f5
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-CATCOV
+    children: []
+  ROW-CATCOV:
+    id: ROW-CATCOV
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-CATCOV
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -275,6 +300,7 @@ metadata:
     '72': true
     '74': true
     '75': true
+    '110': true
   refresh_frequency: 0
   chart_configuration:
     '64':
@@ -292,6 +318,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '65':
       id: 65
       crossFilters:
@@ -307,6 +334,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '66':
       id: 66
       crossFilters:
@@ -322,6 +350,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '67':
       id: 67
       crossFilters:
@@ -337,6 +366,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '68':
       id: 68
       crossFilters:
@@ -352,6 +382,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '69':
       id: 69
       crossFilters:
@@ -367,6 +398,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '70':
       id: 70
       crossFilters:
@@ -382,6 +414,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '71':
       id: 71
       crossFilters:
@@ -397,6 +430,7 @@ metadata:
         - 72
         - 74
         - 75
+        - 110
     '72':
       id: 72
       crossFilters:
@@ -412,6 +446,7 @@ metadata:
         - 71
         - 74
         - 75
+        - 110
     '74':
       id: 74
       crossFilters:
@@ -427,6 +462,7 @@ metadata:
         - 71
         - 72
         - 75
+        - 110
     '75':
       id: 75
       crossFilters:
@@ -442,6 +478,23 @@ metadata:
         - 71
         - 72
         - 74
+        - 110
+    '110':
+      id: 110
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 74
+        - 75
   shared_label_colors: {}
   cross_filters_enabled: false
   native_filter_configuration: []

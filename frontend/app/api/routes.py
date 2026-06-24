@@ -502,9 +502,20 @@ async def concepts(request: Request):
 
 
 @router.get("/dashboard/{slug}", response_class=HTMLResponse)
-async def dashboard(request: Request, slug: str):
+async def dashboard(
+    request: Request,
+    slug: str,
+    software: str | None = Query(default=None),
+    project: str | None = Query(default=None),
+):
     if slug not in DASHBOARDS:
         raise HTTPException(status_code=404, detail="Dashboard not found")
+
+    if slug == "assessments":
+        if software:
+            return _software_detail_response(request, software)
+        if project:
+            return _project_detail_response(request, project)
 
     dashboard_info = DASHBOARDS[slug]
     user = current_user(request)

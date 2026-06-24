@@ -15,7 +15,6 @@ position:
     - ROOT_ID
     children:
     - ROW-1
-    - ROW-3
     - ROW-4
     - ROW-5
     - ROW-7
@@ -84,30 +83,6 @@ position:
     - CHART-1
     - CHART-5
     - CHART-2
-  CHART-11:
-    id: CHART-11
-    meta:
-      width: 12
-      height: 65
-      chartId: 110
-      sliceName: Catalog Coverage
-      uuid: 81c3c9a0-eff6-4fa2-bfca-e515dc3d59f5
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-3
-    children: []
-  ROW-3:
-    id: ROW-3
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-11
   CHART-12:
     id: CHART-12
     meta:
@@ -211,7 +186,6 @@ metadata:
   expanded_slices:
     '100': true
     '101': true
-    '110': true
     '111': true
     '112': true
     '114': true
@@ -225,7 +199,6 @@ metadata:
         scope: global
         chartsInScope:
         - 101
-        - 110
         - 111
         - 112
         - 114
@@ -237,19 +210,6 @@ metadata:
         scope: global
         chartsInScope:
         - 100
-        - 110
-        - 111
-        - 112
-        - 114
-        - 120
-        - 104
-    '110':
-      id: 110
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 100
-        - 101
         - 111
         - 112
         - 114
@@ -262,7 +222,6 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 110
         - 112
         - 114
         - 120
@@ -274,7 +233,6 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 110
         - 111
         - 114
         - 120
@@ -286,7 +244,6 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 110
         - 111
         - 112
         - 120
@@ -298,7 +255,6 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 110
         - 111
         - 112
         - 114
@@ -310,7 +266,6 @@ metadata:
         chartsInScope:
         - 100
         - 101
-        - 110
         - 111
         - 112
         - 114
