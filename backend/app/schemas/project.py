@@ -27,7 +27,7 @@ class ProjectListResponse(BaseModel):
 class ProjectCreate(BaseModel):
 
     name: str = Field(..., min_length=1, max_length=255)
-    visibility: Visibility = Field(default="private")
+    visibility: Visibility = Field(default="public")
 
 
 class ProjectUpdate(BaseModel):

@@ -23,7 +23,7 @@ BEGIN
     UPDATE auth.projects SET visibility = 'private' WHERE visibility IS NULL;
 
     ALTER TABLE auth.projects ALTER COLUMN visibility SET NOT NULL;
-    ALTER TABLE auth.projects ALTER COLUMN visibility SET DEFAULT 'private';
+    ALTER TABLE auth.projects ALTER COLUMN visibility SET DEFAULT 'public';
 
     IF NOT EXISTS (SELECT 1 FROM information_schema.check_constraints
                    WHERE constraint_schema = 'auth'

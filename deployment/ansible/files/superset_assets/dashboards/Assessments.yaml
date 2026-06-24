@@ -23,7 +23,7 @@ position:
     meta:
       width: 12
       height: 14
-      code: "**Assessments Explorer.** Single filter-driven dashboard for exploring assessment data at any scope. With no filters set you see everything you can access; pick a Software to drill into one project, a Dimension to focus on one quality area, an Outcome to narrow to passes or failures, or a Date range to scope by time. Some charts (vs Portfolio Median, Compliance Heatmap) only render under specific filter combinations \u2014 that's intentional."
+      code: "**Assessments.** Filter-driven exploration of every assessment you can see. Five filters at the top \u2014 **Author**, **Project**, **Software**, **Dimension**, **Date** \u2014 and clicking any chart cross-filters every other chart on the page. The flow runs top-to-bottom: cross-project quality comparison, activity + outcome trends, outcome heatmap, dimension and outcome breakdowns, top performers, then improvement targets and failed-check details. Empty cells in the heatmap or bar charts mean no checks in scope for that combination, not a missing value."
     type: MARKDOWN
     parents:
     - ROOT_ID

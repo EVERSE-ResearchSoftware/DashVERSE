@@ -226,7 +226,7 @@ position:
     meta:
       width: 12
       height: 14
-      code: '**Catalog overview.** Reference view of the EVERSE quality model itself: catalog size, how much of it has been exercised by assessments, and the full list of dimensions and indicators with definitions.'
+      code: '**Catalog.** Reference view of the EVERSE quality model: total dimensions and indicators, how much of the catalog has been exercised by at least one assessment in scope, and the full list of dimensions and indicators with definitions. Use this dashboard to look up an indicator definition or to spot catalog gaps where no assessment has touched a dimension yet.'
     type: MARKDOWN
     parents:
     - ROOT_ID

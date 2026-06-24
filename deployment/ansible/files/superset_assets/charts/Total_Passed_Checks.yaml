@@ -10,7 +10,7 @@ params:
     sqlExpression: COUNT(*) FILTER (WHERE outcome = 'Pass')
   header_font_size: 0.25
   subheader_font_size: 0.1
-  subheader: ''
+  subheader: Checks With Pass Outcome
   color_picker:
     r: 17
     g: 119

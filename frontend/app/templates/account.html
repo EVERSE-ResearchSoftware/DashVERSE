@@ -54,11 +54,11 @@
     border-radius: var(--radius-card);
     padding: 0.95rem 1.1rem;
     box-shadow: var(--shadow-card);
-    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
-}
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card-hover);
+    /* Stat cards display values, not navigation. They share their
+       visual chrome with the other cards on the site but intentionally
+       skip the hover-lift affordance used on .dashboard-card and
+       .learn-link -- a clickable card invites a click, a value card
+       doesn't. */
 }
 .stat-value {
     font-family: 'Outfit', 'Inter', sans-serif;
@@ -126,90 +126,299 @@
 </section>
 
 {% if software %}
+{# inline SVG icon helpers reused in this section #}
+{% macro icon_share() %}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>{% endmacro %}
+{% macro icon_trash() %}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>{% endmacro %}
+
 <section class="account-section">
     <h2>My software</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Every piece of software you have assessed, grouped by the project that currently owns it. Move a software to another project to change who can see its assessments, or override its visibility directly. Three tiers: <strong>private</strong> (only you), <strong>authenticated</strong> (any logged-in user), <strong>public</strong> (anyone). A per-software setting always wins over the project's tier.
+        Every piece of software you have assessed, grouped by its current project. Move a software to another project to change who can see its assessments, or override its visibility directly. Three tiers: <strong>public</strong> (anyone), <strong>authenticated</strong> (any logged-in user), <strong>private</strong> (only you). A per-software setting always wins over the project's tier.
     </p>
-    <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-        <thead style="background: var(--color-light-bg);">
-            <tr>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Assessments</th>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Project</th>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Visibility</th>
-                <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sw in software %}
-            {% set ns = namespace(project_visibility='private') %}
-            {% for p in projects %}{% if p.id == sw.project_id %}{% set ns.project_visibility = p.visibility %}{% endif %}{% endfor %}
-            <tr style="border-top: 1px solid #e2e8f0;">
-                <td style="padding: 0.75rem;"><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
-                <td style="padding: 0.75rem; color: var(--color-text-muted);">{{ sw.assessment_count }}</td>
-                <td style="padding: 0.5rem 0.75rem;">
-                    {% if projects | length > 1 %}
-                    <form method="post" action="/account/software/assign" style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="hidden" name="software_name" value="{{ sw.software_name }}">
-                        <select name="project_id" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-                            {% if sw.project_id is none %}
-                            <option value="" selected disabled>(unassigned)</option>
-                            {% endif %}
-                            {% for p in projects %}
-                            <option value="{{ p.id }}" {% if p.id == sw.project_id %}selected{% endif %}>{{ p.name }} ({{ p.visibility }})</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Move</button>
-                    </form>
-                    {% else %}
-                    <span style="color: var(--color-text-muted);">
-                        {% if sw.project_id is none %}
-                        Unassigned.{% if projects %} Create another project to move it.{% endif %}
-                        {% else %}
-                        In project {% for p in projects %}{% if p.id == sw.project_id %}{{ p.name }}{% endif %}{% endfor %}. Create another project to move it.
+
+    {# Bucket software by project_id (preserve original list order within
+       each bucket). Build a list of (project, [sw, ...]) groups in
+       project_id-asc order, with the "Unassigned" group last. #}
+    {% set groups = namespace(byid={}) %}
+    {% set _unassigned = [] %}
+    {% for sw in software %}
+        {% if sw.project_id is none %}
+            {% set _ = _unassigned.append(sw) %}
+        {% else %}
+            {% if sw.project_id not in groups.byid %}
+                {% set _ = groups.byid.update({sw.project_id: []}) %}
+            {% endif %}
+            {% set _ = groups.byid[sw.project_id].append(sw) %}
+        {% endif %}
+    {% endfor %}
+    {% set vis_color = {'public': '#2f855a', 'authenticated': '#1d4ed8', 'private': '#c0392b'} %}
+
+    {% for p in projects %}
+        {% set sw_list = groups.byid.get(p.id, []) %}
+        {% if sw_list %}
+        <div class="software-group">
+            <div class="software-group-header">
+                <h3 class="software-group-name">{{ p.name }}</h3>
+                <span class="software-group-meta">
+                    <span class="vis-badge vis-{{ p.visibility }}">{{ p.visibility|capitalize }}</span>
+                    <span>{{ sw_list|length }} software</span>
+                </span>
+            </div>
+            <table class="account-table">
+                <thead>
+                    <tr>
+                        <th>Software</th>
+                        <th>Assessments</th>
+                        {% if projects | length > 1 %}<th>Move to</th>{% endif %}
+                        <th>Visibility</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sw in sw_list %}
+                    {% set effective = sw.visibility if sw.visibility else p.visibility %}
+                    <tr>
+                        <td><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
+                        <td class="muted">{{ sw.assessment_count }}</td>
+                        {% if projects | length > 1 %}
+                        <td>
+                            <form method="post" action="/account/software/assign" class="inline-form">
+                                <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                                <select name="project_id" class="form-select form-select-sm">
+                                    {% for pp in projects %}
+                                    <option value="{{ pp.id }}" {% if pp.id == sw.project_id %}selected{% endif %}>{{ pp.name }} ({{ pp.visibility }})</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn-secondary btn-sm">Move</button>
+                            </form>
+                        </td>
                         {% endif %}
-                    </span>
+                        <td>
+                            <div class="vis-current">
+                                <span class="vis-badge vis-{{ effective }}">{{ effective|capitalize }}</span>
+                                <span class="muted">{% if sw.visibility %}(override){% else %}(inherits){% endif %}</span>
+                            </div>
+                            <form method="post" action="/account/software/visibility" class="inline-form">
+                                <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                                <select name="visibility" class="form-select form-select-sm">
+                                    <option value="clear" {% if not sw.visibility %}selected{% endif %}>Inherit from project</option>
+                                    <option value="public" {% if sw.visibility == 'public' %}selected{% endif %}>Public (anyone)</option>
+                                    <option value="authenticated" {% if sw.visibility == 'authenticated' %}selected{% endif %}>Authenticated (logged-in users)</option>
+                                    <option value="private" {% if sw.visibility == 'private' %}selected{% endif %}>Private (only me)</option>
+                                </select>
+                                <button type="submit" class="btn-secondary btn-sm">Set</button>
+                            </form>
+                        </td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button type="button" class="btn-secondary btn-sm share-btn"
+                                data-share-path="/?software={{ sw.software_name|urlencode }}"
+                                data-share-label="{{ sw.software_name }}" title="Share link">
+                                {{ icon_share() }} Share
+                            </button>
+                            <form method="post" action="/account/software/delete" class="inline-form" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
+                                <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                                <button type="submit" class="btn-secondary btn-sm" title="Delete all assessments">
+                                    {{ icon_trash() }} Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    {% if _unassigned %}
+    <div class="software-group">
+        <div class="software-group-header">
+            <h3 class="software-group-name">Unassigned</h3>
+            <span class="software-group-meta">
+                <span>{{ _unassigned|length }} software</span>
+            </span>
+        </div>
+        <table class="account-table">
+            <thead>
+                <tr>
+                    <th>Software</th>
+                    <th>Assessments</th>
+                    {% if projects %}<th>Move to</th>{% endif %}
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sw in _unassigned %}
+                <tr>
+                    <td><a href="/?software={{ sw.software_name|urlencode }}" class="link-pill" title="View assessments for {{ sw.software_name }}">{{ sw.software_name }}</a></td>
+                    <td class="muted">{{ sw.assessment_count }}</td>
+                    {% if projects %}
+                    <td>
+                        <form method="post" action="/account/software/assign" class="inline-form">
+                            <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                            <select name="project_id" class="form-select form-select-sm">
+                                <option value="" selected disabled>(unassigned)</option>
+                                {% for pp in projects %}
+                                <option value="{{ pp.id }}">{{ pp.name }} ({{ pp.visibility }})</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn-secondary btn-sm">Move</button>
+                        </form>
+                    </td>
                     {% endif %}
-                </td>
-                <td style="padding: 0.5rem 0.75rem;">
-                    {% set vis_color = {'public': '#2f855a', 'authenticated': '#1d4ed8', 'private': '#c0392b'} %}
-                    {% set effective = sw.visibility if sw.visibility else ns.project_visibility %}
-                    <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">
-                        <span style="color: {{ vis_color[effective] }};">{{ effective|capitalize }}</span>
-                        <span style="color: var(--color-text-muted);">{% if sw.visibility %}(override){% else %}(via project){% endif %}</span>
-                    </div>
-                    <form method="post" action="/account/software/visibility" style="display: flex; gap: 0.3rem;">
-                        <input type="hidden" name="software_name" value="{{ sw.software_name }}">
-                        <select name="visibility" style="flex: 1; padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
-                            <option value="clear" {% if not sw.visibility %}selected{% endif %}>Inherit from project</option>
-                            <option value="private" {% if sw.visibility == 'private' %}selected{% endif %}>Private (only me)</option>
-                            <option value="authenticated" {% if sw.visibility == 'authenticated' %}selected{% endif %}>Authenticated (logged-in users)</option>
-                            <option value="public" {% if sw.visibility == 'public' %}selected{% endif %}>Public (anyone)</option>
-                        </select>
-                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Set</button>
-                    </form>
-                </td>
-                <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
-                    <button type="button" class="btn-secondary share-btn" style="cursor: pointer;"
-                        data-share-path="/?software={{ sw.software_name|urlencode }}"
-                        data-share-label="{{ sw.software_name }}">Share</button>
-                    <form method="post" action="/account/software/delete" style="display: inline;" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
-                        <input type="hidden" name="software_name" value="{{ sw.software_name }}">
-                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Delete all</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button type="button" class="btn-secondary btn-sm share-btn"
+                            data-share-path="/?software={{ sw.software_name|urlencode }}"
+                            data-share-label="{{ sw.software_name }}" title="Share link">
+                            {{ icon_share() }} Share
+                        </button>
+                        <form method="post" action="/account/software/delete" class="inline-form" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
+                            <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                            <button type="submit" class="btn-secondary btn-sm" title="Delete all assessments">
+                                {{ icon_trash() }} Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 </section>
+
+<style>
+/* My software grouped layout: one sub-card per project, then a table
+   inside each card. Uses the same border/shadow tokens as the rest of
+   the site so the cards feel like a single visual family. */
+.software-group {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 0;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+.software-group-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem 0.65rem;
+    background: var(--color-light-bg);
+    border-bottom: 1px solid var(--color-border-soft);
+}
+.software-group-name {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-family: 'Outfit', 'Inter', sans-serif;
+}
+.software-group-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+/* Inline tables inside the project group cards. */
+.account-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.account-table thead th {
+    text-align: left;
+    padding: 0.6rem 0.95rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--color-border-soft);
+}
+.account-table tbody td {
+    padding: 0.7rem 0.95rem;
+    border-top: 1px solid var(--color-border-soft);
+    vertical-align: bottom;
+    font-size: 0.93rem;
+}
+.account-table tbody tr:first-child td { border-top: 0; }
+.account-table .muted { color: var(--color-text-muted); }
+
+/* Visibility badge — small pill that matches the dashboard palette. */
+.vis-badge {
+    display: inline-block;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: var(--color-surface);
+    border: 1px solid currentColor;
+}
+.vis-public        { color: #117733; }
+.vis-authenticated { color: #1d4ed8; }
+.vis-private       { color: #CC3311; }
+.vis-current {
+    font-size: 0.83rem;
+    margin-bottom: 0.35rem;
+}
+
+/* Themed form controls: shared by My software, My projects, API tokens
+   and Run-an-assessment forms. Uses the same border + focus tokens as
+   the rest of the site so inputs/selects feel like one family. */
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-button);
+    font-family: inherit;
+    font-size: 0.94rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+}
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.16);
+}
+.form-select-sm {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.86rem;
+}
+
+/* Inline-form: select + button on one line. */
+.inline-form {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.inline-form > .form-select { flex: 1; min-width: 6rem; }
+
+/* Small-button variant — same theme, tighter dimensions for tables. */
+.btn-sm {
+    padding: calc(0.35rem - 1.5px) calc(0.7rem - 1.5px);
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.btn-sm svg { flex: 0 0 14px; }
+</style>
 {% endif %}
 
 <section class="account-section">
     <h2>My projects</h2>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Assessments are grouped by project. <strong>Public</strong> projects are visible to anonymous viewers on Overview and Assessments; <strong>Authenticated</strong> projects are visible only to logged-in users; <strong>Private</strong> projects are visible only to you. Deleting a project unassigns its software, which then stays private to you until you move it into another project.
+        Assessments are grouped by project. New projects default to <strong>Public</strong> (visible to anonymous viewers on Overview and Assessments). Lower the tier per project to <strong>Authenticated</strong> (only logged-in users) or <strong>Private</strong> (only you). Deleting a project unassigns its software, which then stays private to you until you move it into another project.
     </p>
     {% if projects %}
     <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
@@ -281,9 +490,9 @@
         <label style="display: flex; flex-direction: column; min-width: 180px;">
             <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Visibility</span>
             <select name="visibility" style="padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-                <option value="private" selected>Private (only me)</option>
+                <option value="public" selected>Public (anyone)</option>
                 <option value="authenticated">Authenticated (logged-in users)</option>
-                <option value="public">Public (anyone)</option>
+                <option value="private">Private (only me)</option>
             </select>
         </label>
         <button type="submit" class="btn-primary" style="cursor: pointer;">Create project</button>

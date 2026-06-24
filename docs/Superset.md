@@ -1,340 +1,222 @@
-# Apache Superset Datasets and Views
-
-This document describes the available datasets, views, metrics, and visualization capabilities in DashVERSE Superset.
-
-## Overview
-
-DashVERSE uses Apache Superset to visualize research software quality assessment data. Superset connects to the PostgreSQL database and provides interactive dashboards for exploring quality metrics across software projects, dimensions, and indicators.
-
-### What You Can Analyze
-
-- **Software Quality Scores**: Overall and per-dimension quality scores for each software project
-- **Dimension Coverage**: How well software performs across quality dimensions (Testing, Documentation, Security, etc.)
-- **Indicator Results**: Pass/fail rates for specific quality indicators
-- **Assessment Trends**: How quality metrics change over time
-- **Common Issues**: Most frequently failing quality checks across all software
-- **Language Distribution**: Quality metrics grouped by programming language
-
-## Datasets Overview
-
-Superset datasets are connected to PostgreSQL tables and views in the `api` schema.
-
-| Dataset                 | Source Type | Description                                     |
-| ----------------------- | ----------- | ----------------------------------------------- |
-| dimensions              | Table       | EVERSE quality dimensions                       |
-| indicators              | Table       | Quality indicators linked to dimensions         |
-| software                | Table       | Registered research software projects           |
-| assessments             | Table       | Raw assessment data in JSONB format             |
-| assessments_detailed    | View        | Full assessment info with computed fields       |
-| checks_detailed         | View        | Individual checks with indicator/dimension info |
-| assessment_summary      | View        | Aggregated metrics per software                 |
-| dimension_coverage      | View        | Pass/fail statistics per dimension              |
-| indicator_results       | View        | Results grouped by indicator and status         |
-| software_quality_scores | View        | Quality scores per software and dimension       |
-| assessment_trends       | View        | Monthly assessment statistics                   |
-| common_issues           | View        | Frequently failing indicators                   |
-
-## Available Metrics
-
-### Per-Software Metrics
-
-| Metric | Source | Description |
-|--------|--------|-------------|
-| Assessment Count | assessment_summary | Total number of assessments performed |
-| Latest Assessment Date | assessment_summary | Date of most recent assessment |
-| Average Checks | assessment_summary | Average number of checks per assessment |
-| Unique Indicators | assessment_summary | Number of distinct indicators assessed |
-| Outcome distribution | assessment_checks | Share of Pass / Fail / Not applicable across all checks |
-
-### Per-Dimension Metrics
-
-| Metric | Source | Description |
-|--------|--------|-------------|
-| Total Checks | assessment_checks | Number of checks in this dimension |
-| Passed Checks | assessment_checks | Checks with Pass outcome |
-| Failed Checks | assessment_checks | Checks with Fail outcome |
-| Not applicable | assessment_checks | Checks the tool couldn't run or marked n/a |
-
-### Per-Indicator Metrics
-
-| Metric | Source | Description |
-|--------|--------|-------------|
-| Occurrences | indicator_results | Count of checks for this indicator |
-| Status Distribution | indicator_results | Breakdown by Pass/Fail/NotApplicable |
-| Failure Count | common_issues | Number of failures across all software |
-| Affected Software | common_issues | List of software failing this indicator |
-
-### Trend Metrics
-
-| Metric | Source | Description |
-|--------|--------|-------------|
-| Monthly Assessments | assessment_trends | Number of assessments per month |
-| Monthly Software Count | assessment_trends | Unique software assessed per month |
-| Monthly Average Checks | assessment_trends | Average checks per assessment per month |
-
-## Dataset Columns
-
-### dimensions
-
-Quality dimensions from the EVERSE framework.
-
-| Column      | Type      | Description                         |
-| ----------- | --------- | ----------------------------------- |
-| id          | INTEGER   | Primary key                         |
-| identifier  | VARCHAR   | Unique identifier (e.g., "testing") |
-| name        | VARCHAR   | Display name (e.g., "Testing")      |
-| description | TEXT      | Detailed description                |
-| status      | VARCHAR   | Status (published, draft)           |
-| source      | JSONB     | Source metadata                     |
-| created_at  | TIMESTAMP | Record creation time                |
-| updated_at  | TIMESTAMP | Last update time                    |
-
-### indicators
-
-Quality indicators linked to dimensions.
-
-| Column            | Type      | Description                                 |
-| ----------------- | --------- | ------------------------------------------- |
-| id                | INTEGER   | Primary key                                 |
-| identifier        | VARCHAR   | Unique identifier (e.g., "IND-testing-001") |
-| name              | VARCHAR   | Display name                                |
-| description       | TEXT      | What this indicator measures                |
-| status            | VARCHAR   | Status (published, draft)                   |
-| quality_dimension | VARCHAR   | Reference to parent dimension               |
-| contact           | JSONB     | Contact information                         |
-| source            | JSONB     | Source metadata                             |
-| created_at        | TIMESTAMP | Record creation time                        |
-| updated_at        | TIMESTAMP | Last update time                            |
-
-### software
-
-Registered research software projects.
-
-| Column               | Type      | Description                          |
-| -------------------- | --------- | ------------------------------------ |
-| id                   | INTEGER   | Primary key                          |
-| identifier           | VARCHAR   | Unique identifier                    |
-| name                 | VARCHAR   | Display name                         |
-| latest_version       | VARCHAR   | MAX over `assessedSoftware.softwareVersion` |
-| url                  | VARCHAR   | `assessedSoftware.url` |
-| doi                  | VARCHAR   | `assessedSoftware.schema:identifier.@id` when set |
-| assessment_count     | BIGINT    | COUNT(DISTINCT assessment_raw.id) |
-| first_seen           | TIMESTAMP | MIN(assessment_raw.created_at) |
-| last_seen            | TIMESTAMP | MAX(assessment_raw.created_at) |
-
-Software is a derived view; columns come from `assessedSoftware` on each
-ingested assessment_raw payload, never from a curated registry.
-
-### assessments (assessment_raw)
-
-Raw assessment data stored as JSONB.
-
-| Column     | Type      | Description                           |
-| ---------- | --------- | ------------------------------------- |
-| id         | INTEGER   | Primary key                           |
-| payload    | JSONB     | Complete assessment in JSON-LD format |
-| created_at | TIMESTAMP | Record creation time                  |
-
-### assessments_detailed
-
-Full assessment information with computed fields.
-
-| Column           | Type      | Description                |
-| ---------------- | --------- | -------------------------- |
-| id               | INTEGER   | Assessment ID              |
-| context          | TEXT      | JSON-LD context URL        |
-| type             | TEXT      | Assessment type            |
-| date_created     | TEXT      | Assessment date            |
-| software_name    | TEXT      | Name of assessed software  |
-| software_version | TEXT      | Version assessed           |
-| software_url     | TEXT      | Repository URL             |
-| total_checks     | INTEGER   | Number of checks performed |
-| checks           | JSONB     | Full check results array   |
-| created_at       | TIMESTAMP | Record creation time       |
-
-### checks_detailed
-
-Individual checks unnested from assessments with indicator and dimension information.
-
-| Column            | Type    | Description                        |
-| ----------------- | ------- | ---------------------------------- |
-| assessment_id     | INTEGER | Parent assessment ID               |
-| software_name     | TEXT    | Software being assessed            |
-| assessment_date   | TEXT    | Date of assessment                 |
-| check_type        | TEXT    | Type of check                      |
-| indicator_id      | TEXT    | Indicator being assessed           |
-| checking_software | TEXT    | Tool that performed the check      |
-| process           | TEXT    | Check process description          |
-| status            | TEXT    | Result (Pass, Fail, NotApplicable) |
-| output            | TEXT    | Check output or message            |
-| evidence          | TEXT    | Supporting evidence                |
-| indicator_name    | TEXT    | Human-readable indicator name      |
-| quality_dimension | TEXT    | Parent dimension reference         |
-| dimension_name    | TEXT    | Human-readable dimension name      |
-
-### assessment_summary
-
-Aggregated metrics per software project.
-
-| Column            | Type    | Description                   |
-| ----------------- | ------- | ----------------------------- |
-| software_name     | TEXT    | Software name                 |
-| software_url      | TEXT    | Repository URL                |
-| assessment_count  | BIGINT  | Total assessments             |
-| latest_assessment | TEXT    | Most recent assessment date   |
-| avg_checks        | NUMERIC | Average checks per assessment |
-| unique_indicators | BIGINT  | Unique indicators assessed    |
-
-### dimension_coverage
-
-Pass/fail statistics per quality dimension.
-
-| Column         | Type    | Description                    |
-| -------------- | ------- | ------------------------------ |
-| dimension_name | TEXT    | Dimension name                 |
-| dimension_id   | TEXT    | Dimension identifier           |
-| total_checks   | BIGINT  | Total checks in this dimension |
-| passed         | BIGINT  | Checks with Pass outcome       |
-| failed         | BIGINT  | Checks with Fail outcome       |
-| not_applicable | BIGINT  | Checks with Not applicable outcome |
-
-### indicator_results
-
-Results grouped by indicator and status.
-
-| Column            | Type    | Description                       |
-| ----------------- | ------- | --------------------------------- |
-| indicator_id      | TEXT    | Indicator identifier              |
-| indicator_name    | TEXT    | Indicator name                    |
-| quality_dimension | TEXT    | Parent dimension reference        |
-| dimension_name    | TEXT    | Dimension name                    |
-| status            | TEXT    | Check status                      |
-| occurrences       | BIGINT  | Count of this status              |
-| percentage        | NUMERIC | Percentage of total for indicator |
-
-### software_quality_scores
-
-Quality scores per software and dimension.
-
-| Column         | Type    | Description              |
-| -------------- | ------- | ------------------------ |
-| software_name  | TEXT    | Software name            |
-| dimension_name | TEXT    | Dimension name           |
-| total_checks   | BIGINT  | Checks in this dimension |
-| passed         | BIGINT  | Passed checks            |
-| score          | NUMERIC | Pass rate as percentage  |
-
-### assessment_trends
-
-Monthly assessment statistics.
-
-| Column         | Type      | Description                   |
-| -------------- | --------- | ----------------------------- |
-| month          | TIMESTAMP | Month (truncated date)        |
-| assessments    | BIGINT    | Assessments in this month     |
-| software_count | BIGINT    | Unique software assessed      |
-| avg_checks     | NUMERIC   | Average checks per assessment |
-
-### common_issues
-
-Frequently failing indicators across all assessments.
-
-| Column            | Type   | Description                     |
-| ----------------- | ------ | ------------------------------- |
-| indicator_id      | TEXT   | Indicator identifier            |
-| indicator_name    | TEXT   | Indicator name                  |
-| dimension_name    | TEXT   | Parent dimension                |
-| failure_count     | BIGINT | Number of failures              |
-| affected_software | TEXT[] | Software affected by this issue |
-
-## Dashboard Use Cases
-
-### Software Quality Overview
-
-Use `software_quality_scores` to create:
-- Heatmap of software vs. dimensions with quality scores
-- Bar charts comparing software projects
-- Ranking tables of best/worst performing software
-
-### Dimension Analysis
-
-Use `assessment_checks` to create:
-- Donut charts showing the outcome share per dimension
-- 100% stacked horizontal bars comparing dimensions by outcome mix
-- Identify which dimensions concentrate failures
-
-### Indicator Deep Dive
-
-Use `assessment_checks` to create:
-- Tables of frequently failing indicators (filter `outcome = 'Fail'`)
-- Ranked horizontal bar charts of indicators by failure count
-- Lists of software affected by specific issues
-
-### Trend Analysis
-
-Use `assessment_trends` to create:
-- Line charts showing assessment volume over time
-- Track quality improvements month over month
-- Monitor assessment coverage
-
-### Drill-Down Analysis
-
-Use `checks_detailed` to create:
-- Detailed tables of individual check results
-- Filter by software, dimension, or indicator
-- View evidence and process descriptions
-
-## Filters and Drill-Downs
-
-Common filter dimensions available:
-
-| Filter | Description | Applicable Datasets |
-|--------|-------------|---------------------|
-| software_name | Filter by specific software | All views |
-| dimension_name | Filter by quality dimension | dimension_coverage, indicator_results, software_quality_scores |
-| indicator_name | Filter by quality indicator | indicator_results, checks_detailed, common_issues |
-| status | Filter by check outcome | checks_detailed, indicator_results |
-| assessment_date | Filter by date range | checks_detailed, assessment_trends |
-
-## Example Queries
-
-### Top 10 Software by Passing Indicators
-
-```sql
-SELECT software_name, COUNT(DISTINCT indicator_id) AS passing_indicators
-FROM api.assessment_checks
-WHERE outcome = 'Pass'
-GROUP BY software_name
-ORDER BY passing_indicators DESC
-LIMIT 10;
+# Apache Superset Datasets and Dashboards
+
+DashVERSE renders its dashboards inside an embedded Apache Superset.
+This page lists the actual datasets, dashboards, and key filtering
+behaviour as they exist on the current pinned schema.
+
+For the editing workflow see `docs/developer/dashboards.md` (for
+maintainers) and `docs/user/editing-dashboards.md` (for users).
+
+## Architecture at a glance
+
+```
+PostgREST                      Superset                       Frontend
+  |                              |                              |
+  +-- api.assessment_checks   <--+  (8 datasets, 30+ charts)    |
+  +-- api.catalog_coverage    <--+  (3 dashboards)              |
+  +-- api.dimensions          <--+   |                          |
+  +-- api.indicators          <--+   +-- iframe embed  -------> /dashboard/<slug>
+  +-- api.projects            <--+
+  +-- api.*_flat / *_with_links--+
 ```
 
-### Dimensions Ranked by Failure Count
+Superset reads directly from PostgreSQL via its dbapi connection (not
+PostgREST). RLS still applies because the `assessment_checks` and
+`projects` views use `security_invoker = true`, so the calling role's
+privileges determine row visibility. The embedded SDK then mints a
+guest token per page load that injects two RLS clauses keyed off
+`effective_visibility` and `visibility` columns.
 
-```sql
-SELECT dimension_name,
-       COUNT(*) FILTER (WHERE outcome = 'Fail')          AS failures,
-       COUNT(*) FILTER (WHERE outcome = 'Pass')          AS passes,
-       COUNT(*) FILTER (WHERE outcome = 'Not applicable') AS na
-FROM api.assessment_checks
-WHERE dimension_name IS NOT NULL
-GROUP BY dimension_name
-ORDER BY failures DESC;
+## Datasets
+
+All datasets live in the `api` schema. Eight are imported into Superset
+via the Ansible role `superset_config`.
+
+| Dataset | Backing object | Used by | Notes |
+|---|---|---|---|
+| `assessment_checks` | view | every Overview + Assessments chart | one row per (assessment x check); the dashboard's fact table |
+| `projects` | view | Project native filter | thin wrapper over `auth.projects` |
+| `dimensions` | table | Catalog dashboard | reference data; populated by the `everse-sync` CronJob |
+| `indicators` | table | Catalog dashboard | reference data; populated by the same job |
+| `dimensions_with_links` | view | RSQKit drill-down columns | enriches `dimensions` with URL columns |
+| `indicators_flat` | view | RSQKit drill-down columns | enriches `indicators` with parent dimension and URLs |
+| `catalog_coverage` | view | Catalog dashboard KPI / Catalog Coverage chart | overall Tested / Untested split |
+| `catalog_coverage_breakdown` | view | Catalog dashboard table | per-dimension Tested / Untested counts |
+
+The Superset YAML files live under
+`deployment/ansible/files/superset_assets/datasets/DashVERSE/` and are
+re-imported on every `just env=<env> setup-dashboards` run.
+
+## Key columns on `assessment_checks`
+
+This is the most-used dataset; its columns drive almost every chart and
+filter on the Overview and Assessments dashboards.
+
+| Column | Type | Source |
+|---|---|---|
+| `assessment_id` | bigint | `assessment_raw.id` |
+| `assessed_at` | timestamp | parsed from `payload->>'dateCreated'` |
+| `ingested_at` | timestamp | `assessment_raw.created_at` |
+| `software_name` | text | `payload->'assessedSoftware'->>'name'` (COALESCE'd to `(unknown software)`) |
+| `software_version` | text | `payload->'assessedSoftware'->>'softwareVersion'` |
+| `software_url` | text | `payload->'assessedSoftware'->>'url'` |
+| `software_doi` | text | from `assessedSoftware.schema:identifier` when present |
+| `author_user_id` | int | from `assessment_raw.created_by`, set by the JWT capture trigger |
+| `author_username` | text | joined from `auth.users` |
+| `author_full_name` | text | `COALESCE(creator.name, username)` |
+| `project_id` | bigint | `assessment_raw.project_id` |
+| `project_name` | text | joined from `auth.projects` |
+| `project_visibility` | text | private \| authenticated \| public |
+| `effective_visibility` | text | `COALESCE(software_visibility.visibility, project.visibility, 'public')` |
+| `tool_name` | text | from `checks[i].checkingSoftware.name` |
+| `indicator_name` | text | joined from `indicators` (COALESCE to `(unmapped indicator)`) |
+| `indicator_url` | text | `payload->...->>'assessesIndicator.@id'` |
+| `dimension_name` | text | joined from `dimensions` (COALESCE to `(unmapped dimension)`) |
+| `output` (raw) | text | `checks[i].output` |
+| `outcome` | text | normalised: `Pass` \| `Fail` \| `Not applicable` \| `Unknown` |
+| `evidence` | text | `checks[i].evidence` |
+
+The `outcome` column is computed by the `check_outcome()` PL/pgSQL
+function in `004_create_triggers.sql`. Outputs the function does not
+recognise land in `Unknown`. Plugin runtime errors (`output: "error"`)
+are deliberately classified as `Not applicable` so a broken tool does
+not drag the pass rate down; see `docs/UPSTREAM_ISSUES.md` for the
+ongoing work to surface these as a separate bucket.
+
+## Visibility and RLS
+
+The `assessment_checks` and `projects` datasets are
+`security_invoker = true` views. Per-page guest tokens minted in
+`frontend/app/api/routes.py` add two RLS clauses to the dataset query:
+
+- **Anonymous viewer**: `effective_visibility = 'public'` on
+  assessment_checks; `visibility = 'public'` on projects.
+- **Authenticated viewer**: `effective_visibility IN ('public', 'authenticated') OR author_user_id = <uid>`,
+  similarly for projects (`visibility IN (...) OR owner_user_id = <uid>`).
+
+So an embedded dashboard transparently scopes its rows to whatever the
+viewer is allowed to see. The same RLS clauses also scope the
+Author / Project / Software filter dropdowns -- a private project's
+author does not surface as a filter option for someone who can't read
+that project's rows.
+
+## Dashboards
+
+Three dashboards ship with DashVERSE. Each is defined in a YAML file
+under `deployment/ansible/files/superset_assets/dashboards/`.
+
+### Overview
+
+Slug: `global`. Anchor for first-time visitors. Three KPI cards above
+a Catalog Coverage donut.
+
+| Row | Content |
+|---|---|
+| 1 (KPIs, width 4 each) | Total Assessments, Total Projects, Total Software |
+| 2 | Catalog Coverage donut (full width) |
+| 3 | Dimension Profile (stacked horizontal bars) |
+
+The Total Checks, Passed, Failed, and Pass Rate KPI cards live on the
+account page (`/account`) instead of here, rendered server-side from
+`/api/stats/home`.
+
+### Assessments
+
+Slug: `assessments`. The exploration dashboard. Filter chips on top:
+Author, Project, Software, Dimension, Assessment date.
+
+| Row | Content |
+|---|---|
+| intro | Markdown introduction |
+| 1 | Quality Across Projects (wide) |
+| 2 | Assessment Activity Over Time + Outcome Trend stacked area |
+| 3 | Outcomes Heatmap (wide) |
+| 4 | Dimension Profile + Outcome Mix donut |
+| 5 | Top Performing Software (wide) |
+| improve | Improvement Targets Profile chart |
+| | Improvement Targets table (wide) |
+| failed | Failed Checks Profile chart |
+| detail | Failed Checks Detail table (wide) |
+| | Recent Assessments table (wide) |
+| sw improve | Software Improvement Visual + Software Improvement Targets |
+| | Outcomes Heatmap (wide) |
+
+There is intentionally no Outcome filter chip; Outcome Mix and Outcome
+Trend are themselves the breakdown by outcome and cross-filter clicks
+already narrow other charts.
+
+### Catalog
+
+Slug: `catalog`. Reference data only; what is in the EVERSE
+indicators/dimensions catalog and which of those have been tested by
+at least one assessment in scope.
+
+Charts: Catalog Coverage donut, Dimensions Coverage, Indicators
+Coverage, Dimensions Tested, Indicators Tested, Indicators per
+Dimension, Coverage per Tool, plus a Dimensions Detail and Indicators
+Detail table.
+
+## Colour palette
+
+The Pass / Fail / Not applicable categorical palette uses the Paul
+Tol bright colour set, picked for deuteranopia / protanopia / tritanopia
+safety:
+
+| Label | Hex | Used for |
+|---|---|---|
+| Pass | `#117733` | green, also "Tested" on catalog charts |
+| Fail | `#CC3311` | red |
+| Not applicable | `#666666` | neutral gray, also "Untested" |
+
+All chart YAMLs share the same `label_colors` map for these three
+labels.
+
+## Filters and cross-filtering
+
+Native filter bar (Assessments dashboard):
+
+- Author (uses `author_username`, scoped by RLS)
+- Project (`project_name`)
+- Software (`software_name`)
+- Dimension (`dimension_name`)
+- Assessment date (`assessed_at`)
+
+Every native filter sets `chartsInScope` to every chart on the
+dashboard, so clicks anywhere narrow the whole page.
+
+Cross-filters: clicking a slice or row in one chart filters every
+other chart on the same dashboard. Configured per chart in
+`chart_configuration` inside the dashboard YAML.
+
+Both filter dropdowns and cross-filter results are scoped by the same
+RLS clauses applied to the underlying dataset query.
+
+## Example PostgREST queries
+
+The same views are also exposed via PostgREST as REST endpoints. These
+are useful for verifying what the dashboard "should" be showing.
+
+```bash
+# distinct authors I can see
+. ./scripts/.env && curl -sS -H "Authorization: Bearer $DASHVERSE_TOKEN" \
+  "https://api.dashverse.cloud/assessment_checks?select=author_username" \
+  | jq -r '.[].author_username' | sort -u
+
+# my pass rate per dimension
+curl -sS -H "Authorization: Bearer $DASHVERSE_TOKEN" \
+  "https://api.dashverse.cloud/assessment_checks?author_user_id=eq.<my_uid>&select=dimension_name,outcome" \
+  | jq 'group_by(.dimension_name) | map({dim:.[0].dimension_name, total:length, passed:[.[] | select(.outcome=="Pass")] | length}) | map(. + {rate: (100*.passed/.total | floor)})'
+
+# what is in the (unmapped indicator) bucket
+curl -sS -H "Authorization: Bearer $DASHVERSE_TOKEN" \
+  "https://api.dashverse.cloud/assessment_checks?indicator_name=eq.(unmapped%20indicator)&select=indicator_url&limit=20" \
+  | jq -r '.[].indicator_url' | sort -u
 ```
 
-### Most Common Quality Issues
+## Caching
 
-```sql
-SELECT indicator_name, dimension_name, failure_count
-FROM common_issues
-ORDER BY failure_count DESC
-LIMIT 10;
-```
-
-### Assessment Activity by Month
-
-```sql
-SELECT month, assessments, software_count
-FROM assessment_trends
-ORDER BY month DESC;
-```
+Superset's chart data cache uses Redis with a 60-second TTL (configured
+in `deployment/terraform/modules/superset/values.yaml.tpl`). The Ansible
+role busts the cache for every DashVERSE dataset at the end of every
+`setup-dashboards` run, so a column rename or chart edit shows up
+immediately. Manual bust: `POST /superset/refresh` on the frontend.

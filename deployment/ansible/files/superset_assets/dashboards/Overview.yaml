@@ -23,7 +23,7 @@ position:
     meta:
       width: 12
       height: 14
-      code: '**Global Overview.** Portfolio-wide quality assessment activity + the EVERSE quality model catalog. Aggregate counts, pass rates, and coverage statistics. Anonymous-safe: no software or project names are exposed. Use the filters above to narrow by dimension, date, or tool. See [RSQKit](https://everse.software/RSQKit) for context.'
+      code: '**Overview.** A first look at what is being assessed and how much of the EVERSE catalog is covered. Three KPI cards (total assessments, projects, software), then a Catalog Coverage donut and a stacked Dimension Profile. Visibility scopes to what you can see -- anonymous viewers get public projects, logged-in users also get their own. Go to **Assessments** for filterable exploration or **Catalog** for the full indicator/dimension reference.'
     type: MARKDOWN
     parents:
     - ROOT_ID

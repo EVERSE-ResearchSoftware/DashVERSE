@@ -10,7 +10,7 @@ params:
     sqlExpression: COUNT(*) FILTER (WHERE outcome = 'Pass') * 1.0 / NULLIF(COUNT(*) FILTER (WHERE outcome IN ('Pass', 'Fail')), 0)
   header_font_size: 0.25
   subheader_font_size: 0.1
-  subheader: ''
+  subheader: Pass Rate (Excludes N/A)
   y_axis_format: .0%
   number_format: .0%
   color_picker:

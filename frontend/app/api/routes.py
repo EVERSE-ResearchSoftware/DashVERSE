@@ -967,7 +967,7 @@ async def account_software_visibility(
 async def account_project_create(
     request: Request,
     name: str = Form(...),
-    visibility: str = Form(default="private"),
+    visibility: str = Form(default="public"),
 ):
     user = current_user(request)
     if not user:
@@ -976,7 +976,7 @@ async def account_project_create(
     if not name:
         return _account_redirect(error="Project name is required.")
     if visibility not in ("private", "authenticated", "public"):
-        visibility = "private"
+        visibility = "public"
     _, error, status = _auth_request(
         "POST",
         "/api/projects/",
