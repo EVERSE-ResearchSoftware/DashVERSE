@@ -1,7 +1,5 @@
 slice_name: Outcome Mix
-description: Share of pass, fail, and not-applicable checks. With no software
-  selected, this is the portfolio-wide split; pick a project in the filters
-  to focus on a single software.
+description: Share of pass, fail, and not-applicable checks. With no software selected, this is the portfolio-wide split; pick a project in the filters to focus on a single software.
 certified_by: null
 certification_details: null
 viz_type: pie
@@ -14,9 +12,9 @@ params:
     sqlExpression: COUNT(*)
   color_scheme: supersetColors
   label_colors:
-    Pass: '#0072B2'
-    Fail: '#D55E00'
-    Not applicable: '#999999'
+    Pass: '#117733'
+    Fail: '#CC3311'
+    Not applicable: '#666666'
   show_labels: true
   show_labels_threshold: 5
   labels_outside: true

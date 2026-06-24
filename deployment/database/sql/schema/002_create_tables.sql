@@ -49,6 +49,7 @@ SELECT
   payload->>'dateCreated' AS "dateCreated",
   payload->>'license' AS license,
   payload->'author' AS author,
+  payload->'creator' AS creator,
   payload->'assessedSoftware' AS "assessedSoftware",
   payload->'checks' AS checks,
   created_at

@@ -770,6 +770,15 @@ async def _auth_get_async(client: httpx.AsyncClient, path: str, token: str) -> t
         return {}, None, resp.status_code
 
 
+def _account_redirect(error: str | None = None) -> RedirectResponse:
+    if error:
+        return RedirectResponse(
+            url=f"/account?error={urllib.parse.quote(error)}",
+            status_code=303,
+        )
+    return RedirectResponse(url="/account", status_code=303)
+
+
 async def _account_context(request: Request, user: dict, *, new_token: str | None = None, error: str | None = None):
     token = user["token"]
     async with httpx.AsyncClient() as client:
@@ -806,17 +815,21 @@ async def _account_context(request: Request, user: dict, *, new_token: str | Non
 
 
 @router.get("/account", response_class=HTMLResponse)
-async def account_page(request: Request):
+async def account_page(request: Request, error: str | None = None):
     user = current_user(request)
     if not user:
         return RedirectResponse(
             url=f"/login?next={urllib.parse.quote('/account', safe='')}",
             status_code=302,
         )
-    ctx = await _account_context(request, user)
+    new_token = request.cookies.get("dv_new_token")
+    ctx = await _account_context(request, user, new_token=new_token, error=error)
     if ctx["list_status"] == 401:
         return _stale_session_redirect("/account")
-    return templates.TemplateResponse("account.html", ctx)
+    resp = templates.TemplateResponse("account.html", ctx)
+    if new_token:
+        resp.delete_cookie("dv_new_token", path="/account")
+    return resp
 
 
 @router.post("/account/tokens", response_class=HTMLResponse)
@@ -844,11 +857,17 @@ async def account_token_create(
     if status == 401:
         return _stale_session_redirect("/account")
     new_jwt = (body or {}).get("access_token") if isinstance(body, dict) else None
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, new_token=new_jwt, error=error),
-        status_code=201 if new_jwt else 400,
-    )
+    resp = _account_redirect(error=error)
+    if new_jwt:
+        resp.set_cookie(
+            "dv_new_token",
+            new_jwt,
+            max_age=60,
+            httponly=True,
+            samesite="lax",
+            path="/account",
+        )
+    return resp
 
 
 @router.post("/account/tokens/{token_id}/revoke", response_class=HTMLResponse)
@@ -859,10 +878,7 @@ async def account_token_revoke(request: Request, token_id: int):
     _, error, status = _auth_request("POST", "/api/tokens/revoke", user["token"], {"token_id": token_id})
     if status == 401:
         return _stale_session_redirect("/account")
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/tokens/{token_id}/delete", response_class=HTMLResponse)
@@ -873,10 +889,7 @@ async def account_token_delete(request: Request, token_id: int):
     _, error, status = _auth_request("DELETE", f"/api/tokens/{token_id}", user["token"])
     if status == 401:
         return _stale_session_redirect("/account")
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/software/assign", response_class=HTMLResponse)
@@ -896,10 +909,7 @@ async def account_software_assign(
     )
     if status == 401:
         return _stale_session_redirect("/account")
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/software/delete", response_class=HTMLResponse)
@@ -920,10 +930,7 @@ async def account_software_delete(
         return _stale_session_redirect("/account")
     if not error:
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/software/visibility", response_class=HTMLResponse)
@@ -941,11 +948,7 @@ async def account_software_visibility(
     elif visibility == "clear":
         vis_payload = None
     else:
-        return templates.TemplateResponse(
-            "account.html",
-            await _account_context(request, user, error="Unknown visibility value."),
-            status_code=400,
-        )
+        return _account_redirect(error="Unknown visibility value.")
 
     _, error, status = _auth_request(
         "PUT",
@@ -957,10 +960,7 @@ async def account_software_visibility(
         return _stale_session_redirect("/account")
     if not error:
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/projects", response_class=HTMLResponse)
@@ -974,11 +974,7 @@ async def account_project_create(
         return RedirectResponse(url="/login?next=/account", status_code=302)
     name = name.strip()
     if not name:
-        return templates.TemplateResponse(
-            "account.html",
-            await _account_context(request, user, error="Project name is required."),
-            status_code=400,
-        )
+        return _account_redirect(error="Project name is required.")
     if visibility not in ("private", "authenticated", "public"):
         visibility = "private"
     _, error, status = _auth_request(
@@ -991,10 +987,7 @@ async def account_project_create(
         return _stale_session_redirect("/account")
     if not error:
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/projects/{project_id}/visibility", response_class=HTMLResponse)
@@ -1003,11 +996,7 @@ async def account_project_visibility(request: Request, project_id: int, visibili
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
     if visibility not in ("private", "authenticated", "public"):
-        return templates.TemplateResponse(
-            "account.html",
-            await _account_context(request, user, error="Unknown visibility value."),
-            status_code=400,
-        )
+        return _account_redirect(error="Unknown visibility value.")
     _, error, status = _auth_request(
         "PATCH",
         f"/api/projects/{project_id}",
@@ -1018,10 +1007,7 @@ async def account_project_visibility(request: Request, project_id: int, visibili
         return _stale_session_redirect("/account")
     if not error:
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/projects/{project_id}/rename", response_class=HTMLResponse)
@@ -1031,11 +1017,7 @@ async def account_project_rename(request: Request, project_id: int, name: str = 
         return RedirectResponse(url="/login?next=/account", status_code=302)
     name = name.strip()
     if not name:
-        return templates.TemplateResponse(
-            "account.html",
-            await _account_context(request, user, error="Project name is required."),
-            status_code=400,
-        )
+        return _account_redirect(error="Project name is required.")
     _, error, status = _auth_request(
         "PATCH",
         f"/api/projects/{project_id}",
@@ -1046,10 +1028,7 @@ async def account_project_rename(request: Request, project_id: int, name: str = 
         return _stale_session_redirect("/account")
     if not error:
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 
 @router.post("/account/projects/{project_id}/delete", response_class=HTMLResponse)
@@ -1066,9 +1045,6 @@ async def account_project_delete(request: Request, project_id: int):
         return _stale_session_redirect("/account")
     if not error:
         _superset_invalidate_datasets(_PROJECT_AWARE_DATASET_UUIDS)
-    return templates.TemplateResponse(
-        "account.html",
-        await _account_context(request, user, error=error),
-    )
+    return _account_redirect(error=error)
 
 

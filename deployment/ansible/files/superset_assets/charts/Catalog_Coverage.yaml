@@ -1,7 +1,5 @@
 slice_name: Catalog Coverage
-description: How many of the EVERSE quality model's dimensions and indicators
-  have actually been exercised. With no software selected this shows portfolio
-  coverage; pick a project to see how complete its assessment is.
+description: How many of the EVERSE quality model's dimensions and indicators have actually been exercised. With no software selected this shows portfolio coverage; pick a project to see how complete its assessment is.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar
@@ -20,7 +18,7 @@ params:
     aggregate: MAX
   color_scheme: supersetColors
   label_colors:
-    Tested: '#0072B2'
+    Tested: '#117733'
     Catalog: '#009E73'
   orientation: horizontal
   show_legend: true

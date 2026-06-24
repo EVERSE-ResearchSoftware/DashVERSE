@@ -22,9 +22,9 @@ params:
     sqlExpression: COUNT(*)
   color_scheme: supersetColors
   label_colors:
-    Pass: '#0072B2'
-    Fail: '#D55E00'
-    Not applicable: '#999999'
+    Pass: '#117733'
+    Fail: '#CC3311'
+    Not applicable: '#666666'
   stack: Stack
   show_legend: true
   legendType: scroll

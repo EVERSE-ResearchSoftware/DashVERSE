@@ -39,6 +39,7 @@ position:
     - ROW-INTRO
     - ROW-9
     - ROW-PROFILE-TREND
+    - ROW-11
     - ROW-3
     - ROW-5
     - ROW-IMPR-PROFILE
@@ -48,7 +49,6 @@ position:
     - ROW-8
     - ROW-SW-IMPR-VIZ
     - ROW-10
-    - ROW-11
   ROOT_ID:
     id: ROOT_ID
     type: ROOT
@@ -712,36 +712,6 @@ metadata:
     - 205
     - 208
     - 209
-    - 210
-    - 211
-    - 213
-    - 214
-    - 215
-    - 230
-    - 231
-    controlValues:
-      multiSelect: true
-      inverseSelection: false
-      searchAllOptions: false
-      enableEmptyFilter: false
-    defaultDataMask:
-      filterState:
-        value: null
-  - id: NATIVE_FILTER-outcome
-    name: Outcome
-    type: NATIVE_FILTER
-    scope:
-      excluded: []
-      rootPath:
-      - ROOT_ID
-    targets:
-    - column:
-        name: outcome
-      datasetUuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
-    filterType: filter_select
-    chartsInScope:
-    - 205
-    - 208
     - 210
     - 211
     - 213

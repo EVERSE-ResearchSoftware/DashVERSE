@@ -29,6 +29,7 @@ BEGIN
       'dateCreated', NEW."dateCreated",
       'license', NEW.license,
       'author', NEW.author,
+      'creator', NEW.creator,
       'assessedSoftware', NEW."assessedSoftware",
       'checks', NEW.checks
     ))

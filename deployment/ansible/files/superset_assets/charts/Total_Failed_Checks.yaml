@@ -12,9 +12,9 @@ params:
   subheader_font_size: 0.1
   subheader: ''
   color_picker:
-    r: 213
-    g: 94
-    b: 0
+    r: 204
+    g: 51
+    b: 17
     a: 1
   number_format: ',d'
 query_context: null
