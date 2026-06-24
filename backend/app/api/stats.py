@@ -106,4 +106,35 @@ def home_stats(
         my_failed=my_failed,
         my_pass_rate=(my_passed / my_decided) if my_decided else None,
     )
+
+    recent = db.execute(
+        text(
+            """
+            SELECT
+              assessment_id,
+              software_name,
+              MAX(assessed_at) AS assessed_at,
+              COUNT(*) FILTER (WHERE outcome = 'Pass') AS passed,
+              COUNT(*) FILTER (WHERE outcome = 'Fail') AS failed,
+              COUNT(*) FILTER (WHERE outcome = 'Not applicable') AS not_applicable
+            FROM api.assessment_checks
+            WHERE author_user_id = :uid
+            GROUP BY assessment_id, software_name
+            ORDER BY assessed_at DESC NULLS LAST
+            LIMIT 10
+            """
+        ),
+        {"uid": user.id},
+    ).all()
+    payload["my_recent"] = [
+        {
+            "assessment_id": r.assessment_id,
+            "software_name": r.software_name,
+            "assessed_at": r.assessed_at.isoformat() if r.assessed_at else None,
+            "passed": r.passed or 0,
+            "failed": r.failed or 0,
+            "not_applicable": r.not_applicable or 0,
+        }
+        for r in recent
+    ]
     return payload

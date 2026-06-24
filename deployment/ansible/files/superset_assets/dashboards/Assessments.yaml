@@ -23,7 +23,7 @@ position:
     meta:
       width: 12
       height: 14
-      code: "**Assessments.** Filter-driven exploration of every assessment you can see. Five filters at the top \u2014 **Author**, **Project**, **Software**, **Dimension**, **Date** \u2014 and clicking any chart cross-filters every other chart on the page. The flow runs top-to-bottom: cross-project quality comparison, activity + outcome trends, outcome heatmap, dimension and outcome breakdowns, top performers, then improvement targets and failed-check details. Empty cells in the heatmap or bar charts mean no checks in scope for that combination, not a missing value."
+      code: "**Assessments.** Filter by Author, Project, Software, Dimension or Date. Click any chart to narrow the others. Empty cells mean no checks in scope, not a missing value."
     type: MARKDOWN
     parents:
     - ROOT_ID
@@ -46,7 +46,6 @@ position:
     - ROW-6
     - ROW-FAILED-PROFILE
     - ROW-7
-    - ROW-8
     - ROW-SW-IMPR-VIZ
     - ROW-10
   ROOT_ID:
@@ -136,20 +135,6 @@ position:
     - GRID_ID
     children:
     - CHART-9
-  CHART-12:
-    id: CHART-12
-    meta:
-      width: 12
-      height: 65
-      chartId: 211
-      sliceName: Recent Assessments
-      uuid: 6f1c5ec3-8c56-4dc6-9027-0e59453ba9dd
-    type: CHART
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-8
-    children: []
   ROW-6:
     id: ROW-6
     meta:
@@ -198,16 +183,6 @@ position:
     - GRID_ID
     children:
     - CHART-11
-  ROW-8:
-    id: ROW-8
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - CHART-12
   ROW-9:
     id: ROW-9
     meta:
@@ -371,7 +346,6 @@ metadata:
     '208': true
     '209': true
     '210': true
-    '211': true
     '213': true
     '214': true
     '215': true
@@ -390,7 +364,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -407,7 +380,6 @@ metadata:
         - 205
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -424,7 +396,6 @@ metadata:
         - 205
         - 208
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -441,24 +412,6 @@ metadata:
         - 205
         - 208
         - 209
-        - 211
-        - 213
-        - 214
-        - 215
-        - 220
-        - 221
-        - 222
-        - 230
-        - 231
-    '211':
-      id: 211
-      crossFilters:
-        scope: global
-        chartsInScope:
-        - 205
-        - 208
-        - 209
-        - 210
         - 213
         - 214
         - 215
@@ -476,7 +429,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 214
         - 215
         - 220
@@ -493,7 +445,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 215
         - 220
@@ -510,7 +461,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 220
@@ -527,7 +477,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -544,7 +493,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -560,7 +508,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -577,7 +524,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -594,7 +540,6 @@ metadata:
         - 208
         - 209
         - 210
-        - 211
         - 213
         - 214
         - 215
@@ -621,7 +566,6 @@ metadata:
     - 205
     - 208
     - 210
-    - 211
     - 213
     - 214
     - 215
@@ -652,7 +596,6 @@ metadata:
     - 208
     - 209
     - 210
-    - 211
     - 213
     - 214
     - 215
@@ -682,7 +625,6 @@ metadata:
     - 205
     - 208
     - 210
-    - 211
     - 213
     - 214
     - 215
@@ -713,7 +655,6 @@ metadata:
     - 208
     - 209
     - 210
-    - 211
     - 213
     - 214
     - 215
@@ -743,7 +684,6 @@ metadata:
     - 205
     - 208
     - 210
-    - 211
     - 213
     - 214
     - 215

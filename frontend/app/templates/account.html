@@ -36,7 +36,7 @@
         <div class="stat-label">Failed</div>
     </div>
     <div class="stat-card stat-neutral">
-        <div class="stat-value">{% if pass_pct is none %}&mdash;{% else %}{{ pass_pct }}%{% endif %}</div>
+        <div class="stat-value">{% if pass_pct is none %}-{% else %}{{ pass_pct }}%{% endif %}</div>
         <div class="stat-label">Pass Rate</div>
     </div>
 </section>
@@ -86,6 +86,36 @@
 </section>
 {% endif %}
 
+{% set recent = (stats or {}).my_recent or [] %}
+{% if recent %}
+<section class="account-section">
+    <h2>Recent activity</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Your last {{ recent | length }} assessments. The full list lives on the Assessments dashboard.</p>
+    <table class="account-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Software</th>
+                <th style="text-align: right;">Passed</th>
+                <th style="text-align: right;">Failed</th>
+                <th style="text-align: right;">N/A</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in recent %}
+            <tr>
+                <td class="muted">{{ r.assessed_at[:10] if r.assessed_at else '' }}</td>
+                <td><a href="/?software={{ r.software_name|urlencode }}" class="link-pill" title="View assessments for {{ r.software_name }}">{{ r.software_name }}</a></td>
+                <td style="text-align: right; color: #117733;">{{ r.passed }}</td>
+                <td style="text-align: right; color: #CC3311;">{{ r.failed }}</td>
+                <td style="text-align: right;" class="muted">{{ r.not_applicable }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
 
 <section class="account-section">
     <h2>Profile</h2>
@@ -123,6 +153,90 @@
         </div>
         {% endif %}
     </div>
+</section>
+
+<section class="account-section">
+    <h2>My projects</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+        Assessments are grouped by project. New projects default to <strong>Public</strong> (visible to anonymous viewers on Overview and Assessments). Lower the tier per project to <strong>Authenticated</strong> (only logged-in users) or <strong>Private</strong> (only you). Deleting a project unassigns its software, which then stays private to you until you move it into another project.
+    </p>
+    {% if projects %}
+    <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        <thead style="background: var(--color-light-bg);">
+            <tr>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Name</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Visibility</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
+                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Created</th>
+                <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in projects %}
+            {% set sw_in_project = software | selectattr('project_id', 'equalto', p.id) | list %}
+            <tr style="border-top: 1px solid #e2e8f0;">
+                <td style="padding: 0.5rem 0.75rem;">
+                    <a href="/?project={{ p.name|urlencode }}" class="link-pill" title="View assessments in {{ p.name }}" style="display: inline-block; margin-bottom: 0.4rem;">{{ p.name }}</a>
+                    <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.4rem;">
+                        <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.35rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
+                        <button type="submit" class="btn-secondary" style="cursor: pointer; font-size: 0.85rem; padding: 0.35rem 0.75rem;" title="Rename">Rename</button>
+                    </form>
+                </td>
+                <td style="padding: 0.75rem;">
+                    {% set vis_color = {'public': '#2f855a', 'authenticated': '#1d4ed8', 'private': '#c0392b'} %}
+                    <span style="color: {{ vis_color[p.visibility] }};">{{ p.visibility|capitalize }}</span>
+                </td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">
+                    {% if sw_in_project %}
+                    {{ sw_in_project | map(attribute='software_name') | join(', ') }}
+                    {% else %}
+                    (none)
+                    {% endif %}
+                </td>
+                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
+                <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
+                    <button type="button" class="btn-secondary share-btn" style="cursor: pointer;"
+                        data-share-path="/?project={{ p.name|urlencode }}"
+                        data-share-label="{{ p.name }}">Share</button>
+                    <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline-flex; gap: 0.3rem;">
+                        <select name="visibility" style="padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
+                            <option value="private" {% if p.visibility == 'private' %}selected{% endif %}>Private</option>
+                            <option value="authenticated" {% if p.visibility == 'authenticated' %}selected{% endif %}>Authenticated</option>
+                            <option value="public" {% if p.visibility == 'public' %}selected{% endif %}>Public</option>
+                        </select>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Set</button>
+                    </form>
+                    {% if sw_in_project %}
+                    <button type="button" class="btn-secondary" style="cursor: not-allowed; opacity: 0.5;" title="Cannot delete: {{ sw_in_project|length }} software still assigned. Move or delete them first." disabled>Delete</button>
+                    {% else %}
+                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit='return confirm("Delete project " + {{ p.name|tojson }} + "? This cannot be undone.");'>
+                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">You don't have any projects yet. Create one below to start receiving assessments.</p>
+    {% endif %}
+
+    <form method="post" action="/account/projects" style="margin-top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
+        <label style="flex: 1; min-width: 200px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">New project name</span>
+            <input name="name" required maxlength="255" placeholder="e.g. data-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+        </label>
+        <label style="display: flex; flex-direction: column; min-width: 180px;">
+            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Visibility</span>
+            <select name="visibility" style="padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
+                <option value="public" selected>Public (anyone)</option>
+                <option value="authenticated">Authenticated (logged-in users)</option>
+                <option value="private">Private (only me)</option>
+            </select>
+        </label>
+        <button type="submit" class="btn-primary" style="cursor: pointer;">Create project</button>
+    </form>
 </section>
 
 {% if software %}
@@ -209,18 +323,20 @@
                                 <button type="submit" class="btn-secondary btn-sm">Set</button>
                             </form>
                         </td>
-                        <td style="text-align: right; white-space: nowrap;">
-                            <button type="button" class="btn-secondary btn-sm share-btn"
-                                data-share-path="/?software={{ sw.software_name|urlencode }}"
-                                data-share-label="{{ sw.software_name }}" title="Share link">
-                                {{ icon_share() }} Share
-                            </button>
-                            <form method="post" action="/account/software/delete" class="inline-form" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
-                                <input type="hidden" name="software_name" value="{{ sw.software_name }}">
-                                <button type="submit" class="btn-secondary btn-sm" title="Delete all assessments">
-                                    {{ icon_trash() }} Delete
+                        <td class="actions-cell">
+                            <div class="action-cluster">
+                                <button type="button" class="btn-secondary btn-sm share-btn"
+                                    data-share-path="/?software={{ sw.software_name|urlencode }}"
+                                    data-share-label="{{ sw.software_name }}" title="Share link">
+                                    {{ icon_share() }} Share
                                 </button>
-                            </form>
+                                <form method="post" action="/account/software/delete" class="inline-form" onsubmit='return confirm("Delete all " + {{ sw.assessment_count|tojson }} + " assessment(s) for " + {{ sw.software_name|tojson }} + "? This cannot be undone.");'>
+                                    <input type="hidden" name="software_name" value="{{ sw.software_name }}">
+                                    <button type="submit" class="btn-secondary btn-sm" title="Delete all assessments">
+                                        {{ icon_trash() }} Delete
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -394,14 +510,37 @@
     font-size: 0.86rem;
 }
 
-/* Inline-form: select + button on one line. */
+/* Inline-form: select + button on one line. The button keeps its
+   intrinsic width so it can't get crushed; the select absorbs the
+   remaining space. nowrap so we never get a button on its own row
+   beneath a tiny select. */
 .inline-form {
     display: flex;
     gap: 0.35rem;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
-.inline-form > .form-select { flex: 1; min-width: 6rem; }
+.inline-form > .form-select { flex: 1 1 auto; min-width: 8rem; }
+.inline-form > .btn-secondary { flex: 0 0 auto; }
+
+/* Action cluster: groups Share + Delete (and any future row-level
+   actions) into a right-aligned, gap-spaced row that doesn't wrap. */
+.action-cluster {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.actions-cell {
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* Bottom-align every cell content so the action buttons in one cell
+   line up with the form submit button in the neighbouring cell that
+   has a status row above its form. Without this the buttons float to
+   their cells' vertical centres and look misaligned across the row. */
+.account-table tbody td { vertical-align: bottom; }
 
 /* Small-button variant — same theme, tighter dimensions for tables. */
 .btn-sm {
@@ -414,90 +553,6 @@
 .btn-sm svg { flex: 0 0 14px; }
 </style>
 {% endif %}
-
-<section class="account-section">
-    <h2>My projects</h2>
-    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        Assessments are grouped by project. New projects default to <strong>Public</strong> (visible to anonymous viewers on Overview and Assessments). Lower the tier per project to <strong>Authenticated</strong> (only logged-in users) or <strong>Private</strong> (only you). Deleting a project unassigns its software, which then stays private to you until you move it into another project.
-    </p>
-    {% if projects %}
-    <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-        <thead style="background: var(--color-light-bg);">
-            <tr>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Name</th>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Visibility</th>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Software</th>
-                <th style="text-align: left; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Created</th>
-                <th style="text-align: right; padding: 0.75rem; font-size: 0.85rem; color: var(--color-text-muted);">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in projects %}
-            {% set sw_in_project = software | selectattr('project_id', 'equalto', p.id) | list %}
-            <tr style="border-top: 1px solid #e2e8f0;">
-                <td style="padding: 0.5rem 0.75rem;">
-                    <a href="/?project={{ p.name|urlencode }}" class="link-pill" title="View assessments in {{ p.name }}" style="display: inline-block; margin-bottom: 0.4rem;">{{ p.name }}</a>
-                    <form method="post" action="/account/projects/{{ p.id }}/rename" style="display: flex; gap: 0.4rem;">
-                        <input name="name" value="{{ p.name }}" maxlength="255" style="flex: 1; padding: 0.35rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
-                        <button type="submit" class="btn-secondary" style="cursor: pointer; font-size: 0.85rem; padding: 0.35rem 0.75rem;" title="Rename">Rename</button>
-                    </form>
-                </td>
-                <td style="padding: 0.75rem;">
-                    {% set vis_color = {'public': '#2f855a', 'authenticated': '#1d4ed8', 'private': '#c0392b'} %}
-                    <span style="color: {{ vis_color[p.visibility] }};">{{ p.visibility|capitalize }}</span>
-                </td>
-                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">
-                    {% if sw_in_project %}
-                    {{ sw_in_project | map(attribute='software_name') | join(', ') }}
-                    {% else %}
-                    (none)
-                    {% endif %}
-                </td>
-                <td style="padding: 0.75rem; font-size: 0.9rem; color: var(--color-text-muted);">{{ p.created_at[:10] if p.created_at else '' }}</td>
-                <td style="padding: 0.75rem; text-align: right; white-space: nowrap;">
-                    <button type="button" class="btn-secondary share-btn" style="cursor: pointer;"
-                        data-share-path="/?project={{ p.name|urlencode }}"
-                        data-share-label="{{ p.name }}">Share</button>
-                    <form method="post" action="/account/projects/{{ p.id }}/visibility" style="display: inline-flex; gap: 0.3rem;">
-                        <select name="visibility" style="padding: 0.4rem; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem;">
-                            <option value="private" {% if p.visibility == 'private' %}selected{% endif %}>Private</option>
-                            <option value="authenticated" {% if p.visibility == 'authenticated' %}selected{% endif %}>Authenticated</option>
-                            <option value="public" {% if p.visibility == 'public' %}selected{% endif %}>Public</option>
-                        </select>
-                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Set</button>
-                    </form>
-                    {% if sw_in_project %}
-                    <button type="button" class="btn-secondary" style="cursor: not-allowed; opacity: 0.5;" title="Cannot delete: {{ sw_in_project|length }} software still assigned. Move or delete them first." disabled>Delete</button>
-                    {% else %}
-                    <form method="post" action="/account/projects/{{ p.id }}/delete" style="display: inline;" onsubmit='return confirm("Delete project " + {{ p.name|tojson }} + "? This cannot be undone.");'>
-                        <button type="submit" class="btn-secondary" style="cursor: pointer;">Delete</button>
-                    </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">You don't have any projects yet. Create one below to start receiving assessments.</p>
-    {% endif %}
-
-    <form method="post" action="/account/projects" style="margin-top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
-        <label style="flex: 1; min-width: 200px;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">New project name</span>
-            <input name="name" required maxlength="255" placeholder="e.g. data-pipeline" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-        </label>
-        <label style="display: flex; flex-direction: column; min-width: 180px;">
-            <span style="display: block; font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Visibility</span>
-            <select name="visibility" style="padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;">
-                <option value="public" selected>Public (anyone)</option>
-                <option value="authenticated">Authenticated (logged-in users)</option>
-                <option value="private">Private (only me)</option>
-            </select>
-        </label>
-        <button type="submit" class="btn-primary" style="cursor: pointer;">Create project</button>
-    </form>
-</section>
 
 <section class="account-section">
     <h2>API tokens</h2>
