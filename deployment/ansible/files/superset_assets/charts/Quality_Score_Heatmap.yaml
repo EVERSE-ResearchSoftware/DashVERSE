@@ -1,8 +1,5 @@
 slice_name: Outcomes Heatmap
-description: Number of failing checks per software-dimension pair. Brighter
-  cells mean more failures concentrated in that pair -- where to focus next.
-  Empty/dark cells mean the pair is either fully passing or hasn't been
-  exercised. Filter by software to narrow the view.
+description: Failing checks per software-dimension pair. Brighter cells show where failures concentrate. Empty cells mean the pair is fully passing or has not been exercised.
 certified_by: null
 certification_details: null
 viz_type: heatmap_v2

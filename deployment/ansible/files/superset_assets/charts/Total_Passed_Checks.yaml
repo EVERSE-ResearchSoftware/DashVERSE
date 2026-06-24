@@ -1,5 +1,5 @@
 slice_name: Passed Checks
-description: Count of checks whose outcome is Pass. Pairs with "Failed Checks" and "Pass Rate" so the headline percentage has its raw components visible alongside it.
+description: Number of checks whose outcome is Pass.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

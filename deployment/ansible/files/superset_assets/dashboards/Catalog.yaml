@@ -1,9 +1,10 @@
 dashboard_title: Catalog
-description:
-css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names because the empty-state DOM has\n   drifted between versions; one of these selectors will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n"
+description: null
+css: "/* Friendlier empty-state styling.\n   Targets multiple Superset class names because the empty-state DOM has\n   drifted between versions; one of these selectors will match. */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart {\n    padding: 24px !important;\n}\n\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n\
+  \    font-style: italic;\n    font-weight: normal;\n}\n"
 slug: catalog
-certified_by:
-certification_details:
+certified_by: null
+certification_details: null
 published: true
 uuid: 03b92f18-8a88-46e4-a844-00ff077d57b8
 position:
@@ -193,7 +194,6 @@ position:
     parents:
     - ROOT_ID
     children:
-    - ROW-INTRO
     - ROW-1
     - ROW-2
     - ROW-2B
@@ -211,28 +211,6 @@ position:
     meta:
       text: Dashboard
     type: HEADER
-  ROW-INTRO:
-    id: ROW-INTRO
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - MARKDOWN-INTRO
-  MARKDOWN-INTRO:
-    id: MARKDOWN-INTRO
-    meta:
-      width: 12
-      height: 14
-      code: '**Catalog.** The EVERSE dimensions and indicators with definitions, plus how much of the catalog has been tested by at least one assessment.'
-    type: MARKDOWN
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-INTRO
-    children: []
   ROW-TOOLS:
     id: ROW-TOOLS
     meta:

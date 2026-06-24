@@ -1,7 +1,5 @@
 slice_name: Indicators per Dimension
-description: How many catalog indicators each quality dimension contains. An indicator
-  that spans multiple dimensions is counted under each. Tall bars are well-instrumented
-  dimensions; short bars suggest where the catalog could grow.
+description: Catalog indicators each quality dimension contains. An indicator that spans multiple dimensions is counted under each.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

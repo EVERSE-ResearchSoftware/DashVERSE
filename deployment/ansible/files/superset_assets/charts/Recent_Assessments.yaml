@@ -1,7 +1,5 @@
 slice_name: Recent Assessments
-description: Most recent assessments, one row per assessment, ordered by
-  assessment date. Use to confirm assessments arrived on schedule for the
-  projects you expect.
+description: Most recent assessments, one row per assessment, ordered by date.
 certified_by: null
 certification_details: null
 viz_type: table

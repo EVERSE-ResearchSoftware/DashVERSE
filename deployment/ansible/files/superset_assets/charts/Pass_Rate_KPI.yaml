@@ -1,5 +1,5 @@
 slice_name: Pass Rate
-description: Share of checks returning Pass out of the checks that actually produced a Pass or Fail verdict. Not Applicable rows are excluded from the denominator so a plugin that doesn't apply to a project doesn't drag the rate down.
+description: Share of checks returning Pass out of the Pass+Fail total. Not applicable rows are excluded so an indicator that does not apply to a project does not lower the rate.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

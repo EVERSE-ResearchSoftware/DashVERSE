@@ -1,7 +1,5 @@
 slice_name: Common Issues
-description: Top failing indicators across the portfolio, ranked by how many
-  checks have failed against them. Tackle the longest bars first for the
-  highest-impact fixes.
+description: Top failing indicators across the portfolio, ranked by the number of failing checks.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

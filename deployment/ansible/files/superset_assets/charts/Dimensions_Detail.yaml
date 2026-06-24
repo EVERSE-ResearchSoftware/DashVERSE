@@ -1,6 +1,5 @@
 slice_name: Dimensions Detail
-description: All quality dimensions in the EVERSE catalog with their names, identifiers,
-  descriptions, and a link to the matching RSQKit topic page.
+description: Every dimension in the EVERSE catalog with its identifier, description, and a link to the matching RSQKit topic.
 certified_by: null
 certification_details: null
 viz_type: table

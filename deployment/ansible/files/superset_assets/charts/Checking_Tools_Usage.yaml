@@ -1,7 +1,5 @@
 slice_name: Checking Tools Usage
-description: How each checking tool's work splits across the EVERSE quality
-  dimensions. One bar per tool; segments stack each tool's share by dimension.
-  Bar length is the total number of checks the tool has run.
+description: Checks each tool ran, stacked by quality dimension. Bar length is the total checks; segments show which dimensions the tool covered.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

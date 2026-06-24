@@ -1,9 +1,5 @@
 slice_name: Failed Checks by Software
-description: |
-  Count of failing checks per software, stacked by quality dimension.
-  Use the chart to spot which projects accumulate the most failures and
-  which dimensions drive them, then drop into the table below for the
-  per-check evidence.
+description: Failing checks per software, stacked by quality dimension.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

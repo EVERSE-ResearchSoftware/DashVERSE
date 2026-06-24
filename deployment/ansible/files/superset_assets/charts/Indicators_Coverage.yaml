@@ -1,5 +1,5 @@
 slice_name: Indicators Coverage
-description: How many of the EVERSE catalog indicators have been exercised by an assessment vs how many are still untouched.
+description: Catalog indicators exercised by at least one assessment vs those still untouched.
 certified_by: null
 certification_details: null
 viz_type: pie

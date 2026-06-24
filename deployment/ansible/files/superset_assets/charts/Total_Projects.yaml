@@ -1,5 +1,5 @@
 slice_name: Total Projects
-description: Count of distinct DashVERSE projects represented in the assessment data. Useful as a denominator for "average software per project" / "average assessments per project" interpretations.
+description: Distinct DashVERSE projects represented in the assessment data.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

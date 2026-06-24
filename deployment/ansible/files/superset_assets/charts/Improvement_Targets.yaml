@@ -1,7 +1,5 @@
 slice_name: Improvement Targets
-description: Failing indicators across the portfolio ranked by frequency,
-  with links to the RSQKit dimension topic page and the indicator's
-  definition. Use to plan remediation work.
+description: Failing indicators across the portfolio ranked by frequency, with links to the RSQKit topic and indicator definition.
 certified_by: null
 certification_details: null
 viz_type: table

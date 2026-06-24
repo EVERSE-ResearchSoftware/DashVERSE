@@ -1,6 +1,5 @@
 slice_name: Last Assessment
-description: Date of the most recent assessment for the selected software. A stale
-  value suggests the project has stopped tracking quality.
+description: Date of the most recent assessment in scope. Useful for confirming a CI job actually published.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

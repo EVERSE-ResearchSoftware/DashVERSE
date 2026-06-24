@@ -1,7 +1,5 @@
 slice_name: Tools Coverage
-description: Hierarchical view of what each checking tool exercises. Rows are
-  grouped by tool, then by quality dimension, then by indicator. Click a
-  tool or dimension row to expand or collapse.
+description: Number of distinct tools active in the assessments in scope.
 certified_by: null
 certification_details: null
 viz_type: pivot_table_v2

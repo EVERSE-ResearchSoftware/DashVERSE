@@ -1,8 +1,5 @@
 slice_name: Top Performing Software
-description: Software ranked by how many distinct indicators they pass across
-  all their assessments. Higher counts mean broader catalog coverage with
-  passing checks -- good candidates for case studies and best-practice
-  sharing.
+description: Software ranked by the number of distinct indicators they pass across all assessments.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

@@ -1,8 +1,5 @@
 slice_name: Software Improvement Targets
-description: Failing indicators for the selected software, ranked by
-  frequency. The dashboard's Software filter narrows the table to one
-  project at a time; links open the RSQKit dimension page and the
-  indicator definition.
+description: Failing indicators for the selected software, ranked by frequency. Links open the RSQKit topic and the indicator definition.
 certified_by: null
 certification_details: null
 viz_type: table

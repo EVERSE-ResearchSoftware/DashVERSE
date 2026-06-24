@@ -1,9 +1,5 @@
 slice_name: Software Improvement Visual
-description: |
-  Treemap of failing indicators for the selected software, grouped by
-  quality dimension. Tile area is the number of failures -- bigger
-  tiles are the highest-impact targets. Pair with the table below for
-  the indicator links.
+description: Per-indicator score for the selected software. Filled bars are passing; thin bars need work.
 certified_by: null
 certification_details: null
 viz_type: treemap_v2

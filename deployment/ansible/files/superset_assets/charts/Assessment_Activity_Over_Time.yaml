@@ -1,5 +1,5 @@
 slice_name: Assessment Activity Over Time
-description: Distinct assessments submitted per month. Use to spot adoption peaks and lulls, or to correlate spikes with training rounds and release cycles.
+description: Distinct assessments submitted per week.
 certified_by: null
 certification_details: null
 viz_type: echarts_area

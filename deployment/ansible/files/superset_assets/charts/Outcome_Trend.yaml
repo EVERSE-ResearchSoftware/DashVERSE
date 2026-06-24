@@ -1,13 +1,5 @@
 slice_name: Outcome Trend
-description: 'How many checks have passed, failed, or returned not-applicable each month.
-
-  Each outcome has its own smooth filled curve so the three trends can be
-
-  compared independently. Drag the range slider below the chart to zoom into
-
-  a date window.
-
-  '
+description: Pass, Fail, and Not applicable check counts per week. Each outcome is its own filled curve.
 certified_by: null
 certification_details: null
 viz_type: echarts_area

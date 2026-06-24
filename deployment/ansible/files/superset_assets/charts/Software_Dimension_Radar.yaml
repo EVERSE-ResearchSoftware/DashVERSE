@@ -1,13 +1,5 @@
 slice_name: Dimension Profile
-description: 'Outcome breakdown per quality dimension. With no software selected, this is
-
-  the portfolio profile; pick a project in the filters to see its profile.
-
-  100% stacked bars make it easy to compare dimensions -- the bigger the blue
-
-  segment, the stronger the dimension; bigger orange means more failures.
-
-  '
+description: Outcome breakdown per quality dimension. 100% stacked bars show each dimension's Pass / Fail / Not applicable split.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

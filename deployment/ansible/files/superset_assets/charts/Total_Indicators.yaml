@@ -1,5 +1,5 @@
 slice_name: Total Indicators
-description: Number of quality indicators in the EVERSE catalog.
+description: Number of indicators in the EVERSE catalog.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

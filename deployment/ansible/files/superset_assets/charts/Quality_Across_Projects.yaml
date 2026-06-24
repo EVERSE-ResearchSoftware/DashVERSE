@@ -1,11 +1,5 @@
 slice_name: Quality Across Projects
-description: 'How each project''s checks split across pass, fail, and not applicable.
-
-  100% stacked bars make comparing project profiles quick -- more blue
-
-  means a stronger project profile.
-
-  '
+description: How each project's checks split across Pass, Fail, and Not applicable. 100% stacked bars make profiles easy to compare.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

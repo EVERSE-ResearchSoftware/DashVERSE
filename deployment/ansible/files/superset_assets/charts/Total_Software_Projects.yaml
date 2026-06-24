@@ -1,5 +1,5 @@
 slice_name: Total Software
-description: Count of distinct software assessed in DashVERSE (one entry per software name across all assessments). Distinct from DashVERSE "projects", which group software for visibility and ownership.
+description: Distinct software assessed in DashVERSE.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

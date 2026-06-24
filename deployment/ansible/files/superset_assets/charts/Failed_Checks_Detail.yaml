@@ -1,7 +1,5 @@
 slice_name: Failed Checks Detail
-description: Searchable table of failing checks with software, dimension,
-  indicator, tool output, and the evidence the tool emitted. Filter to a
-  specific repo or dimension to plan remediation.
+description: Searchable table of failing checks with software, dimension, indicator, tool output, and the evidence the tool emitted.
 certified_by: null
 certification_details: null
 viz_type: table

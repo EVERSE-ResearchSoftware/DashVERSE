@@ -1,6 +1,5 @@
 slice_name: Coverage per Tool
-description: How many distinct indicators and quality dimensions each checking
-  tool exercises across all assessments. Long bars indicate broad coverage.
+description: Distinct indicators and quality dimensions each checking tool covers across all assessments.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

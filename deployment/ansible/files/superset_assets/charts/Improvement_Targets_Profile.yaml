@@ -1,8 +1,5 @@
 slice_name: Improvement Targets by Indicator
-description: |
-  Failing indicators ranked by frequency, coloured by quality dimension.
-  Use the chart for a quick read on the most impactful indicators to
-  tackle first; the ranked table below gives the linked references.
+description: Failing indicators ranked by frequency, coloured by quality dimension.
 certified_by: null
 certification_details: null
 viz_type: echarts_timeseries_bar

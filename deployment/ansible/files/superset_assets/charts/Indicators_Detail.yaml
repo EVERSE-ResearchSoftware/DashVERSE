@@ -1,8 +1,5 @@
 slice_name: Indicators Detail
-description: All quality indicators in the EVERSE catalog with the quality
-  dimension they belong to and a link to the indicator's documentation. An
-  indicator that spans multiple dimensions appears once per dimension. Filter
-  by Quality Dimension to focus on a specific area.
+description: Every indicator in the EVERSE catalog with its quality dimension and a link to its documentation. An indicator that spans multiple dimensions appears once per dimension.
 certified_by: null
 certification_details: null
 viz_type: table

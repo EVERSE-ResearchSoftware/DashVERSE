@@ -1,6 +1,5 @@
 slice_name: Assessments
-description: Number of submitted assessments. Across the portfolio it shows total
-  activity; for a single software it shows how often that project has been assessed.
+description: Number of submitted assessments. Across the portfolio it shows total activity; for a single software it shows how often that one was assessed.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

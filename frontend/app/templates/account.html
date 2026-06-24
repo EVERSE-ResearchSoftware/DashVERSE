@@ -86,37 +86,6 @@
 </section>
 {% endif %}
 
-{% set recent = (stats or {}).my_recent or [] %}
-{% if recent %}
-<section class="account-section">
-    <h2>Recent activity</h2>
-    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Your last {{ recent | length }} assessments. The full list lives on the Assessments dashboard.</p>
-    <table class="account-table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Software</th>
-                <th style="text-align: right;">Passed</th>
-                <th style="text-align: right;">Failed</th>
-                <th style="text-align: right;">N/A</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for r in recent %}
-            <tr>
-                <td class="muted">{{ r.assessed_at[:10] if r.assessed_at else '' }}</td>
-                <td><a href="/?software={{ r.software_name|urlencode }}" class="link-pill" title="View assessments for {{ r.software_name }}">{{ r.software_name }}</a></td>
-                <td style="text-align: right; color: #117733;">{{ r.passed }}</td>
-                <td style="text-align: right; color: #CC3311;">{{ r.failed }}</td>
-                <td style="text-align: right;" class="muted">{{ r.not_applicable }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</section>
-{% endif %}
-
-
 <section class="account-section">
     <h2>Profile</h2>
     <div class="profile-grid">
@@ -553,6 +522,37 @@
 .btn-sm svg { flex: 0 0 14px; }
 </style>
 {% endif %}
+
+{% set recent = (stats or {}).my_recent or [] %}
+{% if recent %}
+<section class="account-section">
+    <h2>Recent activity</h2>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Your last {{ recent | length }} assessments. The full list lives on the Assessments dashboard.</p>
+    <table class="account-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Software</th>
+                <th style="text-align: right;">Passed</th>
+                <th style="text-align: right;">Failed</th>
+                <th style="text-align: right;">N/A</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in recent %}
+            <tr>
+                <td class="muted">{{ r.assessed_at[:10] if r.assessed_at else '' }}</td>
+                <td><a href="/?software={{ r.software_name|urlencode }}" class="link-pill" title="View assessments for {{ r.software_name }}">{{ r.software_name }}</a></td>
+                <td style="text-align: right; color: #117733;">{{ r.passed }}</td>
+                <td style="text-align: right; color: #CC3311;">{{ r.failed }}</td>
+                <td style="text-align: right;" class="muted">{{ r.not_applicable }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
 
 <section class="account-section">
     <h2>API tokens</h2>

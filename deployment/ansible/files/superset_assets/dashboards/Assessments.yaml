@@ -8,35 +8,12 @@ certification_details: null
 published: true
 uuid: 1820539b-3d1e-4eb6-ae9a-ce9b7ac2be64
 position:
-  ROW-INTRO:
-    id: ROW-INTRO
-    meta:
-      background: BACKGROUND_TRANSPARENT
-    type: ROW
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    children:
-    - MARKDOWN-INTRO
-  MARKDOWN-INTRO:
-    id: MARKDOWN-INTRO
-    meta:
-      width: 12
-      height: 14
-      code: "**Assessments.** Filter by Author, Project, Software, Dimension or Date. Click any chart to narrow the others. Empty cells mean no checks in scope, not a missing value."
-    type: MARKDOWN
-    parents:
-    - ROOT_ID
-    - GRID_ID
-    - ROW-INTRO
-    children: []
   GRID_ID:
     id: GRID_ID
     type: GRID
     parents:
     - ROOT_ID
     children:
-    - ROW-INTRO
     - ROW-9
     - ROW-PROFILE-TREND
     - ROW-11

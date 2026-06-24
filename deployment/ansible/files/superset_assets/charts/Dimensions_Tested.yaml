@@ -1,6 +1,5 @@
 slice_name: Dimensions Tested
-description: Distinct catalog dimensions exercised by at least one check across
-  all assessments.
+description: Distinct catalog dimensions exercised by at least one check.
 certified_by: null
 certification_details: null
 viz_type: big_number_total

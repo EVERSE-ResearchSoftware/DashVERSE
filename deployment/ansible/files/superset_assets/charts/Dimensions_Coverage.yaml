@@ -1,5 +1,5 @@
 slice_name: Dimensions Coverage
-description: How many of the EVERSE catalog dimensions have been exercised by an assessment vs how many are still untouched.
+description: Catalog dimensions exercised by at least one assessment vs those still untouched.
 certified_by: null
 certification_details: null
 viz_type: pie
