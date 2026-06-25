@@ -155,18 +155,29 @@
 
 {% endif %}
 
-<section class="dashboards" style="margin-bottom: 0;">
+<section class="learn-more" style="margin-bottom: 0;">
     <h2>Resources</h2>
-    <p class="resource-row">
-        <a href="https://everse.software/indicators/website/indicators.html" target="_blank">EVERSE indicators</a>
-        &middot;
-        <a href="https://everse.software/RSQKit/" target="_blank">RSQKit</a>
-        &middot;
-        <a href="https://github.com/EVERSE-ResearchSoftware/QualityPipelines" target="_blank">QualityPipelines</a>
-        &middot;
-        <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank">Schemas</a>
-        &middot;
-        <a href="{{ api_docs_url }}" target="_blank">API docs</a>
-    </p>
+    <div class="links-grid">
+        <a href="https://everse.software/indicators/website/indicators.html" target="_blank" class="learn-link">
+            <strong>EVERSE indicators</strong>
+            <span>The community-defined indicator catalog DashVERSE renders.</span>
+        </a>
+        <a href="https://everse.software/RSQKit/" target="_blank" class="learn-link">
+            <strong>RSQKit</strong>
+            <span>Topic guides linked from each chart's dimension and indicator labels.</span>
+        </a>
+        <a href="https://github.com/EVERSE-ResearchSoftware/QualityPipelines" target="_blank" class="learn-link">
+            <strong>QualityPipelines</strong>
+            <span>The resqui assessment runner. Install, run locally, push results here.</span>
+        </a>
+        <a href="https://github.com/EVERSE-ResearchSoftware/schemas" target="_blank" class="learn-link">
+            <strong>Schemas</strong>
+            <span>JSON-LD schemas the assessment payloads conform to.</span>
+        </a>
+        <a href="{{ api_docs_url }}" target="_blank" class="learn-link">
+            <strong>API docs</strong>
+            <span>PostgREST endpoints for submitting assessments and reading data.</span>
+        </a>
+    </div>
 </section>
 {% endblock %}

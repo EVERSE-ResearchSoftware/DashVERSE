@@ -10,8 +10,8 @@ params:
     column:
       column_name: indicator_id
     aggregate: COUNT_DISTINCT
-  header_font_size: 0.4
-  subheader_font_size: 0.15
+  header_font_size: 0.25
+  subheader_font_size: 0.1
   subheader: Tested Indicators
   color_picker:
     r: 0

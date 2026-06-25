@@ -38,51 +38,35 @@
     skipped=0
     failed=0
     for f in "{{ playbook_dir }}"/../files/superset_assets/charts/*.yaml; do
-        # Extract slice_name and target uuid from the YAML
         slice_name=$(awk '/^slice_name:/ { sub(/^slice_name:[[:space:]]*/, ""); print; exit }' "$f")
         target_uuid=$(awk '/^uuid:/ { sub(/^uuid:[[:space:]]*/, ""); print; exit }' "$f")
         [ -z "$slice_name" ] || [ -z "$target_uuid" ] && { skipped=$((skipped+1)); continue; }
-        # URL-encode the slice_name for the filter expression
-        slice_name_enc=$(printf '%s' "$slice_name" | jq -sRr @uri)
-        # Look up the chart by name
-        chart_resp=$(curl -s "{{ superset_api }}/chart/?q=(filters:!((col:slice_name,opr:eq,value:'${slice_name_enc}')))" \
-            -H "Authorization: Bearer {{ access_token }}" \
-            -H "Cookie: {{ session_cookie }}")
-        chart_id=$(echo "$chart_resp" | jq -r '.result[0].id // empty')
-        current_uuid=$(echo "$chart_resp" | jq -r '.result[0].uuid // empty')
-        if [ -z "$chart_id" ]; then
-            skipped=$((skipped+1))
+        # Escape single quotes for SQL literal safety
+        sql_slice=$(printf '%s' "$slice_name" | sed "s/'/''/g")
+        # Run the UPDATE; capture the affected row count from psql output
+        result=$(kubectl exec -n dashverse deploy/postgresql -- \
+            psql -U {{ database_user }} -d {{ database_db }} -tA -v ON_ERROR_STOP=1 -c \
+            "UPDATE slices SET uuid = '${target_uuid}'::uuid \
+             WHERE slice_name = '${sql_slice}' \
+               AND (uuid IS NULL OR uuid::text <> '${target_uuid}') \
+             RETURNING id, slice_name;" 2>&1)
+        rc=$?
+        if [ "$rc" -ne 0 ]; then
+            echo "  failed: '${slice_name}' rc=${rc} output=${result}"
+            failed=$((failed+1))
             continue
         fi
-        if [ "$current_uuid" = "$target_uuid" ]; then
-            skipped=$((skipped+1))
-            continue
-        fi
-        # PATCH the uuid. Capture body + status code so failures are
-        # diagnosable. The Superset chart endpoint is PUT, not PATCH, and
-        # requires both Bearer token AND a CSRF token. If CSRF rejects,
-        # the body explains it.
-        patch_out=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X PUT \
-            "{{ superset_api }}/chart/${chart_id}" \
-            -H "Authorization: Bearer {{ access_token }}" \
-            -H "Cookie: {{ session_cookie }}" \
-            -H "X-CSRFToken: {{ csrf_token }}" \
-            -H "Content-Type: application/json" \
-            --data "{\"uuid\": \"${target_uuid}\"}")
-        patch_status=$(echo "$patch_out" | awk -F: '/^HTTP_STATUS:/ { print $2 }')
-        patch_body=$(echo "$patch_out" | grep -v '^HTTP_STATUS:' | head -c 300)
-        if [ "$patch_status" = "200" ]; then
-            echo "  fixed: chart id=${chart_id} '${slice_name}' uuid -> ${target_uuid}"
+        if [ -n "$result" ]; then
+            echo "  fixed: '${slice_name}' -> ${target_uuid}"
             fixed=$((fixed+1))
         else
-            echo "  failed (HTTP ${patch_status}): chart id=${chart_id} '${slice_name}' body=${patch_body}"
-            failed=$((failed+1))
+            skipped=$((skipped+1))
         fi
     done
     echo "chart uuid reconcile: fixed=${fixed} skipped=${skipped} failed=${failed}"
   register: chart_uuid_reconcile
   changed_when: "'fixed=0' not in chart_uuid_reconcile.stdout"
-  failed_when: false   # PATCH failures should not abort the whole setup
+  failed_when: false
 
 - name: Show chart UUID reconciliation result
   debug:
