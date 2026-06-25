@@ -884,7 +884,7 @@ async def account_token_create(
 
 
 @router.post("/account/tokens/{token_id}/revoke", response_class=HTMLResponse)
-async def account_token_revoke(request: Request, token_id: int):
+def account_token_revoke(request: Request, token_id: int):
     user = current_user(request)
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
@@ -906,7 +906,7 @@ async def account_token_delete(request: Request, token_id: int):
 
 
 @router.post("/account/software/assign", response_class=HTMLResponse)
-async def account_software_assign(
+def account_software_assign(
     request: Request,
     software_name: str = Form(...),
     project_id: int = Form(...),
@@ -977,7 +977,7 @@ async def account_software_visibility(
 
 
 @router.post("/account/projects", response_class=HTMLResponse)
-async def account_project_create(
+def account_project_create(
     request: Request,
     name: str = Form(...),
     visibility: str = Form(default="public"),
@@ -1045,7 +1045,7 @@ async def account_project_rename(request: Request, project_id: int, name: str = 
 
 
 @router.post("/account/projects/{project_id}/delete", response_class=HTMLResponse)
-async def account_project_delete(request: Request, project_id: int):
+def account_project_delete(request: Request, project_id: int):
     user = current_user(request)
     if not user:
         return RedirectResponse(url="/login?next=/account", status_code=302)
