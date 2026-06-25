@@ -8,8 +8,10 @@ params:
   - outcome
   metric:
     label: checks
-    expressionType: SQL
-    sqlExpression: COUNT(*)
+    expressionType: SIMPLE
+    column:
+      column_name: assessment_id
+    aggregate: COUNT
   color_scheme: supersetColors
   label_colors:
     Pass: '#117733'
