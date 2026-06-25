@@ -68,6 +68,11 @@
             filters: hideFilters
                 ? { visible: false, expanded: false }
                 : { expanded: true },
+            // standalone=3 was added in Superset 4.x to hide the filter
+            // bar entirely (not just collapse it). The SDK's
+            // filters.visible flag was introduced earlier but only
+            // collapses in some builds. Belt-and-suspenders.
+            urlParams: hideFilters ? { standalone: '3' } : {},
         },
     });
 

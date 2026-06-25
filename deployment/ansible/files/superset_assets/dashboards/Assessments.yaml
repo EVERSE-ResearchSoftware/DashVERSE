@@ -1,7 +1,6 @@
 dashboard_title: Assessments
 description: null
-css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n/* heatmap charts: leave breathing room below the canvas so x-axis labels stay visible when the\
-  \ description banner is shown */\n#chart-id-207 .chart-container,\n#chart-id-215 .chart-container {\n    padding-bottom: 18px;\n}\n\n/* KPI card chrome: subtle gradient, hover elevation, consistent inner padding */\n.dashboard-component-chart-holder { transition: box-shadow 0.2s, transform 0.2s; }\n.dashboard-component-chart-holder:hover {\n    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);\n    transform: translateY(-1px);\n}\n.chart-container .big-number-total, .chart-container .big_number_total {\n    background: linear-gradient(135deg, #ffffff, #f8fafc);\n    border-radius: 8px;\n    padding: 8px 10px;\n}\n.chart-container .big-number-total .header-line,\n.chart-container .big_number_total .header-line {\n    font-weight: 700;\n    letter-spacing: -0.01em;\n}\n.chart-container .big-number-total .subheader-line,\n.chart-container .big_number_total .subheader-line {\n    color: #5a6270;\n    text-transform: uppercase;\n    letter-spacing: 0.06em;\n    font-weight: 600;\n}\n"
+css: "/* Friendlier empty-state styling */\n.chart-container .ant-empty,\n.chart-container .empty-state,\n.chart-container .superset-chart-no-results,\n.chart-container .empty-chart { padding: 24px !important; }\n.chart-container .ant-empty-description,\n.chart-container .empty-state-text,\n.chart-container .superset-chart-no-results-text,\n.chart-container .empty-chart-message {\n    font-size: 14px !important;\n    color: #5a6270 !important;\n    font-weight: 500;\n}\n.chart-container .ant-empty-description::after,\n.chart-container .empty-state-text::after,\n.chart-container .superset-chart-no-results-text::after,\n.chart-container .empty-chart-message::after {\n    content: \"Adjust the filters at the top, or read the chart description for guidance.\";\n    display: block;\n    margin-top: 10px;\n    font-size: 12px;\n    color: #888;\n    font-style: italic;\n    font-weight: normal;\n}\n/* heatmap charts: leave breathing room below the canvas so x-axis labels stay visible when the description banner is shown */\n#chart-id-207 .chart-container,\n#chart-id-215 .chart-container {\n    padding-bottom: 18px;\n}\n\n/* KPI card chrome: subtle gradient, hover elevation, consistent inner padding */\n.dashboard-component-chart-holder { transition: box-shadow 0.2s, transform 0.2s; }\n.dashboard-component-chart-holder:hover {\n    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.10);\n    transform: translateY(-1px);\n}\n.chart-container .big-number-total, .chart-container .big_number_total {\n    background: linear-gradient(135deg, #ffffff, #f8fafc);\n    border-radius: 8px;\n    padding: 8px 10px;\n}\n.chart-container .big-number-total .header-line,\n.chart-container .big_number_total .header-line {\n    font-weight: 700;\n    letter-spacing: -0.01em;\n}\n.chart-container .big-number-total .subheader-line,\n.chart-container .big_number_total .subheader-line {\n    color: #5a6270;\n    text-transform: uppercase;\n    letter-spacing: 0.06em;\n    font-weight: 600;\n}\n\n/* Hide every plausible filter-bar element. Many Superset versions and\n   minified builds use different DOM trees, so we cast a wide net via\n   attribute-contains selectors. May catch false positives on charts\n   whose IDs happen to contain \"filter\" \u2014 none exist in this dashboard. */\n[data-test*=\"filter\" i],\n[data-test*=\"Filter\"],\n[id*=\"filter-bar\" i],\n[id*=\"filterBar\"],\n[class*=\"filter-bar\" i],\n[class*=\"filterBar\"],\n[class*=\"FilterBar\"],\n[class*=\"dashboard-filter\" i],\n[class*=\"DashboardFilter\"],\n[class*=\"Filterbar\"],\n[class*=\"filtersBar\"],\n[class*=\"filter-status\"],\n[class*=\"filterStatus\"],\n[aria-label*=\"filter\" i] {\n    display: none !important;\n    width: 0 !important;\n    height: 0 !important;\n    max-width: 0 !important;\n    max-height: 0 !important;\n    overflow: hidden !important;\n    visibility: hidden !important;\n    margin: 0 !important;\n    padding: 0 !important;\n    border: 0 !important;\n}\n\n/* Some Superset versions render the filter bar as a top horizontal row\n   that pushes the grid down. Reset the grid container to start at the\n   top of the iframe regardless. */\n.grid-content,\n[data-test=\"grid-content\"],\n[class*=\"GridContent\"],\n[class*=\"grid-content\"],\n[class*=\"DashboardBuilder\"] {\n    padding-left: 0 !important;\n    padding-right: 0 !important;\n    padding-top: 0 !important;\n    margin-top: 0 !important;\n}\n"
 slug: assessments
 certified_by: null
 certification_details: null
@@ -16,6 +15,7 @@ position:
     children:
     - ROW-9
     - ROW-PROFILE-TREND
+    - ROW-PROJECT-TREND
     - ROW-11
     - ROW-3
     - ROW-5
@@ -314,6 +314,30 @@ position:
     - GRID_ID
     children:
     - CHART-FAILED-PROFILE
+  CHART-PROJECT-TREND:
+    id: CHART-PROJECT-TREND
+    meta:
+      width: 12
+      height: 55
+      chartId: 240
+      sliceName: Project Trend
+      uuid: 31fe6eda-9c0f-4e3a-b2c1-2a8f471d5e60
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-PROJECT-TREND
+    children: []
+  ROW-PROJECT-TREND:
+    id: ROW-PROJECT-TREND
+    meta:
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    children:
+    - CHART-PROJECT-TREND
 metadata:
   color_scheme: supersetColors
   label_colors: {}
@@ -331,6 +355,7 @@ metadata:
     '222': true
     '230': true
     '231': true
+    '240': true
   refresh_frequency: 0
   chart_configuration:
     '205':
@@ -349,6 +374,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '208':
       id: 208
       crossFilters:
@@ -365,6 +391,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '209':
       id: 209
       crossFilters:
@@ -381,6 +408,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '210':
       id: 210
       crossFilters:
@@ -397,6 +425,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '213':
       id: 213
       crossFilters:
@@ -413,6 +442,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '214':
       id: 214
       crossFilters:
@@ -429,6 +459,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '215':
       id: 215
       crossFilters:
@@ -445,6 +476,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '220':
       id: 220
       crossFilters:
@@ -461,6 +493,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '221':
       id: 221
       crossFilters:
@@ -476,6 +509,7 @@ metadata:
         - 222
         - 230
         - 231
+        - 240
     '222':
       id: 222
       crossFilters:
@@ -492,6 +526,7 @@ metadata:
         - 221
         - 230
         - 231
+        - 240
     '230':
       id: 230
       crossFilters:
@@ -508,6 +543,7 @@ metadata:
         - 221
         - 222
         - 231
+        - 240
     '231':
       id: 231
       crossFilters:
@@ -524,6 +560,24 @@ metadata:
         - 221
         - 222
         - 230
+        - 240
+    '240':
+      id: 240
+      crossFilters:
+        scope: global
+        chartsInScope:
+        - 205
+        - 208
+        - 209
+        - 210
+        - 213
+        - 214
+        - 215
+        - 220
+        - 221
+        - 222
+        - 230
+        - 231
   shared_label_colors: {}
   cross_filters_enabled: true
   native_filter_configuration:
@@ -548,6 +602,7 @@ metadata:
     - 215
     - 230
     - 231
+    - 240
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -578,6 +633,7 @@ metadata:
     - 215
     - 230
     - 231
+    - 240
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -607,6 +663,7 @@ metadata:
     - 215
     - 230
     - 231
+    - 240
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -637,6 +694,7 @@ metadata:
     - 215
     - 230
     - 231
+    - 240
     controlValues:
       multiSelect: true
       inverseSelection: false
@@ -666,6 +724,7 @@ metadata:
     - 215
     - 230
     - 231
+    - 240
     controlValues:
       enableEmptyFilter: false
     defaultDataMask:

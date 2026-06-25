@@ -1,0 +1,46 @@
+slice_name: Project Trend
+description: Assessments submitted per project per week. Each project is its own filled curve so you can spot which projects had spikes when.
+certified_by: null
+certification_details: null
+viz_type: echarts_area
+params:
+  x_axis: assessed_at
+  time_grain_sqla: P1W
+  groupby:
+  - project_name
+  metrics:
+  - label: assessments
+    expressionType: SIMPLE
+    column:
+      column_name: assessment_id
+    aggregate: COUNT_DISTINCT
+  adhoc_filters:
+  - clause: WHERE
+    expressionType: SIMPLE
+    subject: project_name
+    operator: IS NOT NULL
+    comparator: ''
+  color_scheme: supersetColors
+  stack: Stack
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  rich_tooltip: true
+  tooltipSortByMetric: true
+  area: true
+  smoothLine: true
+  markerEnabled: true
+  markerSize: 6
+  opacity: 0.45
+  zoomable: true
+  show_value: false
+  y_axis_format: ',d'
+  y_axis_title: Assessments
+  truncate_xaxis: false
+  row_limit: 5000
+  time_range: No filter
+query_context: null
+cache_timeout: null
+uuid: 31fe6eda-9c0f-4e3a-b2c1-2a8f471d5e60
+version: 1.0.0
+dataset_uuid: 9ccd1028-35e4-4b23-9d3b-178fac4ed156
