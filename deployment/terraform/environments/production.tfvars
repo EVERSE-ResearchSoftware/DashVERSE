@@ -11,4 +11,4 @@ postgrest_external_url = "https://api.dashverse.cloud"
 superset_external_url  = "https://analytics.dashverse.cloud"
 api_docs_external_url  = "https://apidocs.dashverse.cloud"
 
-indicators_ref = "5599beb2551a05d0ee2845fcd57c6270b8085e14"
+indicators_ref = "main"
