@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from datetime import datetime
 from typing import Optional
 
@@ -20,13 +20,6 @@ class UserCreate(UserBase):
         repr=False
     )
 
-    @field_validator("password")
-    @classmethod
-    def validate_password_strength(cls, v: str) -> str:
-        if len(v) < settings.PASSWORD_MIN_LENGTH:
-            raise ValueError(f"Password must be at least {settings.PASSWORD_MIN_LENGTH} characters")
-        return v
-
 
 class UserLogin(BaseModel):
 
@@ -43,13 +36,6 @@ class UserUpdate(BaseModel):
         description=f"New password (minimum {settings.PASSWORD_MIN_LENGTH} characters)",
         repr=False
     )
-
-    @field_validator("password")
-    @classmethod
-    def validate_password_strength(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and len(v) < settings.PASSWORD_MIN_LENGTH:
-            raise ValueError(f"Password must be at least {settings.PASSWORD_MIN_LENGTH} characters")
-        return v
 
 
 class UserResponse(UserBase):

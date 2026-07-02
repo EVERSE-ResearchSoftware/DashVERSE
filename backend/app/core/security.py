@@ -82,28 +82,3 @@ def decode_access_token(token: str) -> Optional[dict]:
         return None
     except jwt.InvalidTokenError:
         return None
-
-
-def verify_token(token: str) -> tuple[bool, Optional[dict], Optional[str]]:
-    try:
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET,
-            algorithms=[settings.JWT_ALGORITHM]
-        )
-        return True, payload, None
-    except jwt.ExpiredSignatureError:
-        return False, None, "Token has expired"
-    except jwt.InvalidTokenError as e:
-        return False, None, f"Invalid token: {str(e)}"
-
-
-def _get_jti(token):
-    try:
-        unverified_payload = jwt.decode(
-            token,
-            options={"verify_signature": False}
-        )
-        return unverified_payload.get("jti")
-    except Exception:
-        return None
