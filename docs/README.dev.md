@@ -5,12 +5,12 @@
 Tools:
 
 - [just](https://github.com/casey/just)
-- [OpenTofu (1.6+) or Terraform (1.6+)]()
-- [kubectl (1.28+)]()
+- [OpenTofu (1.6+) or Terraform (1.6+)](https://opentofu.org/docs/intro/install/)
+- [kubectl (1.28+)](https://kubernetes.io/docs/tasks/tools/)
 - [helm (3.0+)](https://helm.sh/docs/intro/install)
 - [minikube (1.30+)](https://minikube.sigs.k8s.io/docs/start) -- both `env=local` and `env=production` run on minikube
 - [Docker](https://docs.docker.com/engine/install) or [Podman](https://podman.io/docs/installation)
-- [Ansible (2.9+)]()
+- [Ansible (2.9+)](https://docs.ansible.com/ansible/latest/installation_guide/index.html)
 - [Python](https://www.python.org/downloads)
 - standard shell utils: `curl`, `jq`, `nc`/`netcat`, `base64` (preflight check verifies these are on PATH)
 
@@ -285,7 +285,7 @@ After deployment, configure Superset with pre-built dashboards using Ansible:
 just setup-dashboards
 ```
 
-This creates five role-based dashboards based on [RSQKit roles](https://everse.software/RSQKit/your_role):
+This sets up five role-based views (filter presets over the three dashboards) based on [RSQKit roles](https://everse.software/RSQKit/your_role):
 
 - **[Policy Maker](https://everse.software/RSQKit/policy_maker)** - High-level adoption and compliance overview
 - **[Principal Investigator](https://everse.software/RSQKit/principal_investigator)** - Project-level metrics and action items

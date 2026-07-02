@@ -7,7 +7,7 @@ The DashVERSE API is powered by PostgREST, which automatically generates a REST 
 Generate a JWT token for write operations:
 
 ```shell
-./scripts/generate-jwt.sh
+just jwt <username> <password>
 export EVERSE_TOKEN="<generated-token>"
 ```
 

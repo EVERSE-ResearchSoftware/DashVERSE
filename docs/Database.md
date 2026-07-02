@@ -139,57 +139,18 @@ chart via `COUNT(*)` and
 `COUNT(*) FILTER (WHERE outcome = 'Fail')`-style metrics; there is no
 rate, score, or threshold column anywhere in the data layer.
 
-## Quality Dimensions
+## Quality Dimensions and Indicators
 
-The EVERSE framework defines 11 quality dimensions based on ISO/IEC 25010:
+Dimensions and indicators are not maintained in this document. They are synced
+at deploy time from the EVERSE indicators repo
+(`EVERSE-ResearchSoftware/indicators`) into the `dimensions` and `indicators`
+tables by the `everse-sync` CronJob, so the live list always matches upstream.
+Query them directly:
 
-| Dimension | Description |
-|-----------|-------------|
-| Maintainability | Ability to modify, update, and evolve software over time. Includes modularity, reusability, analyzability, and testability. |
-| Usability | Ease of use and user experience. Includes learnability, operability, user error protection, and accessibility. |
-| Reliability | Ability to perform required functions under stated conditions. Includes maturity, availability, fault tolerance, and recoverability. |
-| Performance Efficiency | Performance relative to resource usage. Includes time behavior, resource utilization, and capacity. |
-| Portability | Ease of transferring software between environments. Includes adaptability, installability, and replaceability. |
-| Security | Information and data protection. Includes confidentiality, integrity, non-repudiation, and accountability. |
-| Compatibility | Ability to exchange information with other products/systems. Includes co-existence and interoperability. |
-| Functional Suitability | Degree software provides functions meeting stated/implied needs. Includes functional completeness, correctness, and appropriateness. |
-| Reproducibility | Ability to reproduce computational results with same inputs/methods. Critical for research software. |
-| FAIR Principles | Findability, Accessibility, Interoperability, Reusability of research software. |
-
-Additional simplified dimensions include: Documentation, Testing, Licensing, Versioning, Community, Sustainability.
-
-## Quality Indicators
-
-Each dimension contains multiple indicators. Examples:
-
-### Maintainability Indicators
-- Documentation Coverage - Percentage of code with documentation
-- Code Modularity - Use of independent, reusable modules
-- Technical Debt Ratio - Estimated time to fix issues
-- Code Complexity - Cyclomatic complexity metrics
-
-### Usability Indicators
-- User Documentation - Quality of README, tutorials, guides
-- Installation Instructions - Clarity of setup documentation
-- API Documentation - Quality of API reference
-- Example Availability - Presence of usage examples
-
-### Reliability Indicators
-- Test Coverage - Percentage of code covered by tests
-- Test Suite Quality - Presence of unit, integration, system tests
-- Error Handling - Robustness of error handling
-- Bug Fix Rate - Average time to resolve bugs
-
-### Security Indicators
-- Security Vulnerabilities - Known CVEs in dependencies
-- No Leaked Credentials - No secrets in repository
-- Static Analysis - Security scanning results
-
-### FAIR Indicators
-- Software Citation - CITATION.cff, codemeta.json
-- License Clarity - Clear open-source license
-- Persistent Identifier - DOI or persistent identifier
-- Listed in Registry - Presence in software registries
+```sql
+SELECT identifier, name FROM dimensions ORDER BY name;
+SELECT identifier, name, quality_dimension FROM indicators ORDER BY name;
+```
 
 ## Assessment Data Format
 
@@ -253,19 +214,11 @@ SELECT payload->>'dateCreated', payload->'checks' FROM assessment_raw;
 
 ## Populating Test Data
 
-The `deployment/database/populate_data.py` script generates fake data for development:
+Seed example assessments for development with the Ansible seed playbook:
 
 ```shell
-cd deployment/database
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_NAME=dashverse
-export DB_USER=dashverse
-export DB_PASSWORD=<password>
-python populate_data.py --num_assessment 3
+just seed-data
 ```
-
-Use `--clear` to truncate tables before populating.
 
 ## Schema Files
 

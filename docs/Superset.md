@@ -80,8 +80,7 @@ The `outcome` column is computed by the `check_outcome()` PL/pgSQL
 function in `004_create_triggers.sql`. Outputs the function does not
 recognise land in `Unknown`. Plugin runtime errors (`output: "error"`)
 are deliberately classified as `Not applicable` so a broken tool does
-not drag the pass rate down; see `docs/UPSTREAM_ISSUES.md` for the
-ongoing work to surface these as a separate bucket.
+not drag the pass rate down.
 
 ## Visibility and RLS
 
