@@ -58,7 +58,7 @@ variable "cpu_request" {
 
 variable "memory_request" {
   type    = string
-  default = "512Mi"
+  default = "1Gi"
 }
 
 variable "init_configmap" {
