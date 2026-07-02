@@ -18,6 +18,9 @@
           provider: db
         status_code: 200
       register: login_response
+      until: login_response.status | default(0) == 200
+      retries: 10
+      delay: 6
 
     - name: Set access token
       set_fact:
@@ -34,6 +37,9 @@
         follow_redirects: all
         status_code: [200, 302]
       register: form_login_response
+      until: form_login_response.status | default(0) in [200, 302]
+      retries: 10
+      delay: 6
 
     - name: Set session cookie from form login
       set_fact:
@@ -47,6 +53,9 @@
           Cookie: "{{ session_cookie }}"
         status_code: 200
       register: csrf_response
+      until: csrf_response.status | default(0) == 200
+      retries: 10
+      delay: 6
 
     - name: Set CSRF token
       set_fact:

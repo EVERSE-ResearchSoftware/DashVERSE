@@ -442,6 +442,8 @@ build-frontend:
     minikube image build -t dashverse/frontend:latest frontend/
 
 setup-dashboards: check-deps check-minikube
+    kubectl -n {{ns}} rollout status deploy/postgresql --timeout=3m
+    kubectl -n {{ns}} rollout status deploy/superset --timeout=5m
     cd deployment/ansible && \
     DATABASE_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.postgres-password}' | base64 -d) \
     SUPERSET_PASSWORD=$(kubectl get secret {{ns}}-secrets -n {{ns}} -o jsonpath='{.data.superset-admin-password}' | base64 -d) \
