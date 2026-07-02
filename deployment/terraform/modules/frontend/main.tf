@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "frontend" {
             name = "SUPERSET_ADMIN_PASSWORD"
             value_from {
               secret_key_ref {
-                name = "dashverse-secrets"
+                name = var.secret_name
                 key  = "superset-admin-password"
               }
             }

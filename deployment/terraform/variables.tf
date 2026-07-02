@@ -51,26 +51,6 @@ variable "postgres_storage_size" {
   default = "10Gi"
 }
 
-variable "postgrest_db_schema" {
-  type    = string
-  default = "api"
-}
-
-variable "postgrest_anon_role" {
-  type    = string
-  default = "web_anon"
-}
-
-variable "superset_admin_user" {
-  type    = string
-  default = "admin"
-}
-
-variable "superset_admin_email" {
-  type    = string
-  default = "admin@example.com"
-}
-
 variable "postgrest_external_url" {
   description = "Public URL of the PostgREST API the assessment client sees (e.g. https://api.dashverse.cloud)"
   type        = string
@@ -96,6 +76,6 @@ variable "indicators_ref" {
     live; set to a commit SHA in production.tfvars to pin the catalog so
     an upstream rename or schema change can't break the dashboard.
   EOT
-  type    = string
-  default = "main"
+  type        = string
+  default     = "main"
 }
