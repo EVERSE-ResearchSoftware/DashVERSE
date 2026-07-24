@@ -1,0 +1,46 @@
+schema_version: "1.0.0"
+
+project:
+  name: DashVERSE
+  version: v0.2.0
+  repository: https://github.com/EVERSE-ResearchSoftware/DashVERSE
+  license: Apache-2.0
+  content_type: software
+
+ai_usage:
+  used: true
+  summary: >-
+    The core functionality of this project was designed and implemented by the
+    development team without the use of AI code generation tools. In the later
+    stages of the project, AI-assisted development tools were selectively used
+    as a helper for specific tasks such as documentation drafting, boilerplate
+    generation, and code formatting.
+  level: moderate
+  activities:
+    - documentation
+    - code_generation
+    - formatting
+  ai_proportion:
+    qualitative: mostly_human
+  scope:
+    documentation: true
+    code_generation: true
+  components:
+    - name: core functionality
+      ai_involvement: >-
+        Designed and implemented by the development team without AI code
+        generation tools.
+    - name: documentation and boilerplate
+      ai_involvement: >-
+        AI-assisted tools used selectively in later stages for documentation
+        drafting, boilerplate generation, and code formatting.
+
+declaration:
+  date: "2026-07-24"
+  declared_by: Faruk Diblen
+  organization: Netherlands eScience Center
+  contact: f.diblen@esciencecenter.nl
+  notes: >-
+    AI assistance was limited to the later stages of development and applied
+    only to supporting tasks. The core design and implementation predate any
+    AI tool usage.
